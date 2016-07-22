@@ -1,17 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.devappstudio.verifie" >
+
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
+        android:name=".AppController"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name=".AppController"
         android:theme="@style/AppTheme" >
         <activity
             android:name=".SplashActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,9 +21,28 @@
             </intent-filter>
         </activity>
 
-        <meta-data android:name="DATABASE" android:value="verifie.db" />
-        <meta-data android:name="VERSION" android:value="1" />
-        <meta-data android:name="QUERY_LOG" android:value="true" />
-        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="com.devappstudio.verifie" />
+        <meta-data
+            android:name="DATABASE"
+            android:value="verifie.db" />
+        <meta-data
+            android:name="VERSION"
+            android:value="1" />
+        <meta-data
+            android:name="QUERY_LOG"
+            android:value="true" />
+        <meta-data
+            android:name="DOMAIN_PACKAGE_NAME"
+            android:value="com.devappstudio.verifie" />
+
+        <activity
+            android:name=".MainTabActivity"
+            android:label="@string/title_activity_main_tab" >
+        </activity>
+        <activity
+            android:name=".Login"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_login" >
+        </activity>
     </application>
+
 </manifest>
