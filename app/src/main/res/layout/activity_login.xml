@@ -132,10 +132,93 @@
                                         android:orientation="vertical"
                                         android:layout_width="match_parent"
                                         android:layout_height="0dp"
-
                                         android:layout_weight="1">
 
+
+
+                                        <LinearLayout
+                                            android:orientation="vertical"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1">
+
+
+                                        </LinearLayout>
+
+                                        <LinearLayout
+                                            android:orientation="vertical"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1">
+
+
+                                            <ImageButton
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="match_parent"
+                                                android:id="@+id/fb_login"
+                                                android:layout_gravity="center_horizontal"
+                                                android:src="@drawable/fb_back"
+                                                android:background="@drawable/fb_src"
+                                                android:layout_marginLeft="60dp"
+                                                android:layout_marginRight="60dp"
+                                                android:paddingBottom="20dp"
+                                                android:paddingTop="20dp"
+                                                android:paddingLeft="20dp"
+                                                android:layout_marginBottom="10dp"
+
+                                                />
+                                        </LinearLayout>
+
+                                        <LinearLayout
+                                            android:orientation="vertical"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1">
+
+
+                                            <ImageButton
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="match_parent"
+                                                android:id="@+id/gplus_login"
+                                                android:layout_gravity="center_horizontal"
+                                                android:src="@drawable/gplus_front"
+                                                android:background="@drawable/gplus_back"
+                                                android:layout_marginLeft="60dp"
+                                                android:layout_marginTop="15dp"
+                                                android:layout_marginRight="60dp"
+                                                android:paddingBottom="10dp"
+                                                android:paddingLeft="20dp"
+                                                android:paddingTop="5dp"
+                                                />
+
+                                        </LinearLayout>
+
+                                        <LinearLayout
+                                            android:orientation="vertical"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:layout_weight="1">
+
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                                android:text="DONT HAVE A VERIFIE ACCOUNT? REGISTER HERE"
+                                                android:id="@+id/textView"
+                                                android:textColor="@color/white"
+                                                android:paddingTop="20dp"
+                                                android:paddingBottom="20dp"
+                                                android:layout_gravity="center"
+                                                />
+                                        </LinearLayout>
+
+
                                     </LinearLayout>
+
+
+
+
                                 </LinearLayout>
 
 
