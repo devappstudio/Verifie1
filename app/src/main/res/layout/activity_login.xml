@@ -2,7 +2,145 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.devappstudio.verifie.Login"
-    android:background="@drawable/sign_in_back">
+    tools:context=".Login"
+    android:background="@drawable/main_image"
+   >
 
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:background="@drawable/rectangle_2"
+        android:layout_centerHorizontal="true">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:background="@drawable/layer_24"
+            android:layout_centerHorizontal="true">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_centerVertical="true"
+                android:background="@drawable/stay_safe_clean"
+                android:layout_centerHorizontal="true">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/loginoption"
+                    android:layout_centerHorizontal="true">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:background="@drawable/shadow"
+                        android:layout_centerHorizontal="true">
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
+                            android:background="@drawable/shape_1"
+                            android:layout_centerHorizontal="true">
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_centerVertical="true"
+                                android:background="@drawable/shape_1_copy"
+                                android:layout_centerHorizontal="true">
+
+
+                                <LinearLayout
+                                    android:orientation="vertical"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    >
+
+                                    <LinearLayout
+                                        android:orientation="vertical"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        >
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:orientation="vertical"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+                                        android:layout_weight="1"
+                                        >
+
+                                        <EditText
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:inputType="textEmailAddress"
+                                            android:ems="10"
+                                            android:layout_marginTop="10dp"
+                                            android:layout_marginLeft="20dp"
+                                            android:layout_marginRight="20dp"
+                                            android:drawableLeft="@drawable/vector_smart_object_001"
+                                            android:layout_weight="1"
+                                            android:id="@+id/editText"
+                                            android:hint="Email Address"
+                                            android:password="false"
+                                            android:phoneNumber="false" />
+
+                                        <EditText
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:inputType="textPassword"
+                                            android:ems="10"
+                                            android:drawableLeft="@drawable/vector_smart_object"
+                                            android:layout_marginTop="5dp"
+                                            android:layout_marginLeft="20dp"
+                                            android:layout_marginRight="20dp"
+                                            android:layout_weight="1"
+                                            android:id="@+id/editText2"
+                                            android:hint="Password" />
+
+                                        <ImageButton
+                                            android:layout_width="match_parent"
+                                            android:layout_height="0dp"
+                                            android:id="@+id/imageButton"
+                                            android:layout_weight="1"
+                                            android:layout_marginTop="5dp"
+                                            android:layout_marginLeft="20dp"
+                                            android:layout_marginRight="20dp"
+                                            android:paddingTop="10dp"
+                                            android:paddingBottom="10dp"
+                                            android:layout_marginBottom="5dp"
+                                            android:src="@drawable/login"
+                                            android:background="@color/primary_material_light" />
+
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:orientation="vertical"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="0dp"
+
+                                        android:layout_weight="1">
+
+                                    </LinearLayout>
+                                </LinearLayout>
+
+
+                            </RelativeLayout>
+                        </RelativeLayout>
+
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 </RelativeLayout>
