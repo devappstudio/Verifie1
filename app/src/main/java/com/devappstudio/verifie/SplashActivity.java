@@ -29,7 +29,7 @@ public class SplashActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setupWindowAnimations();
 
-        final Intent intent = new Intent(this, Login.class);
+        final Intent intent = new Intent(this, RegisterActivity.class);
         intent.putExtra("val", "shown");
         final RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
         StringRequest sr = new StringRequest("http://rockradiogh.com/api_/audio.php",
