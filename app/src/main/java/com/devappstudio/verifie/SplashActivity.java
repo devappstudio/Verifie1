@@ -1,14 +1,8 @@
 package com.devappstudio.verifie;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.transition.Slide;
-import android.transition.TransitionInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -27,9 +21,8 @@ public class SplashActivity extends Activity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_splash);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setupWindowAnimations();
 
-        final Intent intent = new Intent(this, RegisterActivity.class);
+        final Intent intent = new Intent(this, Login.class);
         intent.putExtra("val", "shown");
         final RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
         StringRequest sr = new StringRequest("http://rockradiogh.com/api_/audio.php",
@@ -69,22 +62,5 @@ public class SplashActivity extends Activity {
         rq.start();
 
     }
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    private void setupWindowAnimations() {
-        Slide slide = (Slide) TransitionInflater.from(this).inflateTransition(R.transition.activity_slide);
-        getWindow().setExitTransition(slide);
-    }
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return super.onOptionsItemSelected(item);
-    }
 }
