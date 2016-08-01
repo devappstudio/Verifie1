@@ -28,12 +28,16 @@ public class RegisterActivity extends Activity {
         email = (EditText)findViewById(R.id.register_email);
         password = (EditText)findViewById(R.id.register_password);
         telephone = (EditText)findViewById(R.id.register_telephone);
-
-
         registered_tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openLogin();
+            }
+        });
+            register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openMain();
             }
         });
     }
@@ -46,27 +50,11 @@ public class RegisterActivity extends Activity {
 
     }
 
-
-    void fbRegister()
+    void openMain()
     {
+        final Intent intent = new Intent(this, main.class);
+        startActivity(intent);
+        finish();
 
     }
-
-    void gpRegister()
-    {
-
-    }
-
-
-    void register_new()
-    {
-
-    }
-
-    void save_details()
-    {
-
-    }
-
-
 }

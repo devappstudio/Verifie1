@@ -33,12 +33,21 @@ public class Login extends Activity {
         email = (EditText)findViewById(R.id.login_email);
         password = (EditText)findViewById(R.id.login_password);
 
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openMain();
+            }
+        });
+
+
         not_registered.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 open_register();
             }
         });
+
 
     }
 
@@ -69,6 +78,14 @@ public class Login extends Activity {
 
     void save_details()
     {
+
+    }
+
+    void openMain()
+    {
+        final Intent intent = new Intent(this, main.class);
+        startActivity(intent);
+        finish();
 
     }
 
