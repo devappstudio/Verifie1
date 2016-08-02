@@ -1,15 +1,23 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context="com.devappstudio.verifie.TwoFragment">
     <Switch
-        android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textOn="On"
         android:textOff="Off"
-        android:thumbTextPadding="50dp"
+        android:layout_gravity="right"
+        android:showText="true"
+        android:thumbTextPadding="20dp"
+        android:padding="15dp"
+        android:layout_margin="10dp"
+        app:showText="true"
         android:thumb="@drawable/switch_thumb"
         android:track="@drawable/switch_track" />
-</RelativeLayout>
+    <include layout="@layout/content_main"/>
+
+</LinearLayout>

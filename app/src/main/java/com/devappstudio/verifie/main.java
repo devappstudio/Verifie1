@@ -20,9 +20,8 @@ public class main extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private int[] tabIcons = {
-            R.drawable.ic_tab_favourite,
-            R.drawable.ic_tab_call,
-            R.drawable.ic_tab_contacts
+            R.drawable.home_icon,
+            R.drawable.near
     };
 
     @Override
@@ -33,7 +32,7 @@ public class main extends AppCompatActivity {
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setLogo(R.drawable.fb_reg);
+        toolbar.setLogo(R.drawable.slider_logo);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -79,8 +78,8 @@ public class main extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OneFragment(), "Home");
-        adapter.addFragment(new TwoFragment(), "Nearby");
+        adapter.addFragment(new OneFragment(), " Home");
+        adapter.addFragment(new TwoFragment(), " Nearby");
         viewPager.setAdapter(adapter);
 
     }

@@ -5,13 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import datastore.User;
 
 public class SplashActivity extends Activity {
 
@@ -22,44 +17,55 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        final Intent intent = new Intent(this, Login.class);
-        intent.putExtra("val", "shown");
-        final RequestQueue rq = Volley.newRequestQueue(getApplicationContext());
-        StringRequest sr = new StringRequest("http://rockradiogh.com/api_/audio.php",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String arg0) {
-                        //System.out.println(arg0);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        intent.putExtra("link", arg0);
-                        rq.stop();
-                        startActivity(intent);
-                        finish();
-                    }
-                }, new Response.ErrorListener() {
 
-            @Override
-            public void onErrorResponse(VolleyError arg0) {
-                // TODO Auto-generated method stub
-                Toast.makeText(getApplicationContext(), "Sorry no internet found",
-                        Toast.LENGTH_LONG).show();
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                intent.putExtra("link", arg0);
-                rq.stop();
-                startActivity(intent);
-                finish();
+        Thread background = new Thread() {
+            public void run() {
 
+                try {
+                    // Thread will sleep for 5 seconds
+                    sleep(5*1000);
+
+                    // After 5 seconds redirect to another intent
+
+                    Intent intent=new Intent(getBaseContext(),Login.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+                    startActivity(intent);
+
+                    //Remove activity
+                    finish();
+
+                } catch (Exception e) {
+
+                }
             }
-        });
+        };
 
-        rq.add(sr);
-        rq.start();
+
+        try {
+            User user = User.findById(User.class,1);
+            Long id = user.getId();
+            Intent intent=new Intent(getBaseContext(),main.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+
+            startActivity(intent);
+            //Remove activity
+            finish();
+        }
+        catch (Exception e)
+        {
+
+            background.start();
+        }
+
+
+
 
     }
 
