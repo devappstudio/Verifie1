@@ -63,10 +63,6 @@ public class SplashActivity extends Activity {
 
             background.start();
         }
-
-
-
-
     }
 
 }
