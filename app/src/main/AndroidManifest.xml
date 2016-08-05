@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.devappstudio.verifie" >
+    package="com.devappstudio.verifie">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -9,13 +9,13 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/MyMaterialTheme" >
+        android:theme="@style/MyMaterialTheme">
         <activity
             android:name=".SplashActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,21 +39,20 @@
         <activity
             android:name=".Login"
             android:label="@string/title_activity_login"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".RegisterActivity"
             android:label="@string/title_activity_register"
             android:parentActivityName=".Login"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.devappstudio.verifie.Login" />
         </activity>
         <activity
             android:name=".main"
-            android:label="@string/title_activity_main" >
-        </activity>
+            android:label="@string/title_activity_main"></activity>
+        <activity android:name=".Verify_Registration"></activity>
     </application>
 
 </manifest>

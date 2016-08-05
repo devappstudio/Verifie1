@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.9"
+        android:layout_marginLeft="5dp" />
+
+    <TextView
+        android:text="TextView"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+
+        android:layout_weight="4"
+        android:id="@+id/message"
+        android:layout_marginLeft="20dp" />
+
+</LinearLayout>
