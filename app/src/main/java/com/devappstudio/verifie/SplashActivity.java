@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 
-import datastore.User;
+import datastore.RealmController;
 
 public class SplashActivity extends Activity {
 
@@ -46,17 +46,23 @@ public class SplashActivity extends Activity {
 
 
         try {
-            User user = User.findById(User.class,1);
-            Long id = user.getId();
-            Intent intent=new Intent(getBaseContext(),main.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            if(RealmController.getInstance().hasUser())
+            {
+                Intent intent=new Intent(getBaseContext(),main.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
-            startActivity(intent);
-            //Remove activity
-            finish();
+                startActivity(intent);
+                //Remove activity
+                finish();
+
+            }
+            else
+            {
+                background.start();
+            }
         }
         catch (Exception e)
         {

@@ -4,6 +4,7 @@ package com.devappstudio.verifie;
  * Created by root on 7/22/16.
  */
 
+import android.app.Application;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -12,8 +13,11 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.squareup.leakcanary.LeakCanary;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
-public class AppController extends com.orm.SugarApp {
+
+public class AppController extends Application {
     public static final String TAG = AppController.class
             .getSimpleName();
 
@@ -25,6 +29,15 @@ public class AppController extends com.orm.SugarApp {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
+                .name(Realm.DEFAULT_REALM_NAME)
+                .schemaVersion(0)
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm.setDefaultConfiguration(realmConfiguration);
+
+
         LeakCanary.install(this);
         mInstance = this;
     }

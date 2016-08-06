@@ -31,7 +31,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import datastore.Api;
+import datastore.RealmController;
 import datastore.User;
+import io.realm.Realm;
 
 
 public class RegisterActivity extends Activity{
@@ -46,6 +48,7 @@ public class RegisterActivity extends Activity{
     String[] arr = { "Male", "Female"};
     private DatePickerDialog fromDatePickerDialog;
     private SimpleDateFormat dateFormatter;
+    private Realm realm;
 
 
     @Override
@@ -65,6 +68,8 @@ public class RegisterActivity extends Activity{
         screen_name = (EditText)findViewById(R.id.screen_name);
         date_of_birth = (EditText)findViewById(R.id.date_of_birth);
         password = (EditText)findViewById(R.id.register_password);
+
+        this.realm = RealmController.with(this).getRealm();
 
         gender = (AutoCompleteTextView)
                 findViewById(R.id.gender);
@@ -94,6 +99,12 @@ public class RegisterActivity extends Activity{
             @Override
             public void onClick(View v) {
                 facebook_registration();
+            }
+        });
+        gp_register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gplus_registration();
             }
         });
 
@@ -213,11 +224,11 @@ public class RegisterActivity extends Activity{
                                     //JSONObject jo_user = response.getJSONObject("user");
                                     //save user
                                     // save company
-                                    User user = new User();
-                                    user.setFullname(e_name);
-                                    user.setServer_id(response.get("data").toString());
-                                    user.setTelephone(e_telephone);
-                                    user.save();
+                                    User user = new User(e_name,e_telephone,response.get("data").toString(),"","");
+                                    realm.beginTransaction();
+                                    realm.copyToRealm(user);
+                                    realm.commitTransaction();
+
                                     final Intent intent = new Intent(RegisterActivity.this, main.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -235,7 +246,7 @@ public class RegisterActivity extends Activity{
                             catch (Exception e)
                             {
                                 e.printStackTrace();
-                                Toast.makeText(getApplicationContext(), "Sorry An Error Occurred", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "Sorry An Error Occurred "+response.toString(), Toast.LENGTH_LONG).show();
                             }
                         }
                     }, new Response.ErrorListener() {
@@ -267,12 +278,29 @@ public class RegisterActivity extends Activity{
     {
          facebook = new Facebook(getApplication(), "1016646581724640", "c88fa83f9fc4ffd2a5c708ae8ccc6675");
 
-        Toast.makeText(getApplicationContext(),facebook.getFullName(),Toast.LENGTH_LONG).show();
+        new Thread() {
+            public void run() {
+                try {
+                    Toast.makeText(getApplicationContext(),facebook.getFullName(),Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }.start();
 
     }
     void gplus_registration()
     {
         googleplus = new GooglePlus(getApplication(), "959643729618-34qni9duh3f9bg1bp7of6ua7467p95up.apps.googleusercontent.com", "bISGHbAFR0paZiDT5pGZygZ8");
+        new Thread() {
+            public void run() {
+                try {
+                    Toast.makeText(getApplicationContext(),googleplus.getFullName(),Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }.start();
 
 
     }
