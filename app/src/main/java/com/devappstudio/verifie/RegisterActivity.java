@@ -351,7 +351,7 @@ public class RegisterActivity extends Activity{
             e_name = facebook.getFullName();
             String temp = facebook.getDateOfBirth().getDay()+"";
             e_date_of_birth = "";
-            if(!temp.isEmpty() && !temp.equalsIgnoreCase(null))
+            if(!temp.isEmpty() && !temp.equalsIgnoreCase(null) && !temp.equals(null))
             {
                 e_date_of_birth = facebook.getDateOfBirth().getDay()+"-"+facebook.getDateOfBirth().getMonth()+"-"+facebook.getDateOfBirth().getYear();
             }
@@ -389,6 +389,7 @@ public class RegisterActivity extends Activity{
             intent.putExtra("e_email", e_email);
             intent.putExtra("e_pic", e_pic);
             intent.putExtra("e_secrete", e_secrete);
+            intent.putExtra("e_link", "add_user_fb");
             startActivity(intent);
             finish();
         }
@@ -436,9 +437,9 @@ public class RegisterActivity extends Activity{
         @Override
         protected String doInBackground(String... params) {
             e_name = googleplus.getFullName();
-            String temp = googleplus.getDateOfBirth().getDay()+"";
+            String temp = googleplus.getDateOfBirth().getDay().toString();
             e_date_of_birth = "";
-            if(!temp.isEmpty() && !temp.equalsIgnoreCase(null))
+            if(!temp.isEmpty() && !temp.equalsIgnoreCase(null) && !temp.equals(null))
             {
                 e_date_of_birth = googleplus.getDateOfBirth().getDay()+"-"+googleplus.getDateOfBirth().getMonth()+"-"+googleplus.getDateOfBirth().getYear();
             }
@@ -476,6 +477,7 @@ public class RegisterActivity extends Activity{
             intent.putExtra("e_email", e_email);
             intent.putExtra("e_pic", e_pic);
             intent.putExtra("e_secrete", e_secrete);
+            intent.putExtra("e_link", "add_user_gp");
             startActivity(intent);
             finish();
 

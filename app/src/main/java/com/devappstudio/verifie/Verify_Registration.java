@@ -39,7 +39,7 @@ public class Verify_Registration extends AppCompatActivity {
 
     CircleImageView circleImageView;
     Intent intent;
-    String e_name,e_email,e_password,e_telephone,e_screen_name,e_date_of_birth,e_gender,e_pic,e_secrete;
+    String e_name,e_email,e_password,e_telephone,e_screen_name,e_date_of_birth,e_gender,e_pic,e_secrete,e_link;
     EditText name,email,password,telephone,screen_name,date_of_birth;
     String[] arr = { "Male", "Female"};
     private DatePickerDialog fromDatePickerDialog;
@@ -70,6 +70,7 @@ public class Verify_Registration extends AppCompatActivity {
             e_gender = intent.getStringExtra("e_gender");
             e_pic = intent.getStringExtra("e_pic");
             e_secrete = intent.getStringExtra("e_secrete");
+            e_link = intent.getStringExtra("e_link");
         }catch(Exception e){
 
         }
@@ -84,7 +85,7 @@ public class Verify_Registration extends AppCompatActivity {
         name = (EditText)findViewById(R.id.register_fullname);
         name.setText(e_name);
         email = (EditText)findViewById(R.id.register_email);
-        email.setText(e_name);
+        email.setText(e_email);
         screen_name = (EditText)findViewById(R.id.screen_name);
         date_of_birth = (EditText)findViewById(R.id.date_of_birth);
         date_of_birth.setText(e_date_of_birth);
@@ -236,7 +237,7 @@ public class Verify_Registration extends AppCompatActivity {
             params.put("id_from_provider",e_secrete);
 
             JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                    Api.getApi()+"add_user",new JSONObject(params),
+                    Api.getApi()+e_link,new JSONObject(params),
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -255,7 +256,6 @@ public class Verify_Registration extends AppCompatActivity {
                                     realm.beginTransaction();
                                     realm.copyToRealm(user);
                                     realm.commitTransaction();
-
                                     final Intent intent = new Intent(Verify_Registration.this, main.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
