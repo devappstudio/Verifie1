@@ -437,7 +437,7 @@ public class RegisterActivity extends Activity{
         @Override
         protected String doInBackground(String... params) {
             e_name = googleplus.getFullName();
-            String temp = googleplus.getDateOfBirth().getDay().toString();
+            String temp = googleplus.getDateOfBirth().getDay()+"";
             e_date_of_birth = "";
             if(!temp.isEmpty() && !temp.equalsIgnoreCase(null) && !temp.equals(null))
             {
