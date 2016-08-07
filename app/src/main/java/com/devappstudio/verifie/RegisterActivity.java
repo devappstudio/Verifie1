@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -44,7 +45,7 @@ public class RegisterActivity extends Activity{
     TextView registered_tv;
     EditText name,email,password,telephone,screen_name,date_of_birth;
     AutoCompleteTextView gender;
-    String e_name,e_email,e_password,e_telephone,e_screen_name,e_date_of_birth,e_gender;
+    String e_name,e_email,e_password,e_telephone,e_screen_name,e_date_of_birth,e_gender,e_pic,e_secrete;
     String[] arr = { "Male", "Female"};
     private DatePickerDialog fromDatePickerDialog;
     private SimpleDateFormat dateFormatter;
@@ -98,14 +99,15 @@ public class RegisterActivity extends Activity{
         fb_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                facebook_registration();
+                fb_registration task = new fb_registration();
+                task.execute("");
             }
         });
         gp_register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gplus_registration();
-            }
+                gp_registration task = new gp_registration();
+                task.execute("");               }
         });
 
     }
@@ -281,7 +283,7 @@ public class RegisterActivity extends Activity{
         new Thread() {
             public void run() {
                 try {
-                    Toast.makeText(getApplicationContext(),facebook.getFullName(),Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(),,Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -289,6 +291,7 @@ public class RegisterActivity extends Activity{
         }.start();
 
     }
+
     void gplus_registration()
     {
         googleplus = new GooglePlus(getApplication(), "959643729618-34qni9duh3f9bg1bp7of6ua7467p95up.apps.googleusercontent.com", "bISGHbAFR0paZiDT5pGZygZ8");
@@ -305,6 +308,181 @@ public class RegisterActivity extends Activity{
 
     }
 
+
+    private class fb_registration extends AsyncTask<String, Void, String> {
+
+        /**
+         * Runs on the UI thread before {@link #doInBackground}.
+         *
+         * @see #onPostExecute
+         * @see #doInBackground
+         */
+        final Dialog dialog = new Dialog(RegisterActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            facebook = new Facebook(getApplication(), "1016646581724640", "c88fa83f9fc4ffd2a5c708ae8ccc6675");
+            dialog.setContentView(R.layout.loading_dialog_layout);
+            dialog.setTitle("Retrieving your information ...");
+            TextView text = (TextView) dialog.findViewById(R.id.message);
+            text.setText("Please wait ...");
+            dialog.show();
+
+        }
+
+        /**
+         * Override this method to perform a computation on a background thread. The
+         * specified parameters are the parameters passed to {@link #execute}
+         * by the caller of this task.
+         * <p>
+         * This method can call {@link #publishProgress} to publish updates
+         * on the UI thread.
+         *
+         * @param params The parameters of the task.
+         * @return A result, defined by the subclass of this task.
+         * @see #onPreExecute()
+         * @see #onPostExecute
+         * @see #publishProgress
+         */
+
+        @Override
+        protected String doInBackground(String... params) {
+            e_name = facebook.getFullName();
+            String temp = facebook.getDateOfBirth().getDay()+"";
+            e_date_of_birth = "";
+            if(!temp.isEmpty() && !temp.equalsIgnoreCase(null))
+            {
+                e_date_of_birth = facebook.getDateOfBirth().getDay()+"-"+facebook.getDateOfBirth().getMonth()+"-"+facebook.getDateOfBirth().getYear();
+            }
+            e_gender = facebook.getGender();
+            e_email = facebook.getEmail();
+            e_pic = facebook.getPictureURL();
+            e_secrete = facebook.getIdentifier();
+            return null;
+        }
+
+        /**
+         * <p>Runs on the UI thread after {@link #doInBackground}. The
+         * specified result is the value returned by {@link #doInBackground}.</p>
+         * <p>
+         * <p>This method won't be invoked if the task was cancelled.</p>
+         *
+         * @param s The result of the operation computed by {@link #doInBackground}.
+         * @see #onPreExecute
+         * @see #doInBackground
+         * @see #onCancelled(Object)
+         */
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            dialog.hide();
+            final Intent intent = new Intent(RegisterActivity.this, Verify_Registration.class);
+            intent.putExtra("val", "shown");
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra("e_name", e_name);
+            intent.putExtra("e_date_of_birth", e_date_of_birth);
+            intent.putExtra("e_gender", e_gender);
+            intent.putExtra("e_email", e_email);
+            intent.putExtra("e_pic", e_pic);
+            intent.putExtra("e_secrete", e_secrete);
+            startActivity(intent);
+            finish();
+        }
+
+
+    }
+
+    private class gp_registration extends AsyncTask<String, Void, String> {
+
+        /**
+         * Runs on the UI thread before {@link #doInBackground}.
+         *
+         * @see #onPostExecute
+         * @see #doInBackground
+         */
+        final Dialog dialog = new Dialog(RegisterActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            googleplus = new GooglePlus(getApplication(), "959643729618-34qni9duh3f9bg1bp7of6ua7467p95up.apps.googleusercontent.com", "bISGHbAFR0paZiDT5pGZygZ8");
+            dialog.setContentView(R.layout.loading_dialog_layout);
+            dialog.setTitle("Retrieving your information ...");
+            TextView text = (TextView) dialog.findViewById(R.id.message);
+            text.setText("Please wait ...");
+            dialog.show();
+
+        }
+
+        /**
+         * Override this method to perform a computation on a background thread. The
+         * specified parameters are the parameters passed to {@link #execute}
+         * by the caller of this task.
+         * <p>
+         * This method can call {@link #publishProgress} to publish updates
+         * on the UI thread.
+         *
+         * @param params The parameters of the task.
+         * @return A result, defined by the subclass of this task.
+         * @see #onPreExecute()
+         * @see #onPostExecute
+         * @see #publishProgress
+         */
+
+        @Override
+        protected String doInBackground(String... params) {
+            e_name = googleplus.getFullName();
+            String temp = googleplus.getDateOfBirth().getDay()+"";
+            e_date_of_birth = "";
+            if(!temp.isEmpty() && !temp.equalsIgnoreCase(null))
+            {
+                e_date_of_birth = googleplus.getDateOfBirth().getDay()+"-"+googleplus.getDateOfBirth().getMonth()+"-"+googleplus.getDateOfBirth().getYear();
+            }
+            e_gender = googleplus.getGender();
+            e_email = googleplus.getEmail();
+            e_pic = googleplus.getPictureURL();
+            e_secrete = googleplus.getIdentifier();
+            return null;
+        }
+
+        /**
+         * <p>Runs on the UI thread after {@link #doInBackground}. The
+         * specified result is the value returned by {@link #doInBackground}.</p>
+         * <p>
+         * <p>This method won't be invoked if the task was cancelled.</p>
+         *
+         * @param s The result of the operation computed by {@link #doInBackground}.
+         * @see #onPreExecute
+         * @see #doInBackground
+         * @see #onCancelled(Object)
+         */
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            dialog.hide();
+            final Intent intent = new Intent(RegisterActivity.this, Verify_Registration.class);
+            intent.putExtra("val", "shown");
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            intent.putExtra("e_name", e_name);
+            intent.putExtra("e_date_of_birth", e_date_of_birth);
+            intent.putExtra("e_gender", e_gender);
+            intent.putExtra("e_email", e_email);
+            intent.putExtra("e_pic", e_pic);
+            intent.putExtra("e_secrete", e_secrete);
+            startActivity(intent);
+            finish();
+
+        }
+
+
+    }
 
     private void setDateTimeField() {
         date_of_birth.setOnClickListener(new View.OnClickListener() {
