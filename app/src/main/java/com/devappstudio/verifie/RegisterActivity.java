@@ -480,7 +480,6 @@ public class RegisterActivity extends Activity{
             intent.putExtra("e_link", "add_user_gp");
             startActivity(intent);
             finish();
-
         }
 
 
@@ -518,5 +517,4 @@ public class RegisterActivity extends Activity{
         },newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH));
 
     }
-
 }
