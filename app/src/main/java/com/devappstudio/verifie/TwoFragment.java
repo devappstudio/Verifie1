@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -22,6 +24,8 @@ public class TwoFragment extends Fragment{
     private List<NearBy> movieList = new ArrayList<>();
     private RecyclerView recyclerView;
     private NearByAdaptor mAdapter;
+    Switch visibility;
+
 
     public TwoFragment() {
         // Required empty public constructor
@@ -39,6 +43,15 @@ public class TwoFragment extends Fragment{
         View myView = inflater.inflate(R.layout.fragment_two, container, false);
         recyclerView = (RecyclerView) myView.findViewById(R.id.recycler_view);
         mAdapter = new NearByAdaptor(movieList);
+        visibility = (Switch)myView.findViewById(R.id.visibility);
+        visibility.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Toast.makeText(getActivity(),"Android SwitchCompat Example Value "+isChecked,Toast.LENGTH_LONG).show();
+            }
+        });
+
+
         prepareMovieData();
 
         recyclerView.setHasFixedSize(true);

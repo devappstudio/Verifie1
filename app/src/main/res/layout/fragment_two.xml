@@ -16,6 +16,7 @@
         android:padding="15dp"
         android:layout_margin="10dp"
         app:showText="true"
+        android:id="@+id/visibility"
         android:thumb="@drawable/switch_thumb"
         android:track="@drawable/switch_track" />
     <include layout="@layout/content_main"/>
