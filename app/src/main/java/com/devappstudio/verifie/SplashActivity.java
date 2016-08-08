@@ -56,6 +56,7 @@ public class SplashActivity extends Activity {
 
                 startActivity(intent);
                 //Remove activity
+
                 finish();
 
             }

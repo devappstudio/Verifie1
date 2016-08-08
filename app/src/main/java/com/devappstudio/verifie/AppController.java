@@ -4,20 +4,20 @@ package com.devappstudio.verifie;
  * Created by root on 7/22/16.
  */
 
-import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.squareup.leakcanary.LeakCanary;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
 
-public class AppController extends Application {
+public class AppController extends android.support.multidex.MultiDexApplication   {
     public static final String TAG = AppController.class
             .getSimpleName();
 
@@ -38,7 +38,7 @@ public class AppController extends Application {
         Realm.setDefaultConfiguration(realmConfiguration);
 
 
-        LeakCanary.install(this);
+   //     LeakCanary.install(this);
         mInstance = this;
     }
 
@@ -78,5 +78,12 @@ public class AppController extends Application {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(tag);
         }
+    }
+
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(newBase);
+        MultiDex.install(this);
     }
 }

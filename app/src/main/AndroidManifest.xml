@@ -3,7 +3,7 @@
     package="com.devappstudio.verifie">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".AppController"
@@ -27,12 +27,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity
             android:name=".Login"
             android:label="@string/title_activity_login"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".RegisterActivity"
             android:label="@string/title_activity_register"
@@ -44,8 +42,9 @@
         </activity>
         <activity
             android:name=".main"
-            android:label="@string/title_activity_main"></activity>
-        <activity android:name=".Verify_Registration"></activity>
+            android:label="@string/title_activity_main" />
+        <activity android:name=".Verify_Registration" />
+        <activity android:name=".verifyLogin"></activity>
     </application>
 
 </manifest>
