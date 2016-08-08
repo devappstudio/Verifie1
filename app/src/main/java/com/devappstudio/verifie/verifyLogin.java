@@ -57,6 +57,7 @@ public class verifyLogin extends AppCompatActivity {
         back = (Button) findViewById(R.id.deny_button);
         login = (Button) findViewById(R.id.confirm_button);
         circleImageView = (CircleImageView)findViewById(R.id.profile_image);
+
         this.realm = RealmController.with(this).getRealm();
 
         Picasso.with(getApplicationContext()).load(e_pic).into(circleImageView);
@@ -123,7 +124,7 @@ public class verifyLogin extends AppCompatActivity {
 
                             if(response.get("status").toString().equalsIgnoreCase("1"))
                             {
-                                JSONObject jo_stock = response.getJSONObject("data");
+                                JSONObject jo_stock = (JSONObject) response.get("data");
                                 // JSONObject jo_company = response.getJSONObject("company");
                                 //JSONObject jo_user = response.getJSONObject("user");
                                 //save user
@@ -131,6 +132,7 @@ public class verifyLogin extends AppCompatActivity {
 
 
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
+                                    RealmController.getInstance().clearAll();
                                     realm.beginTransaction();
                                     realm.copyToRealm(user);
                                     realm.commitTransaction();
@@ -208,17 +210,18 @@ public class verifyLogin extends AppCompatActivity {
 
                             if(response.get("status").toString().equalsIgnoreCase("1"))
                             {
-                                JSONObject jo_stock = response.getJSONObject("data");
+                                JSONObject jo_stock = (JSONObject) response.get("data");
                                 // JSONObject jo_company = response.getJSONObject("company");
                                 //JSONObject jo_user = response.getJSONObject("user");
                                 //save user
                                 // save company
 
-
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
-                                    realm.beginTransaction();
+                                RealmController.getInstance().clearAll();
+                                realm.beginTransaction();
                                     realm.copyToRealm(user);
                                     realm.commitTransaction();
+
 
                                 final Intent intent = new Intent(verifyLogin.this, main.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -237,7 +240,7 @@ public class verifyLogin extends AppCompatActivity {
                         catch (Exception e)
                         {
                             e.printStackTrace();
-                            Toast.makeText(getApplicationContext(), "Sorry An Error Occurred "+response.toString(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Sorry An Error Occurred ", Toast.LENGTH_LONG).show();
                         }
                     }
                 }, new Response.ErrorListener() {

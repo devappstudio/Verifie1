@@ -226,6 +226,8 @@ public class RegisterActivity extends Activity{
                                     //JSONObject jo_user = response.getJSONObject("user");
                                     //save user
                                     // save company
+                                    RealmController.getInstance().clearAll();
+
                                     User user = new User(e_name,e_telephone,response.get("data").toString(),"","");
                                     realm.beginTransaction();
                                     realm.copyToRealm(user);
