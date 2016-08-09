@@ -12,12 +12,18 @@ android:background="?android:attr/selectableItemBackground"
     >
 
 <!-- Thumbnail Image -->
-<com.android.volley.toolbox.NetworkImageView
-    android:id="@+id/thumbnail"
-    android:layout_width="80dp"
-    android:layout_height="80dp"
-    android:layout_alignParentLeft="true"
-    android:layout_marginRight="8dp" />
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/thumbnail"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/circular"
+        app:civ_border_width="1dp"
+        android:layout_marginRight="8dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="25dp"
+        android:layout_gravity="center"
+        app:civ_border_color="#FF000000"/>
     <ImageButton
         android:layout_alignParentRight="true"
         android:layout_width="wrap_content"

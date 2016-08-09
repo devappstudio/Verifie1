@@ -5,6 +5,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <permission
+        android:name="com.devappstudio.verifie.My_LOCATION_SERVICES"
+        android:protectionLevel="signature" />
+
     <application
         android:name=".AppController"
         android:allowBackup="true"
@@ -15,7 +19,7 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
         <service android:name=".MyService" android:process=":my_service" />
-        <service android:name=".MyLocationService" android:process=":my_service" />
+        <service android:name=".MyLocationService" android:enabled="true"  android:permission="com.devappstudio.verifie.My_LOCATION_SERVICES"  />
         <activity
             android:name=".SplashActivity"
             android:configChanges="orientation|keyboardHidden"

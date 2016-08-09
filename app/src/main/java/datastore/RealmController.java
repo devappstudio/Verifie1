@@ -86,32 +86,48 @@ public class RealmController {
     }
 
     //find all objects in the Book.class
-    public RealmResults<User> getBooks() {
+    public RealmResults<Visibility> getVisibility() {
+
+        return realm.where(Visibility.class).findAll();
+    }
+
+    //find all objects in the Book.class
+    public RealmResults<Location_Stats> getLocations() {
+
+        return realm.where(Location_Stats.class).findAll();
+    }
+
+    //find all objects in the Book.class
+    public RealmResults<User> getUsers() {
 
         return realm.where(User.class).findAll();
     }
 
     //query a single item with the given id
-    public User getUser(String id) {
+    public User getUser(int id) {
+        RealmResults<User> u = getUsers();
 
-        return realm.where(User.class).equalTo("id", id).findFirst();
+        return u.first();
     }
 
     //query a single item with the given id
-    public Location_Stats getLocation(String id) {
+    public Location_Stats getLocation(int id) {
+        RealmResults<Location_Stats> u = getLocations();
 
-        return realm.where(Location_Stats.class).equalTo("id", id).findFirst();
+        return u.first();
     }
    //query a single item with the given id
-    public Visibility getVisibility(String id) {
+    public Visibility getVisibility(int id) {
 
-        return realm.where(Visibility.class).equalTo("id", id).findFirst();
+        RealmResults<Visibility> u = getVisibility();
+
+        return u.first();
     }
 
     //check if Book.class is empty
     public boolean hasUser() {
-
-        return !realm.allObjects(User.class).isEmpty();
+        RealmResults<User> u = getUsers();
+        return !u.isEmpty();
     }
   //check if Book.class is empty
     public boolean hasVisible() {

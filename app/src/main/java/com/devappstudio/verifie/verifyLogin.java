@@ -132,7 +132,7 @@ public class verifyLogin extends AppCompatActivity {
 
 
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
-                                    RealmController.getInstance().clearAll();
+                                    RealmController.with(getApplication()).clearAll();
                                     realm.beginTransaction();
                                     realm.copyToRealm(user);
                                     realm.commitTransaction();
@@ -217,7 +217,7 @@ public class verifyLogin extends AppCompatActivity {
                                 // save company
 
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
-                                RealmController.getInstance().clearAll();
+                                RealmController.with(getApplication()).clearAll();
                                 realm.beginTransaction();
                                     realm.copyToRealm(user);
                                     realm.commitTransaction();

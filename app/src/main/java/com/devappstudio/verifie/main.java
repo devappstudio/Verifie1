@@ -27,6 +27,10 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+import datastore.Location_Stats;
+import datastore.RealmController;
+import io.realm.Realm;
+
 public class main extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
@@ -55,6 +59,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
             R.drawable.home_icon,
             R.drawable.near
     };
+    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +77,8 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         setupTabIcons();
+        this.realm = RealmController.with(getApplication()).getRealm();
+
         // First we need to check availability of play services
         if (checkPlayServices()) {
             // Building the GoogleApi client
@@ -86,6 +93,9 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
            Intent intent = new Intent(getApplicationContext(),
                     MyLocationService.class);
             startService(intent);
+        }
+        else
+        {
         }
 
 
@@ -182,6 +192,11 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         if (mLastLocation != null) {
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
+            RealmController.with(getApplication()).clearAllLocation();
+            Location_Stats ls = new Location_Stats(longitude,latitude);
+            realm.beginTransaction();
+            realm.copyToRealm(ls);
+            realm.commitTransaction();
 
         } else {
 
@@ -271,5 +286,61 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         }
         return false;
     }
+
+    /*
+
+    if (googleApiClient == null) {
+    googleApiClient = new GoogleApiClient.Builder(this)
+            .addApi(LocationServices.API).addConnectionCallbacks(this)
+            .addOnConnectionFailedListener(Login.this).build();
+    googleApiClient.connect();
+            LocationRequest locationRequest = LocationRequest.create();
+    locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    locationRequest.setInterval(30 * 1000);
+    locationRequest.setFastestInterval(5 * 1000);
+    LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+            .addLocationRequest(locationRequest);
+
+    // **************************
+    builder.setAlwaysShow(true); // this is the key ingredient
+    // **************************
+
+    PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi
+            .checkLocationSettings(googleApiClient, builder.build());
+    result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+        @Override
+        public void onResult(LocationSettingsResult result) {
+            final Status status = result.getStatus();
+            final LocationSettingsStates state = result
+                    .getLocationSettingsStates();
+            switch (status.getStatusCode()) {
+            case LocationSettingsStatusCodes.SUCCESS:
+                // All location settings are satisfied. The client can
+                // initialize location
+                // requests here.
+                break;
+            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                // Location settings are not satisfied. But could be
+                // fixed by showing the user
+                // a dialog.
+                try {
+                    // Show the dialog by calling
+                    // startResolutionForResult(),
+                    // and check the result in onActivityResult().
+                    status.startResolutionForResult(Login.this, 1000);
+                } catch (IntentSender.SendIntentException e) {
+                    // Ignore the error.
+                }
+                break;
+            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                // Location settings are not satisfied. However, we have
+                // no way to fix the
+                // settings so we won't show the dialog.
+                break;
+            }
+        }
+    });
+}
+     */
 
 }

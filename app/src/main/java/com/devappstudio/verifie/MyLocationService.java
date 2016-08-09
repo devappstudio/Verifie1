@@ -77,9 +77,9 @@ public class MyLocationService extends Service implements LocationListener,
         myLocationVar = location;
         // do your work here with location
       //TODO This is where location is updated
-        if(RealmController.getInstance().hasVisible())
+        if(RealmController.with(getApplication()).hasVisible() && RealmController.with(getApplication()).hasLocation())
         {
-            if(RealmController.getInstance().getVisibility("1").isStatus())
+            if(RealmController.with(getApplication()).getVisibility(1).isStatus())
             {
                 new_location();
             }
@@ -98,10 +98,11 @@ public class MyLocationService extends Service implements LocationListener,
         Location loc = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         myLocationVar = loc;
        //TODO This where the location is first requested
-        if(RealmController.getInstance().hasVisible())
+        if(RealmController.with(getApplication()).hasVisible() && RealmController.with(getApplication()).hasLocation())
         {
-            if(RealmController.getInstance().getVisibility("1").isStatus())
+            if(RealmController.with(getApplication()).getVisibility(1).isStatus())
             {
+                if(myLocationVar != null)
                 new_location();
             }
         }
@@ -140,7 +141,7 @@ public class MyLocationService extends Service implements LocationListener,
 
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("server_id", RealmController.getInstance().getUser("1").getServer_id());
+        params.put("server_id", RealmController.with(getApplication()).getUser(1).getServer_id());
         params.put("longitude",myLocationVar.getLongitude()+"");
         params.put("latitude",myLocationVar.getLatitude()+"");
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
@@ -153,7 +154,7 @@ public class MyLocationService extends Service implements LocationListener,
 
                             if(response.get("status").toString().equalsIgnoreCase("1"))
                             {
-                                RealmController.getInstance().clearAllLocation();
+                                RealmController.with(getApplication()).clearAllLocation();
                                 Location_Stats ls = new Location_Stats(myLocationVar.getLongitude(),myLocationVar.getLatitude());
                                 realm.beginTransaction();
                                 realm.copyToRealm(ls);

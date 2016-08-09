@@ -124,7 +124,7 @@ public class Login extends Activity {
                                 //save user
                                 // save company
 
-                                RealmController.getInstance().clearAll();
+                                RealmController.with(getApplication()).clearAll();
 
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
                                     realm.beginTransaction();
@@ -198,7 +198,7 @@ public class Login extends Activity {
                                 //save user
                                 // save company
 
-                                RealmController.getInstance().clearAll();
+                                RealmController.with(getApplication()).clearAll();
 
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
                                     realm.beginTransaction();
@@ -322,7 +322,7 @@ public class Login extends Activity {
                                     //save user
                                     // save company
 
-                                    RealmController.getInstance().clearAll();
+                                    RealmController.with(getApplication()).clearAll();
 
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
                                     realm.beginTransaction();

@@ -44,19 +44,14 @@ public class SplashActivity extends Activity {
             }
         };
 
-
-        try {
-            if(RealmController.getInstance().hasUser())
+            if(RealmController.with(getApplication()).hasUser())
             {
-                Intent intent=new Intent(getBaseContext(),main.class);
+                Intent intent=new Intent(SplashActivity.this,main.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-
                 startActivity(intent);
-                //Remove activity
-
                 finish();
 
             }
@@ -64,13 +59,8 @@ public class SplashActivity extends Activity {
             {
                 background.start();
             }
-        }
-        catch (Exception e)
-        {
 
-            background.start();
-        }
-    }
+     }
 
 
 
