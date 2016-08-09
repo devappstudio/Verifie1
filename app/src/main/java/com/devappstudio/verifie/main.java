@@ -1,5 +1,8 @@
 package com.devappstudio.verifie;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -78,11 +81,16 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
 
 
+        if(!isMyServiceRunning(MyLocationService.class)){
+           //Start it
+           Intent intent = new Intent(getApplicationContext(),
+                    MyLocationService.class);
+            startService(intent);
+        }
+
+
+
         //TODO  update_user_location  new_user_location near_users_get
-
-
-
-
 
     }
 
@@ -174,7 +182,6 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         if (mLastLocation != null) {
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
-            Toast.makeText(getApplicationContext(),longitude+" "+latitude,Toast.LENGTH_LONG).show();
 
         } else {
 
@@ -251,6 +258,18 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
     @Override
     public void onConnectionSuspended(int arg0) {
         mGoogleApiClient.connect();
+    }
+
+
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

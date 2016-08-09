@@ -69,6 +69,22 @@ public class RealmController {
         realm.commitTransaction();
     }
 
+    //clear all objects from Book.class
+    public void clearAllVisibility() {
+
+        realm.beginTransaction();
+        realm.clear(Visibility.class);
+        realm.commitTransaction();
+    }
+
+    //clear all objects from Book.class
+    public void clearAllLocation() {
+
+        realm.beginTransaction();
+        realm.clear(Location_Stats.class);
+        realm.commitTransaction();
+    }
+
     //find all objects in the Book.class
     public RealmResults<User> getBooks() {
 
@@ -81,10 +97,30 @@ public class RealmController {
         return realm.where(User.class).equalTo("id", id).findFirst();
     }
 
+    //query a single item with the given id
+    public Location_Stats getLocation(String id) {
+
+        return realm.where(Location_Stats.class).equalTo("id", id).findFirst();
+    }
+   //query a single item with the given id
+    public Visibility getVisibility(String id) {
+
+        return realm.where(Visibility.class).equalTo("id", id).findFirst();
+    }
+
     //check if Book.class is empty
     public boolean hasUser() {
 
         return !realm.allObjects(User.class).isEmpty();
+    }
+  //check if Book.class is empty
+    public boolean hasVisible() {
+
+        return !realm.allObjects(Visibility.class).isEmpty();
+    }
+    public boolean hasLocation() {
+
+        return !realm.allObjects(Location_Stats.class).isEmpty();
     }
 
     //query example

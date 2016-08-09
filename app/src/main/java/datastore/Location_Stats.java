@@ -12,7 +12,7 @@ public class Location_Stats  extends RealmObject {
     @PrimaryKey
     private int id;
 
-    double longitude,latitude;
+    private double longitude,latitude;
 
     public Location_Stats(double longitude, double latitude) {
         this.longitude = longitude;

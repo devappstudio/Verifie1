@@ -12,7 +12,7 @@ public class Visibility  extends RealmObject {
     @PrimaryKey
     private int id;
 
-    boolean status;
+    private boolean status;
 
     public Visibility(boolean status) {
         this.status = status;
@@ -27,5 +27,14 @@ public class Visibility  extends RealmObject {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
