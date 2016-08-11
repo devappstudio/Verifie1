@@ -80,6 +80,8 @@ public class Verify_Registration extends AppCompatActivity {
         Picasso.with(getApplicationContext()).load(e_pic).into(circleImageView);
 
 
+
+
         dateFormatter = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
 
         name = (EditText)findViewById(R.id.register_fullname);
@@ -122,8 +124,9 @@ public class Verify_Registration extends AppCompatActivity {
         date_of_birth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!fromDatePickerDialog.isShowing())
+                /*if(!fromDatePickerDialog.isShowing())
                     fromDatePickerDialog.show();
+                */
             }
         });
 
@@ -132,8 +135,9 @@ public class Verify_Registration extends AppCompatActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(date_of_birth.isFocused())
                 {
-                    if(!fromDatePickerDialog.isShowing())
+                   /* if(!fromDatePickerDialog.isShowing())
                         fromDatePickerDialog.show();
+                        */
                 }
             }
         });
@@ -168,44 +172,37 @@ public class Verify_Registration extends AppCompatActivity {
         if(e_telephone.isEmpty() || e_telephone.equalsIgnoreCase("") || e_telephone.equalsIgnoreCase(null))
         {
             error = 1;
-            telephone.setBackgroundColor(getResources().getColor(R.color.red));
         }
 
         if(e_screen_name.isEmpty() || e_screen_name.equalsIgnoreCase("") || e_screen_name.equalsIgnoreCase(null))
         {
             error = 1;
-            screen_name.setBackgroundColor(getResources().getColor(R.color.red));
         }
 
         if(e_password.isEmpty() || e_password.equalsIgnoreCase("") || e_password.equalsIgnoreCase(null))
         {
             error = 1;
-            password.setBackgroundColor(getResources().getColor(R.color.red));
         }
 
         if(e_name.isEmpty() || e_name.equalsIgnoreCase("") || e_name.equalsIgnoreCase(null))
         {
             error = 1;
-            name.setBackgroundColor(getResources().getColor(R.color.red));
         }
 
         if(e_gender.isEmpty() || e_gender.equalsIgnoreCase("") || e_gender.equalsIgnoreCase(null))
         {
             error = 1;
-            gender.setBackgroundColor(getResources().getColor(R.color.red));
         }
 
         if(e_email.isEmpty() || e_email.equalsIgnoreCase("") || e_email.equalsIgnoreCase(null))
         {
             error = 1;
-            email.setBackgroundColor(getResources().getColor(R.color.red));
         }
 
 
         if(e_date_of_birth.isEmpty() || e_date_of_birth.equalsIgnoreCase("") || e_date_of_birth.equalsIgnoreCase(null))
         {
             error = 1;
-            date_of_birth.setBackgroundColor(getResources().getColor(R.color.red));
         }
 
         if(error == 1)

@@ -269,7 +269,6 @@ public class Login extends Activity {
         if(e_password.isEmpty() || e_password.equalsIgnoreCase("") || e_password.equalsIgnoreCase(null))
         {
             error = 1;
-            password.setBackgroundColor(getResources().getColor(R.color.red));
         }
 
 
@@ -277,7 +276,6 @@ public class Login extends Activity {
         if(e_email.isEmpty() || e_email.equalsIgnoreCase("") || e_email.equalsIgnoreCase(null))
         {
             error = 1;
-            email.setBackgroundColor(getResources().getColor(R.color.red));
         }
         if(error == 1)
         {

@@ -105,7 +105,7 @@
                             android:textColor="@color/white"
                             android:textColorHint="@color/white"
                             android:id="@+id/date_of_birth"
-                            android:hint="Date Of Birth"
+                            android:hint="Date Of Birth (mm/dd/yyy)"
                             android:backgroundTint="@color/white"
                             />
 

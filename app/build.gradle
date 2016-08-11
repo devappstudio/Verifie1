@@ -26,6 +26,7 @@ android {
 repositories {
     maven {
         url "http://maven.cloudrail.com"
+
     }
 }
 
@@ -46,5 +47,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'io.realm:realm-android:0.82.1'
 
+    compile 'com.github.ybq:Android-SpinKit:1.0.5'
+    compile 'com.kuassivi.view:progressprofile:1.0.+'
 }
-
