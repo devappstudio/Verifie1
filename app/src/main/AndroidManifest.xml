@@ -18,8 +18,15 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <service android:name=".MyService" android:process=":my_service" />
-        <service android:name=".MyLocationService" android:enabled="true"  android:permission="com.devappstudio.verifie.My_LOCATION_SERVICES"  />
+
+        <service
+            android:name=".MyService"
+            android:process=":my_service" />
+        <service
+            android:name=".MyLocationService"
+            android:enabled="true"
+            android:permission="com.devappstudio.verifie.My_LOCATION_SERVICES" />
+
         <activity
             android:name=".SplashActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -49,7 +56,7 @@
             android:name=".main"
             android:label="@string/title_activity_main" />
         <activity android:name=".Verify_Registration" />
-        <activity android:name=".verifyLogin"></activity>
+        <activity android:name=".verifyLogin" />
     </application>
 
 </manifest>
