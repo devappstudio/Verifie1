@@ -11,6 +11,7 @@
     <item name="darkorange" type="color">#FFFF8800</item>
     <item name="darkred" type="color">#FFCC0000</item>
     <item name="white" type="color">#FFFFFF</item>
+    <item name="grey" type="color">#A9A9A9</item>
     <color name="primaryColor">#ff0000</color>
     <color name="primaryColorDark">#d81b60</color>
     <color name="accent_color">#880e4f</color>\<!-- Screens background color-->
@@ -32,16 +33,16 @@
     <color name="dot_light_screen4">#e4b5fc</color>
 
     <array name="array_dot_active">
-        <item>@color/dot_light_screen1</item>
-        <item>@color/dot_light_screen2</item>
-        <item>@color/dot_light_screen3</item>
-        <item>@color/dot_light_screen4</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
+        <item>@color/white</item>
     </array>
 
     <array name="array_dot_inactive">
-        <item>@color/dot_dark_screen1</item>
-        <item>@color/dot_dark_screen2</item>
-        <item>@color/dot_dark_screen3</item>
-        <item>@color/dot_dark_screen4</item>
+        <item>@color/grey</item>
+        <item>@color/grey</item>
+        <item>@color/grey</item>
+        <item>@color/grey</item>
     </array>
 </resources>

@@ -249,9 +249,12 @@ public class TwoFragment extends Fragment{
                                 if(visibility.isChecked())
                                 {
                                     Toast.makeText(getActivity(),"Your visibility is on",Toast.LENGTH_LONG).show();
+                                    near_by_users();
                                 }
                                 else
                                 {
+                                    movieList.clear();
+                                    mAdapter.notifyDataSetChanged();
                                     Toast.makeText(getActivity(),"Your visibility is off",Toast.LENGTH_LONG).show();
 
                                 }
@@ -265,6 +268,17 @@ public class TwoFragment extends Fragment{
                         catch (Exception e)
                         {
                             e.printStackTrace();
+                            if(visibility.isChecked())
+                            {
+                               visibility.setChecked(false);
+                            }
+                            else
+                            {
+                              visibility.setChecked(true);
+
+                            }
+
+
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -273,6 +287,15 @@ public class TwoFragment extends Fragment{
             public void onErrorResponse(VolleyError error) {
                 dialog.hide();
                 Toast.makeText(getActivity(),"Sorry A Network Error Occurred",Toast.LENGTH_LONG).show();
+                if(visibility.isChecked())
+                {
+                    visibility.setChecked(false);
+                }
+                else
+                {
+                    visibility.setChecked(true);
+
+                }
                 error.printStackTrace();
             }
         }) {
@@ -445,7 +468,7 @@ public class TwoFragment extends Fragment{
                     near_by_users();
                 }
             }
-            mHandler.postDelayed(mHandlerTask, (1000 * 15 * 1));
+            mHandler.postDelayed(mHandlerTask, (1000 * 5 * 1));
         }
     };
 }
