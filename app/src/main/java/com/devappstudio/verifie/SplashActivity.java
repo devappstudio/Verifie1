@@ -95,9 +95,7 @@ public class SplashActivity extends Activity {
 
             if(RealmController.with(getApplication()).hasUser())
             {
-                server_id = RealmController.with(getApplication()).getUser(1).getServer_id();
-                get_user();
-
+                background1.start();
             }
             else
             {

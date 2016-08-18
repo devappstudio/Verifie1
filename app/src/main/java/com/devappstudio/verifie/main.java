@@ -67,6 +67,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
     private ViewPager viewPager;
     private int[] tabIcons = {
             R.drawable.home_icon,
+            R.drawable.near,
             R.drawable.near
     };
     private Realm realm;
@@ -209,6 +210,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new OneFragment(), " Home");
         adapter.addFragment(new TwoFragment(), " Nearby");
+        adapter.addFragment(new ThreeFragment(), " About");
         viewPager.setAdapter(adapter);
 
     }
