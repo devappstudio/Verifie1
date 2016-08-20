@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -22,6 +23,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -78,7 +82,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setLogo(R.drawable.slider_logo);
@@ -88,17 +92,23 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
 //        setupTabIcons();
+
         this.realm = RealmController.with(getApplication()).getRealm();
+
+
         // First we need to check availability of play services
         if (checkPlayServices()) {
             // Building the GoogleApi client
             buildGoogleApiClient();
 
             if (mGoogleApiClient == null) {
+                // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
+                // See https://g.co/AppIndexing/AndroidStudio for more information.
                 mGoogleApiClient = new GoogleApiClient.Builder(this)
                         .addApi(LocationServices.API).addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(main.this).build();
+                        .addOnConnectionFailedListener(main.this).addApi(AppIndex.API).build();
                 mGoogleApiClient.connect();
                 LocationRequest locationRequest = LocationRequest.create();
                 locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -153,17 +163,13 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         }
 
 
-
-        if(!isMyServiceRunning(MyLocationService.class)){
-           //Start it
-           Intent intent = new Intent(getApplicationContext(),
+        if (!isMyServiceRunning(MyLocationService.class)) {
+            //Start it
+            Intent intent = new Intent(getApplicationContext(),
                     MyLocationService.class);
             startService(intent);
+        } else {
         }
-        else
-        {
-        }
-
 
 
         //TODO  update_user_location  new_user_location near_users_get
@@ -247,6 +253,32 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
     @Override
     public void onLocationChanged(Location location) {
 
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("main Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(mGoogleApiClient, getIndexApiAction());
+        mGoogleApiClient.disconnect();
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -350,6 +382,9 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect();
         }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+       // AppIndex.AppIndexApi.start(mGoogleApiClient, getIndexApiAction());
     }
 
     /**
