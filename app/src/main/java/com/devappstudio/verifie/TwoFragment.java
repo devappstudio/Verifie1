@@ -268,15 +268,7 @@ public class TwoFragment extends Fragment{
                         catch (Exception e)
                         {
                             e.printStackTrace();
-                            if(visibility.isChecked())
-                            {
-                               visibility.setChecked(false);
-                            }
-                            else
-                            {
-                              visibility.setChecked(true);
 
-                            }
 
 
                         }
@@ -287,15 +279,7 @@ public class TwoFragment extends Fragment{
             public void onErrorResponse(VolleyError error) {
                 dialog.hide();
                 Toast.makeText(getActivity(),"Sorry A Network Error Occurred",Toast.LENGTH_LONG).show();
-                if(visibility.isChecked())
-                {
-                    visibility.setChecked(false);
-                }
-                else
-                {
-                    visibility.setChecked(true);
 
-                }
                 error.printStackTrace();
             }
         }) {

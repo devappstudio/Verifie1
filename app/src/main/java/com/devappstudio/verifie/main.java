@@ -70,9 +70,6 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private int[] tabIcons = {
-            R.drawable.home_icon,
-            R.drawable.near,
-            R.drawable.near
     };
     private Realm realm;
 
@@ -91,7 +88,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-        setupTabIcons();
+//        setupTabIcons();
         this.realm = RealmController.with(getApplication()).getRealm();
         // First we need to check availability of play services
         if (checkPlayServices()) {

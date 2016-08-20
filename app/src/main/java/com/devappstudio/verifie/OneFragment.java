@@ -1,8 +1,6 @@
 package com.devappstudio.verifie;
 
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,7 +10,6 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -47,7 +44,10 @@ public class OneFragment extends Fragment{
         View myView = inflater.inflate(R.layout.fragment_one, container, false);
         url = RealmController.with(getActivity()).getUser(1).getFile_name();
         ProgressProfileView profile = (ProgressProfileView) myView.findViewById(R.id.profile);
-       // Picasso.with(getActivity()).load(url).into(profile);
+
+        profile.setProgress(59.5f);
+        profile.startAnimation();
+
         viewPager = (ViewPager) myView.findViewById(R.id.view_pager);
         dotsLayout = (LinearLayout) myView.findViewById(R.id.layoutDots);
 
@@ -63,46 +63,6 @@ public class OneFragment extends Fragment{
         myViewPagerAdapter = new MyViewPagerAdapter();
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
-
-
-
-        profile.setProgress(59.5f);
-        profile.startAnimation();
-
-
-        profile.getAnimator().addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-
-
-
-        profile.getAnimator().addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-
-            }
-        });
-
-        profile.getAnimator().setInterpolator(new AccelerateDecelerateInterpolator());
 
         return myView;
     }
