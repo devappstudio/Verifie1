@@ -4,8 +4,8 @@ package com.devappstudio.verifie;
  * Created by root on 7/22/16.
  */
 
+import android.app.Application;
 import android.content.Context;
-import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
 import com.android.volley.Request;
@@ -16,8 +16,10 @@ import com.android.volley.toolbox.Volley;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
+//import android.support.multidex.MultiDex;
 
-public class AppController extends android.support.multidex.MultiDexApplication   {
+
+public class AppController /*extends android.support.multidex.MultiDexApplication */ extends Application {
     public static final String TAG = AppController.class
             .getSimpleName();
 
@@ -84,6 +86,6 @@ public class AppController extends android.support.multidex.MultiDexApplication 
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(newBase);
-        MultiDex.install(this);
+       // MultiDex.install(this);
     }
 }

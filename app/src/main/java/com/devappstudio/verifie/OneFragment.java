@@ -21,6 +21,10 @@ import android.widget.TextView;
 
 import com.kuassivi.view.ProgressProfileView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class OneFragment extends Fragment{
@@ -33,6 +37,7 @@ public class OneFragment extends Fragment{
     private int[] layouts;
     private TextView percentage;
     private Button btnSkip, btnNext;
+    static private Float level = 0f;
     public OneFragment() {
         // Required empty public constructor
     }
@@ -46,9 +51,53 @@ public class OneFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View myView = inflater.inflate(R.layout.fragment_one, container, false);
+
+
+        SimpleDateFormat simpleDateFormat =
+                new SimpleDateFormat("dd/M/yyyy");
+
+        try {
+            Calendar calendar = Calendar.getInstance();
+            String strDate = "" + simpleDateFormat.format(calendar.getTime());
+
+            Date date1 = simpleDateFormat.parse(strDate);
+            Date date2 = simpleDateFormat.parse("13/10/2017");
+            Long t =  printDifference(date1, date2)/7;
+            if(t > 52)
+            {
+                level =  (float)(t/52)*100;
+
+            }
+            else
+            {
+                level =  (float)(52/t)*100;
+
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            level = 50f;
+        }
+
+
+        View myView = null;
+        myView = inflater.inflate(R.layout.fragment_one, container, false);
+
+        if(level <= 25f)
+        {
+             myView = inflater.inflate(R.layout.fragment_one, container, false);
+        }
+       if(level > 25f && level <= 65)
+        {
+             myView = inflater.inflate(R.layout.fragment_one1, container, false);
+        }
+       if(level > 65f && level <= 100)
+        {
+             myView = inflater.inflate(R.layout.fragment_one2, container, false);
+        }
         final ProgressProfileView profile = (ProgressProfileView) myView.findViewById(R.id.profile);
-        profile.setProgress(94.5f);
+
+        profile.setProgress(level);
 
         profile.startAnimation();
 
@@ -233,6 +282,37 @@ public class OneFragment extends Fragment{
             View view = (View) object;
             container.removeView(view);
         }
+    }
+
+
+    public Long printDifference(Date startDate, Date endDate){
+
+        //milliseconds
+        long different = endDate.getTime() - startDate.getTime();
+
+        System.out.println("startDate : " + startDate);
+        System.out.println("endDate : "+ endDate);
+        System.out.println("different : " + different);
+
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+
+        long elapsedDays = different / daysInMilli;
+        different = different % daysInMilli;
+
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+
+        long elapsedMinutes = different / minutesInMilli;
+        different = different % minutesInMilli;
+
+        long elapsedSeconds = different / secondsInMilli;
+
+       return elapsedDays;
+
+
     }
 
 }

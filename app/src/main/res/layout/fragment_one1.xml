@@ -31,9 +31,9 @@
                 app:max="100"
                 android:elevation="4dp"
                 app:backgroundRingColor="@color/rotabar_back_ground"
-                app:progressRingColor="@color/rotabar_red_last"
+                app:progressRingColor="@color/rotabar_light_green_second"
                 app:progress="42"
-                app:progressRingCap="BUTT"
+                app:progressRingCap="ROUND"
                 app:progressRingOutline="false"/>
 
             <TextView
