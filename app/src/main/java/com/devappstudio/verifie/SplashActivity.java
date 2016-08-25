@@ -57,7 +57,6 @@ public class SplashActivity extends Activity {
                     Intent intent=new Intent(getBaseContext(),Login.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 
                     startActivity(intent);
@@ -78,10 +77,9 @@ public class SplashActivity extends Activity {
                     sleep(5*1000);
 
 
-                    Intent intent=new Intent(getBaseContext(),main.class);
+                    Intent intent=new Intent(getBaseContext(),MyLocationRequest.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
                     finish();
@@ -138,10 +136,9 @@ public class SplashActivity extends Activity {
                                 realm.commitTransaction();
 
 
-                                final Intent intent = new Intent(SplashActivity.this, main.class);
+                                final Intent intent = new Intent(SplashActivity.this, MyLocationService.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                 startActivity(intent);
                                 finish();

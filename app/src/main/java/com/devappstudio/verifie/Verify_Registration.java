@@ -255,10 +255,9 @@ public class Verify_Registration extends AppCompatActivity {
                                     realm.beginTransaction();
                                     realm.copyToRealm(user);
                                     realm.commitTransaction();
-                                    final Intent intent = new Intent(Verify_Registration.this, main.class);
+                                    final Intent intent = new Intent(Verify_Registration.this, MyLocationRequest.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                     startActivity(intent);
                                     finish();

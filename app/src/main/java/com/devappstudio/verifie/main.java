@@ -79,7 +79,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+       super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -98,71 +98,72 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         this.realm = RealmController.with(getApplication()).getRealm();
 
 
-        // First we need to check availability of play services
-        if (checkPlayServices()) {
-            // Building the GoogleApi client
-            buildGoogleApiClient();
+        if (mGoogleApiClient == null) {
+            // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
+            // See https://g.co/AppIndexing/AndroidStudio for more information.
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API).addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(main.this).addApi(AppIndex.API).build();
+            mGoogleApiClient.connect();
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(30 * 1000);
+            locationRequest.setFastestInterval(5 * 1000);
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(locationRequest);
 
-            if (mGoogleApiClient == null) {
-                // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
-                // See https://g.co/AppIndexing/AndroidStudio for more information.
-                mGoogleApiClient = new GoogleApiClient.Builder(this)
-                        .addApi(LocationServices.API).addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(main.this).addApi(AppIndex.API).build();
-                mGoogleApiClient.connect();
-                LocationRequest locationRequest = LocationRequest.create();
-                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                locationRequest.setInterval(30 * 1000);
-                locationRequest.setFastestInterval(5 * 1000);
-                LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                        .addLocationRequest(locationRequest);
+            // **************************
+            builder.setAlwaysShow(true); // this is the key ingredient
+            // **************************
 
-                // **************************
-                builder.setAlwaysShow(true); // this is the key ingredient
-                // **************************
+            PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi
+                    .checkLocationSettings(mGoogleApiClient, builder.build());
+            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @Override
+                public void onResult(LocationSettingsResult result) {
+                    final Status status = result.getStatus();
+                    final LocationSettingsStates state = result
+                            .getLocationSettingsStates();
+                    switch (status.getStatusCode()) {
+                        case LocationSettingsStatusCodes.SUCCESS:
+                            // All location settings are satisfied. The client can
+                            // initialize location
+                            // requests here.
 
-                PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi
-                        .checkLocationSettings(mGoogleApiClient, builder.build());
-                result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-                    @Override
-                    public void onResult(LocationSettingsResult result) {
-                        final Status status = result.getStatus();
-                        final LocationSettingsStates state = result
-                                .getLocationSettingsStates();
-                        switch (status.getStatusCode()) {
-                            case LocationSettingsStatusCodes.SUCCESS:
-                                // All location settings are satisfied. The client can
-                                // initialize location
-                                // requests here.
-                                break;
-                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                // Location settings are not satisfied. But could be
-                                // fixed by showing the user
-                                // a dialog.
-                                try {
-                                    // Show the dialog by calling
-                                    // startResolutionForResult(),
-                                    // and check the result in onActivityResult().
-                                    status.startResolutionForResult(main.this, 1000);
-                                } catch (IntentSender.SendIntentException e) {
-                                    // Ignore the error.
-                                }
-                                break;
-                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                                // Location settings are not satisfied. However, we have
-                                // no way to fix the
-                                // settings so we won't show the dialog.
-                                break;
-                        }
+                            break;
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            // Location settings are not satisfied. But could be
+                            // fixed by showing the user
+                            // a dialog.
+                            try {
+                                // Show the dialog by calling
+                                // startResolutionForResult(),
+                                // and check the result in onActivityResult().
+                                status.startResolutionForResult(main.this, 45240610);
+                            } catch (IntentSender.SendIntentException e) {
+                                // Ignore the error.
+                                e.printStackTrace();
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            // Location settings are not satisfied. However, we have
+                            // no way to fix the
+                            // settings so we won't show the dialog.
+                            break;
                     }
-                });
-            }
-
-
-            displayLocation();
+                }
+            });
         }
 
 
+  /*      // First we need to check availability of play services
+        if (checkPlayServices()) {
+            // Building the GoogleApi client
+            buildGoogleApiClient();
+            displayLocation();
+        }
+
+*/
         if (!isMyServiceRunning(MyLocationService.class)) {
             //Start it
             Intent intent = new Intent(getApplicationContext(),
@@ -238,7 +239,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
                 try {
                     // Show the dialog by calling startResolutionForResult(), and check the result
                     // in onActivityResult().
-                    status.startResolutionForResult(main.this, 1000);
+                    status.startResolutionForResult(getParent(), 45240610);
                 } catch (IntentSender.SendIntentException e) {
                     Log.i(TAG, "PendingIntent unable to execute request.");
                 }
@@ -516,23 +517,25 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
      *
      * @param requestCode
      * @param resultCode
-     * @param data
+     *@param data
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            // Check for the integer request code originally supplied to startResolutionForResult().
-            case 1000:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        Log.i(TAG, "User agreed to make required location settings changes.");
-                        startLocationUpdates();
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        Log.i(TAG, "User chose not to make required location settings changes.");
-                        break;
-                }
-                break;
+        if(requestCode == 45240610)
+        {
+            switch (resultCode) {
+                case Activity.RESULT_OK:
+                    Log.i(TAG, "User agreed to make required location settings changes.");
+                    startLocationUpdates();
+                    break;
+                case Activity.RESULT_CANCELED:
+                    Log.i(TAG, "User chose not to make required location settings changes.");
+                    break;
+            }
+        }
+        else
+        {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

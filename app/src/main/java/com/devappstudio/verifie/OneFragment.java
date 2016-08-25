@@ -74,7 +74,7 @@ public class OneFragment extends Fragment{
 
 
     // Camera activity request codes
-    private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 100;
+    private static final int CAMERA_CAPTURE_IMAGE_REQUEST_CODE = 935;
     private static final int CAMERA_CAPTURE_VIDEO_REQUEST_CODE = 200;
 
     public static final int MEDIA_TYPE_IMAGE = 1;
@@ -367,11 +367,9 @@ public class OneFragment extends Fragment{
         fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-
         // start the image capture Intent
-        startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+        OneFragment.this.startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
     }
-
 
     /**
      * Receiving activity result method will be called after closing the camera
@@ -379,6 +377,7 @@ public class OneFragment extends Fragment{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // if the result is capturing Image
+
         if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
 
@@ -400,26 +399,8 @@ public class OneFragment extends Fragment{
                         "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
                         .show();
             }
-        } else if (requestCode == CAMERA_CAPTURE_VIDEO_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-
-                // video successfully recorded
-                // launching upload activity
-                launchUploadActivity(false);
-
-            } else if (resultCode == RESULT_CANCELED) {
-
-                // user cancelled recording
-                Toast.makeText(getActivity(),
-                        "User cancelled video recording", Toast.LENGTH_SHORT)
-                        .show();
-
-            } else {
-                // failed to record video
-                Toast.makeText(getActivity(),
-                        "Sorry! Failed to record video", Toast.LENGTH_SHORT)
-                        .show();
-            }
+        } else {
+            super.onActivityResult( requestCode,  resultCode,  data);
         }
     }
     private void launchUploadActivity(boolean isImage){
@@ -491,7 +472,7 @@ public class OneFragment extends Fragment{
                 entity.addPart("id", new StringBody(RealmController.with(getActivity()).getUser(1).getServer_id()));
 
                 totalSize = entity.getContentLength();
-                httppost.setEntity(entity);
+                httppost.setEntity((entity));
 
                 // Making server call
                 HttpResponse response = httpclient.execute(httppost);

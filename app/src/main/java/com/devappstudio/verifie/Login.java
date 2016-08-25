@@ -132,10 +132,9 @@ public class Login extends Activity {
                                     realm.commitTransaction();
 
 
-                                final Intent intent = new Intent(Login.this, main.class);
+                                final Intent intent = new Intent(Login.this, MyLocationRequest.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                 startActivity(intent);
                                 finish();
@@ -206,10 +205,9 @@ public class Login extends Activity {
                                     realm.commitTransaction();
 
 
-                                final Intent intent = new Intent(Login.this, main.class);
+                                final Intent intent = new Intent(Login.this, MyLocationRequest.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                 startActivity(intent);
                                 finish();
@@ -328,10 +326,9 @@ public class Login extends Activity {
                                     realm.commitTransaction();
 
 
-                                    final Intent intent = new Intent(Login.this, main.class);
+                                    final Intent intent = new Intent(Login.this, MyLocationRequest.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                     startActivity(intent);
                                     finish();
@@ -439,7 +436,6 @@ public class Login extends Activity {
             intent.putExtra("val", "shown");
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra("e_name", e_name);
             intent.putExtra("e_email", e_email);
@@ -516,7 +512,6 @@ public class Login extends Activity {
             intent.putExtra("val", "shown");
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra("e_name", e_name);
             intent.putExtra("e_email", e_email);

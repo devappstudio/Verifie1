@@ -2,9 +2,11 @@ package com.devappstudio.verifie;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.app.ActivityCompat;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -76,11 +78,9 @@ public class MyLocationService extends Service implements LocationListener,
         System.out.println("MyLocationService.onLocationChanged");
         myLocationVar = location;
         // do your work here with location
-      //TODO This is where location is updated
-        if(RealmController.with(getApplication()).hasVisible() && RealmController.with(getApplication()).hasLocation())
-        {
-            if(RealmController.with(getApplication()).getVisibility(1).isStatus())
-            {
+        //TODO This is where location is updated
+        if (RealmController.with(getApplication()).hasVisible() && RealmController.with(getApplication()).hasLocation()) {
+            if (RealmController.with(getApplication()).getVisibility(1).isStatus()) {
                 new_location();
             }
         }
@@ -95,15 +95,23 @@ public class MyLocationService extends Service implements LocationListener,
         mLocationRequest.setInterval(300000); // Update location every 300 second
 
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         Location loc = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         myLocationVar = loc;
-       //TODO This where the location is first requested
-        if(RealmController.with(getApplication()).hasVisible() && RealmController.with(getApplication()).hasLocation())
-        {
-            if(RealmController.with(getApplication()).getVisibility(1).isStatus())
-            {
-                if(myLocationVar != null)
-                new_location();
+        //TODO This where the location is first requested
+        if (RealmController.with(getApplication()).hasVisible() && RealmController.with(getApplication()).hasLocation()) {
+            if (RealmController.with(getApplication()).getVisibility(1).isStatus()) {
+                if (myLocationVar != null)
+                    new_location();
             }
         }
 
@@ -125,6 +133,16 @@ public class MyLocationService extends Service implements LocationListener,
 
         Toast.makeText(this, "Location services stopped", Toast.LENGTH_LONG).show();
 
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         Location loc = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
         mGoogleApiClient.disconnect();

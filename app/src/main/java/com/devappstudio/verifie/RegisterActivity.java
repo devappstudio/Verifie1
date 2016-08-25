@@ -226,10 +226,9 @@ public class RegisterActivity extends Activity{
                                     realm.copyToRealm(user);
                                     realm.commitTransaction();
 
-                                    final Intent intent = new Intent(RegisterActivity.this, main.class);
+                                    final Intent intent = new Intent(RegisterActivity.this, MyLocationRequest.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                     startActivity(intent);
                                     finish();
@@ -376,7 +375,6 @@ public class RegisterActivity extends Activity{
             intent.putExtra("val", "shown");
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra("e_name", e_name);
             intent.putExtra("e_date_of_birth", e_date_of_birth);
@@ -464,7 +462,6 @@ public class RegisterActivity extends Activity{
             intent.putExtra("val", "shown");
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             intent.putExtra("e_name", e_name);
             intent.putExtra("e_date_of_birth", e_date_of_birth);
