@@ -3,7 +3,7 @@ package com.devappstudio.verifie;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
-import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -24,11 +24,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.ybq.android.spinkit.style.ChasingDots;
 import com.kuassivi.view.ProgressProfileView;
 
 import org.apache.http.HttpEntity;
@@ -79,6 +77,11 @@ public class OneFragment extends Fragment{
 
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
+
+    static TextView text;
+    static String filePath;
+    long totalSize = 0;
+
 
 
     public OneFragment() {
@@ -138,13 +141,27 @@ public class OneFragment extends Fragment{
         {
              myView = inflater.inflate(R.layout.fragment_one2, container, false);
         }
-        final ProgressProfileView profile = (ProgressProfileView) myView.findViewById(R.id.profile);
+        ProgressProfileView profile = (ProgressProfileView) myView.findViewById(R.id.profile);
 
         profile.setProgress(level);
 
         profile.startAnimation();
 
         percentage = (TextView)myView.findViewById(R.id.percent_view) ;
+        String imagename ="profile";
+        if(ImageStorage.checkifImageExists(imagename))
+        {
+            File file = ImageStorage.getImage("/verifie/profile/"+imagename+".jpg");
+            String path = file.getAbsolutePath();
+            if (path != null){
+                Bitmap b = BitmapFactory.decodeFile(path);
+                profile.setImageBitmap(b);
+
+            }
+        } else {
+            new GetImages(RealmController.with(getActivity()).getUser(1).getFile_name(), profile, imagename).execute() ;
+        }
+
 
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -365,7 +382,7 @@ public class OneFragment extends Fragment{
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-
+        filePath = fileUri.getPath();
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
         // start the image capture Intent
         OneFragment.this.startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
@@ -411,24 +428,15 @@ public class OneFragment extends Fragment{
      * Uploading the file to server
      * */
     private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
+        ProgressDialog pd;
 
-        final Dialog dialog = new Dialog(getActivity());
-        TextView text;
-        String filePath = fileUri.getPath();
-        long totalSize = 0;
-        @Override
+         @Override
         protected void onPreExecute() {
             // setting progress bar to zero
-            dialog.setContentView(R.layout.upload_dialog);
-            dialog.setTitle("Contacting Servers ...");
-            text = (TextView) dialog.findViewById(R.id.message);
-            text.setText("Please wait uploading ... 0% done");
 
-            ProgressBar progressBar = (ProgressBar)dialog.findViewById(R.id.spin_kit);
-            ChasingDots doubleBounce = new ChasingDots();
-            progressBar.setIndeterminateDrawable(doubleBounce);
-            dialog.show();
-            super.onPreExecute();
+             pd = ProgressDialog.show(getActivity(),"Contacting Server ..."," Please wait uploading ... 0% done", true);
+
+             super.onPreExecute();
         }
 
         @Override
@@ -438,7 +446,7 @@ public class OneFragment extends Fragment{
             // updating progress bar value
 
             // updating percentage value
-            text.setText("Please wait uploading ... "+String.valueOf(progress[0])+"% done");
+            pd.setMessage("Please wait uploading ... "+String.valueOf(progress[0])+"% done");
         }
 
         @Override
@@ -451,9 +459,16 @@ public class OneFragment extends Fragment{
             String responseString = null;
 
             HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httppost = new HttpPost(Api.FILE_UPLOAD_URL);
 
+            HttpPost httppost = new HttpPost(Api.FILE_UPLOAD_URL);
+  /*
+*/
             try {
+
+                String boundary = "-------------" + System.currentTimeMillis();
+
+                httppost.setHeader("Content-type", "multipart/form-data; boundary="+boundary);
+
                 AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
                         new AndroidMultiPartEntity.ProgressListener() {
 
@@ -500,8 +515,7 @@ public class OneFragment extends Fragment{
         @Override
         protected void onPostExecute(String result) {
             Log.e(TAG, "Response from server: " + result);
-            dialog.hide();
-
+            pd.hide();
             // showing the server response in an alert dialog
           //  showAlert(result);
             Toast.makeText(getActivity(),result,Toast.LENGTH_LONG).show();

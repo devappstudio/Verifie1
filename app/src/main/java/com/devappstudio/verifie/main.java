@@ -521,6 +521,8 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if(requestCode == 45240610)
         {
             switch (resultCode) {
@@ -532,10 +534,6 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
                     Log.i(TAG, "User chose not to make required location settings changes.");
                     break;
             }
-        }
-        else
-        {
-            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

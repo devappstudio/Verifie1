@@ -71,11 +71,11 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_request);
-
+/*
         if (!canAccessLocation() || !canAccessContacts() || !canAccessLocation1() || !canAccessCamera() || !canWriteExternal() || !canReadExternal() ) {
             requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
         }
-
+*/
 
         mGoogleApiClient = new GoogleApiClient.Builder(getApplication())
                 .addApi(LocationServices.API)
@@ -147,9 +147,12 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
                 //final LocationSettingsStates state = result.getLocationSettingsStates();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
-                        //...
+                        final Intent intent = new Intent(MyLocationRequest.this, main.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(intent);
+                        finish();
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         // Location settings are not satisfied. But could be fixed by showing the user
