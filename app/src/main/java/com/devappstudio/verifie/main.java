@@ -5,12 +5,14 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -48,7 +50,7 @@ import datastore.RealmController;
 import io.realm.Realm;
 
 public class main extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener  ,
+        GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         ResultCallback<LocationSettingsResult>{
 
@@ -79,7 +81,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-       super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -172,12 +174,9 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         } else {
         }
 
-
         //TODO  update_user_location  new_user_location near_users_get
 
     }
-
-
 
 
     private void setupTabIcons() {
@@ -278,7 +277,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-       // AppIndex.AppIndexApi.end(mGoogleApiClient, getIndexApiAction());
+        // AppIndex.AppIndexApi.end(mGoogleApiClient, getIndexApiAction());
         mGoogleApiClient.disconnect();
     }
 
@@ -312,12 +311,21 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
     }
 
 
-
     /**
      * Method to display the location on UI
      * */
     private void displayLocation() {
 
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         mLastLocation = LocationServices.FusedLocationApi
                 .getLastLocation(mGoogleApiClient);
 
@@ -325,7 +333,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
             RealmController.with(getApplication()).clearAllLocation();
-            Location_Stats ls = new Location_Stats(longitude,latitude);
+            Location_Stats ls = new Location_Stats(longitude, latitude);
             realm.beginTransaction();
             realm.copyToRealm(ls);
             realm.commitTransaction();
@@ -385,7 +393,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         }
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-       // AppIndex.AppIndexApi.start(mGoogleApiClient, getIndexApiAction());
+        // AppIndex.AppIndexApi.start(mGoogleApiClient, getIndexApiAction());
     }
 
     /**
@@ -408,7 +416,6 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
     public void onConnectionSuspended(int arg0) {
         mGoogleApiClient.connect();
     }
-
 
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -481,7 +488,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         int locationMode = 0;
         String locationProviders;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
                 locationMode = Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.LOCATION_MODE);
 
@@ -491,7 +498,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
 
-        }else{
+        } else {
             locationProviders = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
         }
@@ -503,6 +510,16 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
      * Requests location updates from the FusedLocationApi.
      */
     protected void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(Status status) {

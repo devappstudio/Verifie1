@@ -55,6 +55,18 @@ import static android.app.Activity.RESULT_OK;
 
 
 public class OneFragment extends Fragment{
+
+    private Button mButton;
+    private ViewPager mViewPager;
+
+    private CardPagerAdapter mCardAdapter;
+    private ShadowTransformer mCardShadowTransformer;
+    private CardFragmentPagerAdapter mFragmentCardAdapter;
+    private ShadowTransformer mFragmentCardShadowTransformer;
+
+
+
+
     String url;
     int number_slides = 3;
     private ViewPager viewPager;
@@ -166,7 +178,13 @@ public class OneFragment extends Fragment{
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                captureImage();
+               // captureImage();
+                final Intent intent = new Intent(getActivity(), ImageEditor.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                getActivity().startActivity(intent);
+                getActivity().finish();
             }
         });
 
@@ -221,7 +239,24 @@ public class OneFragment extends Fragment{
         });
 
 
-       viewPager = (ViewPager) myView.findViewById(R.id.view_pager);
+
+
+        mViewPager = (ViewPager) myView.findViewById(R.id.viewPager);
+
+
+        mCardAdapter = new CardPagerAdapter();
+        mFragmentCardAdapter = new CardFragmentPagerAdapter(getActivity().getSupportFragmentManager(),
+                dpToPixels(2, getActivity()));
+
+        mCardShadowTransformer = new ShadowTransformer(mViewPager, mCardAdapter);
+        mFragmentCardShadowTransformer = new ShadowTransformer(mViewPager, mFragmentCardAdapter);
+
+        mViewPager.setAdapter(mCardAdapter);
+        mViewPager.setPageTransformer(false, mCardShadowTransformer);
+        mViewPager.setOffscreenPageLimit(5);
+        mCardShadowTransformer.enableScaling(true);
+
+        viewPager = (ViewPager) myView.findViewById(R.id.view_pager);
         dotsLayout = (LinearLayout) myView.findViewById(R.id.layoutDots);
 
         layouts = new int[number_slides];
@@ -229,7 +264,6 @@ public class OneFragment extends Fragment{
         for (int i=0; i<number_slides; i++)
         {
             layouts[i] = R.layout.mid_1;
-
         }
 
         // adding bottom dots
@@ -570,6 +604,9 @@ public class OneFragment extends Fragment{
         }
 
         return mediaFile;
+    }
+    public static float dpToPixels(int dp, Context context) {
+        return dp * (context.getResources().getDisplayMetrics().density);
     }
 
 

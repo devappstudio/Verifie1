@@ -51,4 +51,5 @@ dependencies {
     compile 'com.github.ybq:Android-SpinKit:1.0.5'
     compile 'com.kuassivi.view:progressprofile:1.0.5'
     compile 'org.apache.httpcomponents:httpmime:4.3.5'
+    compile 'com.github.shaishavgandhi05:LoginButtons:v0.1.1'
 }
