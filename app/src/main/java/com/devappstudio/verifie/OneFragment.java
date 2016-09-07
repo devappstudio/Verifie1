@@ -16,13 +16,13 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.CardView;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,8 +43,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import datastore.Api;
@@ -78,6 +80,8 @@ public class OneFragment extends Fragment{
     private Button btnSkip, btnNext;
     static private Float level = 0f;
     private Uri fileUri; // file url to store image/video
+    private static List<CardView> mViews;
+    private static List<ContactLocations> mData;
 
     // LogCat tag
     private static final String TAG = OneFragment.class.getSimpleName();
@@ -243,18 +247,35 @@ public class OneFragment extends Fragment{
 
         mViewPager = (ViewPager) myView.findViewById(R.id.viewPager);
 
+        mData = new ArrayList<>();
+        mViews = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            ContactLocations cl  = new ContactLocations();
+            cl.setLocation("Location address");
+            cl.setName("Name Of Hospital");
+            cl.setPerson("Name Of Contact Person");
+            cl.setTelephone("+233262141279");
+            mData.add(cl);
+            mViews.add(null);
+        }
 
-        mCardAdapter = new CardPagerAdapter();
-        mFragmentCardAdapter = new CardFragmentPagerAdapter(getActivity().getSupportFragmentManager(),
-                dpToPixels(2, getActivity()));
+
+        mCardAdapter = new CardPagerAdapter(mViews,mData);
 
         mCardShadowTransformer = new ShadowTransformer(mViewPager, mCardAdapter);
-        mFragmentCardShadowTransformer = new ShadowTransformer(mViewPager, mFragmentCardAdapter);
 
         mViewPager.setAdapter(mCardAdapter);
         mViewPager.setPageTransformer(false, mCardShadowTransformer);
         mViewPager.setOffscreenPageLimit(5);
+        mViewPager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(),"Current integer "+mViewPager.getCurrentItem(), Toast.LENGTH_LONG).show();
+            }
+        });
+
         mCardShadowTransformer.enableScaling(true);
+
 
         viewPager = (ViewPager) myView.findViewById(R.id.view_pager);
         dotsLayout = (LinearLayout) myView.findViewById(R.id.layoutDots);
@@ -334,9 +355,9 @@ public class OneFragment extends Fragment{
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             layoutInflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            ImageView iv;
+            android.support.v7.widget.AppCompatImageView iv;
             View view = layoutInflater.inflate(layouts[position], container, false);
-            iv = (ImageView)view.findViewById(R.id.imageView);
+            iv = (android.support.v7.widget.AppCompatImageView)view.findViewById(R.id.imageView);
             Bitmap icon = null;
             if(position == 0)
             {

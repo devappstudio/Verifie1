@@ -50,10 +50,13 @@ import datastore.Location_Stats;
 import datastore.RealmController;
 import io.realm.Realm;
 
+
+
 public class main extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
         ResultCallback<LocationSettingsResult>{
+
 
 
     private static final String TAG = main.class.getSimpleName();
@@ -61,6 +64,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 1000;
 
     private Location mLastLocation;
+
 
     // Google client to interact with Google API
     private GoogleApiClient mGoogleApiClient;
@@ -70,21 +74,16 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
     private LocationRequest mLocationRequest;
 
-    // Location updates intervals in sec
-    private static int UPDATE_INTERVAL = 10000; // 10 sec
-    private static int FATEST_INTERVAL = 5000; // 5 sec
-    private static int DISPLACEMENT = 10; // 10 meters
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private int[] tabIcons = {
-    };
     private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -159,14 +158,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         }
 
 
-  /*      // First we need to check availability of play services
-        if (checkPlayServices()) {
-            // Building the GoogleApi client
-            buildGoogleApiClient();
-            displayLocation();
-        }
 
-*/
         if (!isMyServiceRunning(MyLocationService.class)) {
             //Start it
             Intent intent = new Intent(getApplicationContext(),
@@ -177,12 +169,6 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
         //TODO  update_user_location  new_user_location near_users_get
 
-    }
-
-
-    private void setupTabIcons() {
-        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
-        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
     }
 
 
@@ -219,7 +205,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new OneFragment(), " Home");
         adapter.addFragment(new TwoFragment(), " Nearby");
-       // adapter.addFragment(new ThreeFragment(), " About");
+        adapter.addFragment(new ThreeFragment(), " About");
         viewPager.setAdapter(adapter);
 
     }

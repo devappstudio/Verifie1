@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_weight="0.9"
+        android:layout_height="0dp"
+        android:background="@color/bg_screen3">
+
+        <TextView
+            android:text="TextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/centerName"
+            android:textSize="30sp"
+            android:textAlignment="center"
+            android:textColor="@color/cardview_light_background"
+            android:textStyle="normal|bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_weight="3"
+        android:layout_height="0dp">
+
+        <TextView
+            android:text="TextView"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/location"
+            android:textStyle="normal|bold"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/nameContactPerson"
+            android:textStyle="normal|bold"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <TextView
+            android:text="TextView"
+            android:layout_marginTop="15dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/telephoneContactPerson"
+            android:textStyle="normal|bold"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+        <Button
+            android:layout_marginTop="15dp"
+            android:text="Ok"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/button3"
+            android:textAllCaps="false"
+            android:textAlignment="center" />
+    </LinearLayout>
+</LinearLayout>

@@ -2,6 +2,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.devappstudio.verifie">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
+    <permission
+        android:name="com.devappstudio.verifie.My_LOCATION_SERVICES"
+        android:protectionLevel="signature" />
 
     <application
         android:name=".AppController"
@@ -53,17 +63,8 @@
         <activity android:name=".Verify_Registration" />
         <activity android:name=".verifyLogin" />
         <activity android:name=".ImageEditor" />
-        <activity android:name=".MyLocationRequest"></activity>
+        <activity android:name=".MyLocationRequest" />
+        <activity android:name=".MainActivity"></activity>
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-
-    <permission
-        android:name="com.devappstudio.verifie.My_LOCATION_SERVICES"
-        android:protectionLevel="signature" />
 
 </manifest>
