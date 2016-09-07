@@ -71,11 +71,11 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_request);
-/*
+
         if (!canAccessLocation() || !canAccessContacts() || !canAccessLocation1() || !canAccessCamera() || !canWriteExternal() || !canReadExternal() ) {
             requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
         }
-*/
+
 
         mGoogleApiClient = new GoogleApiClient.Builder(getApplication())
                 .addApi(LocationServices.API)

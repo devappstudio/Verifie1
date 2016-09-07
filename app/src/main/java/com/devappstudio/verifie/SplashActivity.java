@@ -1,11 +1,13 @@
 package com.devappstudio.verifie;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -29,10 +31,12 @@ import datastore.RealmController;
 import datastore.User;
 import io.realm.Realm;
 
-public class SplashActivity extends Activity {
+public class SplashActivity extends AppCompatActivity {
     static String server_id;
     private Realm realm;
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,10 +49,17 @@ public class SplashActivity extends Activity {
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.spin_kit);
         ChasingDots doubleBounce = new ChasingDots();
         progressBar.setIndeterminateDrawable(doubleBounce);
+
+
+
         Thread background = new Thread() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             public void run() {
 
                 try {
+
+
+
                     // Thread will sleep for 5 seconds
                     sleep(5*1000);
 
