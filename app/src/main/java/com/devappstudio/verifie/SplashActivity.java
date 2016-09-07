@@ -1,5 +1,6 @@
 package com.devappstudio.verifie;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -7,7 +8,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -31,7 +31,7 @@ import datastore.RealmController;
 import datastore.User;
 import io.realm.Realm;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends Activity {
     static String server_id;
     private Realm realm;
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
@@ -49,7 +49,6 @@ public class SplashActivity extends AppCompatActivity {
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.spin_kit);
         ChasingDots doubleBounce = new ChasingDots();
         progressBar.setIndeterminateDrawable(doubleBounce);
-
 
 
         Thread background = new Thread() {
@@ -112,7 +111,6 @@ public class SplashActivity extends AppCompatActivity {
             }
 
      }
-
 
     void get_user()
     {
@@ -197,6 +195,7 @@ public class SplashActivity extends AppCompatActivity {
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
 
     }
+
     public void open(){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("Sorry Couldn't Connect To Our Server. Do You Want To Retry ?");
@@ -218,9 +217,5 @@ public class SplashActivity extends AppCompatActivity {
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
-
-
-
-
 
 }

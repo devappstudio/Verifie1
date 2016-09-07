@@ -56,21 +56,38 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final NearBy nearBy = nearByList.get(position);
-        Picasso.with(context).load(nearBy.getImage_url()).into(holder.img);
+        if(is_local(nearBy.getLocal_id()))
+        {
+            // check if the user is registered on verifie or not
 
-        holder.name.setText(nearBy.getName());
-        holder.imb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO SEND GCM TO
-               System.out.print(position+" Clicked For Request For "+nearBy.getTelephone_number()+" -- "+nearBy.getServer_id());
-            }
-        });
+        }
+        else
+        {
+            Picasso.with(context).load(nearBy.getImage_url()).into(holder.img);
+            holder.name.setText(nearBy.getName());
+            holder.imb.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //TODO SEND GCM TO
+                    System.out.print(position+" Clicked For Request For "+nearBy.getTelephone_number()+" -- "+nearBy.getServer_id());
+                }
+            });
+
+        }
     }
 
     @Override
     public int getItemCount() {
         return nearByList.size();
+    }
+
+
+
+    private boolean is_local(String local_id)
+    {
+        if(local_id.equalsIgnoreCase("") || local_id.equalsIgnoreCase(null))
+            return  true;
+        return false;
     }
 
 

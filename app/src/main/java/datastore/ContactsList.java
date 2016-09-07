@@ -11,7 +11,24 @@ public class ContactsList   extends RealmObject {
     @PrimaryKey
     private int id;
 
-    String name,telephone,is_on_verifie;
+
+    private   String name,telephone,is_on_verifie,type,file_name,server_id,screen_name;
+
+    public String getServer_id() {
+        return server_id;
+    }
+
+    public String getScreen_name() {
+        return screen_name;
+    }
+
+    public void setScreen_name(String screen_name) {
+        this.screen_name = screen_name;
+    }
+
+    public void setServer_id(String server_id) {
+        this.server_id = server_id;
+    }
 
     public ContactsList(int id, String name, String telephone, String is_on_verifie) {
         this.id = id;
@@ -21,6 +38,21 @@ public class ContactsList   extends RealmObject {
     }
 
     public ContactsList() {
+    }
+    public String getType() {
+        return type;
+    }
+
+    public String getFile_name() {
+        return file_name;
+    }
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
 

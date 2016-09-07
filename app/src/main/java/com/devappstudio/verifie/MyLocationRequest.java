@@ -308,6 +308,4 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
     private boolean hasPermission(String perm) {
         return(PackageManager.PERMISSION_GRANTED==checkSelfPermission(perm));
     }
-
-
 }

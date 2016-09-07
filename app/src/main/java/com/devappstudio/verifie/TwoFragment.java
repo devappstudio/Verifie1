@@ -37,10 +37,12 @@ import java.util.List;
 import java.util.Map;
 
 import datastore.Api;
+import datastore.ContactsList;
 import datastore.RealmController;
 import datastore.User;
 import datastore.Visibility;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 
 public class TwoFragment extends Fragment{
@@ -97,6 +99,7 @@ public class TwoFragment extends Fragment{
 
 
        // prepareMovieData();
+        getContacts();
 
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -120,40 +123,6 @@ public class TwoFragment extends Fragment{
 
 
         return myView;
-    }
-
-    private void prepareMovieData() {
-        NearBy movie = new NearBy("Mad Max: Fury Road", "Action & Adventure", "2015"," ----- ");
-        movieList.add(movie);
-
-        movie = new NearBy("Inside Out", "Animation, Kids & Family", "2015"," ----- ");
-        movieList.add(movie);
-
-        movie = new NearBy("Star Wars: Episode VII - The Force Awakens", "Action", "2015"," ----- ");
-        movieList.add(movie);
-
-        movie = new NearBy("Shaun the Sheep", "Animation", "2015"," ----- ");
-        movieList.add(movie);
-
-        movie = new NearBy("The Martian", "Science Fiction & Fantasy", "2015"," ----- ");
-        movieList.add(movie);
-
-        movie = new NearBy("Mission: Impossible Rogue Nation", "Action", "2015"," ----- ");
-        movieList.add(movie);
-
-        movie = new NearBy("Up", "Animation", "2009"," ----- ");
-        movieList.add(movie);
-
-        movie = new NearBy("Star Trek", "Science Fiction", "2009"," ----- ");
-        movieList.add(movie);
-
-        movie = new NearBy("The LEGO Movie", "Animation", "2014"," ----- ");
-        movieList.add(movie);
-
-        movie = new NearBy("Iron Man", "Action & Adventure", "2008"," ----- ");
-        movieList.add(movie);
-
-        mAdapter.notifyDataSetChanged();
     }
 
     public interface ClickListener {
@@ -396,6 +365,23 @@ public class TwoFragment extends Fragment{
                             {
                                 movieList.clear();
 
+                                RealmResults<ContactsList> RegisteredCls = RealmController.with(getActivity()).getAllRegisteredContacts();
+                                RealmResults<ContactsList> UnRegisteredCls = RealmController.with(getActivity()).getAllUnRegisteredContacts();
+
+                                for (int ii = 0; ii < RegisteredCls.size(); ii++)
+                                {
+                                    ContactsList cl = RegisteredCls.get(ii);
+                                    NearBy dumb = new NearBy(cl.getName(),"",cl.getTelephone(),cl.getServer_id()+"",cl.getFile_name(),cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
+                                    movieList.add(dumb);
+                                }
+
+                                for (int ii = 0; ii < UnRegisteredCls.size(); ii++)
+                                {
+                                    ContactsList cl = UnRegisteredCls.get(ii);
+                                    NearBy dumb = new NearBy(cl.getName(),"",cl.getTelephone(),cl.getServer_id()+"",cl.getFile_name(),cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
+                                    movieList.add(dumb);
+                                }
+
                                 JSONArray jaa = response.getJSONArray("data");
 
                                 for (int i=0; i< jaa.length(); i++)
@@ -405,7 +391,7 @@ public class TwoFragment extends Fragment{
                                     User us = RealmController.with(getActivity()).getUser(1);
                                     if(!us.getServer_id().equalsIgnoreCase(object.get("id").toString()))
                                     {
-                                        NearBy dumb = new NearBy(object.get("fullname").toString(),object.get("file_name").toString(),object.get("telephone").toString(),object.get("id").toString());
+                                        NearBy dumb = new NearBy(object.get("fullname").toString(),object.get("file_name").toString(),object.get("telephone").toString(),object.get("id").toString(),object.get("screen_name").toString());
                                         movieList.add(dumb);
                                     }
 
@@ -461,11 +447,15 @@ public class TwoFragment extends Fragment{
 
 
 
+
     void getContacts()
     {
+
+
+
         ContentResolver cr = getActivity().getContentResolver();
         Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null,
-                "DISPLAY_NAME LIKE ' '", null, null);
+                "DISPLAY_NAME LIKE ''", null, null);
         if (cursor.moveToFirst()) {
             String contactId =
                     cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
@@ -475,25 +465,45 @@ public class TwoFragment extends Fragment{
             Cursor phones = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                     ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
             while (phones.moveToNext()) {
+                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 String number = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                String image = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI));
+
                 int type = phones.getInt(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
-                switch (type) {
-                    case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
-                        // do something with the Home number here...
-                        break;
-                    case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
-                        // do something with the Mobile number here...
-                        break;
-                    case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
-                        // do something with the Work number here...
-                        break;
+                if(!RealmController.with(getActivity()).numberRegistered(number))
+                {
+                    ContactsList cl = new ContactsList();
+                    cl.setTelephone(number);
+                    cl.setIs_on_verifie("0");
+                    cl.setName(name);
+                    cl.setType("Other");
+                    cl.setFile_name(image);
+                    switch (type) {
+                        case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+                            // do something with the Home number here...
+                            cl.setType("Home");
+
+                            break;
+                        case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+                            // do something with the Mobile number here...
+                            cl.setType("Mobile");
+
+                            break;
+                        case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+                            // do something with the Work number here...
+                            cl.setType("Work");
+                            break;
+                    }
+                    RealmController.with(getActivity()).addContact(cl);
+
                 }
-            }
+             }
             phones.close();
 
             //
             //  Get all email addresses.
             //
+            /*
             Cursor emails = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
                     ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + contactId, null, null);
             while (emails.moveToNext()) {
@@ -509,6 +519,8 @@ public class TwoFragment extends Fragment{
                 }
             }
             emails.close();
+
+            */
         }
         cursor.close();
 
