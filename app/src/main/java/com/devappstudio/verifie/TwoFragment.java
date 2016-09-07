@@ -2,9 +2,12 @@ package com.devappstudio.verifie;
 
 
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -455,4 +458,62 @@ public class TwoFragment extends Fragment{
             mHandler.postDelayed(mHandlerTask, (1000 * 5 * 1));
         }
     };
+
+
+
+    void getContacts()
+    {
+        ContentResolver cr = getActivity().getContentResolver();
+        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null,
+                "DISPLAY_NAME LIKE ' '", null, null);
+        if (cursor.moveToFirst()) {
+            String contactId =
+                    cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            //
+            //  Get all phone numbers.
+            //
+            Cursor phones = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
+            while (phones.moveToNext()) {
+                String number = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                int type = phones.getInt(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+                switch (type) {
+                    case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+                        // do something with the Home number here...
+                        break;
+                    case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+                        // do something with the Mobile number here...
+                        break;
+                    case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+                        // do something with the Work number here...
+                        break;
+                }
+            }
+            phones.close();
+
+            //
+            //  Get all email addresses.
+            //
+            Cursor emails = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
+                    ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + contactId, null, null);
+            while (emails.moveToNext()) {
+                String email = emails.getString(emails.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                int type = emails.getInt(emails.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+                switch (type) {
+                    case ContactsContract.CommonDataKinds.Email.TYPE_HOME:
+                        // do something with the Home email here...
+                        break;
+                    case ContactsContract.CommonDataKinds.Email.TYPE_WORK:
+                        // do something with the Work email here...
+                        break;
+                }
+            }
+            emails.close();
+        }
+        cursor.close();
+
+
+    }
+
+
 }
