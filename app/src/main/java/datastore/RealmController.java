@@ -68,6 +68,12 @@ public class RealmController {
         realm.clear(User.class);
         realm.commitTransaction();
     }
+  public void clearContacts() {
+
+        realm.beginTransaction();
+        realm.clear(ContactsList.class);
+        realm.commitTransaction();
+    }
 
     //clear all objects from Book.class
     public void clearAllVisibility() {
@@ -167,7 +173,7 @@ public class RealmController {
     public boolean numberRegistered(String number)
     {
         RealmResults<ContactsList> cl = realm.where(ContactsList.class).equalTo("telephone",number).findAll();
-        if(cl.size() != 0)
+        if(cl.size() > 0)
         {
             for (int i=0; i<cl.size(); i++)
             {

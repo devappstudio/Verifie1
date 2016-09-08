@@ -221,7 +221,7 @@ public class verifyLogin extends AppCompatActivity {
                                     realm.commitTransaction();
 
 
-                                final Intent intent = new Intent(verifyLogin.this, main.class);
+                                final Intent intent = new Intent(verifyLogin.this, MyLocationRequest.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

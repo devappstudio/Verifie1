@@ -8,6 +8,7 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -72,16 +73,19 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location_request);
 
-        if (!canAccessLocation() || !canAccessContacts() || !canAccessLocation1() || !canAccessCamera() || !canWriteExternal() || !canReadExternal() ) {
+        if (!canAccessLocation()) {
             requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
         }
+        else
+        {
 
+            mGoogleApiClient = new GoogleApiClient.Builder(getApplication())
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this).build();
+            mGoogleApiClient.connect();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(getApplication())
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this).build();
-        mGoogleApiClient.connect();
+        }
 
 
 
@@ -252,15 +256,33 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
 
             case LOCATION_REQUEST:
                 if (canAccessLocation()) {
+
+                    mGoogleApiClient = new GoogleApiClient.Builder(getApplication())
+                            .addApi(LocationServices.API)
+                            .addConnectionCallbacks(this)
+                            .addOnConnectionFailedListener(this).build();
+                    mGoogleApiClient.connect();
+
                 }
                 else {
+                    Toast.makeText(getApplication(),"Sorry Verifie Cannot Function Properly Withoout Your Location",Toast.LENGTH_LONG).show();
+                    finish();;
                 }
                 break;
 
             case LOCATION1_REQUEST:
                 if (canAccessLocation1()) {
+
+                    mGoogleApiClient = new GoogleApiClient.Builder(getApplication())
+                            .addApi(LocationServices.API)
+                            .addConnectionCallbacks(this)
+                            .addOnConnectionFailedListener(this).build();
+                    mGoogleApiClient.connect();
+
                 }
                 else {
+                    Toast.makeText(getApplication(),"Sorry Verifie Cannot Function Properly Withoout Your Location",Toast.LENGTH_LONG).show();
+                    finish();
                 }
                 break;
 
@@ -283,7 +305,7 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
     private boolean canAccessLocation() {
         return(hasPermission(Manifest.permission.ACCESS_FINE_LOCATION));
     }
-   private boolean canAccessLocation1() {
+    private boolean canAccessLocation1() {
         return(hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION));
     }
 
@@ -295,7 +317,6 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
         return(hasPermission(Manifest.permission.READ_CONTACTS));
     }
 
-
     private boolean canReadExternal() {
         return(hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE));
     }
@@ -306,6 +327,6 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
 
     @TargetApi(Build.VERSION_CODES.M)
     private boolean hasPermission(String perm) {
-        return(PackageManager.PERMISSION_GRANTED==checkSelfPermission(perm));
+        return(PackageManager.PERMISSION_GRANTED== ActivityCompat.checkSelfPermission(getApplicationContext(),perm));
     }
 }

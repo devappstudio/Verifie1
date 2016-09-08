@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -27,15 +27,16 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name;
+        public TextView name,screen;
         public CircleImageView img;
-        public ImageButton imb;
+        public Button imb;
 
         public MyViewHolder(View view) {
             super(view);
             name = (TextView) view.findViewById(R.id.name);
+            screen = (TextView) view.findViewById(R.id.screen_name);
             img = (CircleImageView) view.findViewById(R.id.thumbnail);
-            imb = (ImageButton) view.findViewById(R.id.requestRollar);
+            imb = (Button) view.findViewById(R.id.requestRollar);
         }
     }
 
@@ -59,12 +60,42 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
         if(is_local(nearBy.getLocal_id()))
         {
             // check if the user is registered on verifie or not
+            if(nearBy.getOn_verifie().equalsIgnoreCase("0"))
+            {
+                //Not On
+                holder.name.setText(nearBy.getName());
+                holder.screen.setText(nearBy.getTelephone_number());
+                holder.imb.setText("Invite");
+                holder.imb.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //TODO SEND GCM TO
+                        System.out.print(position+" Clicked For Request For "+nearBy.getTelephone_number()+" -- "+nearBy.getServer_id());
+                    }
+                });
+
+            }
+            else
+            {
+                Picasso.with(context).load(nearBy.getImage_url()).into(holder.img);
+                holder.name.setText(nearBy.getName());
+                holder.screen.setText(nearBy.getScreen_name()+" - "+nearBy.getTelephone_number());
+                holder.imb.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //TODO SEND GCM TO
+                        System.out.print(position+" Clicked For Request For "+nearBy.getTelephone_number()+" -- "+nearBy.getServer_id());
+                    }
+                });
+
+            }
 
         }
         else
         {
             Picasso.with(context).load(nearBy.getImage_url()).into(holder.img);
             holder.name.setText(nearBy.getName());
+            holder.screen.setText(nearBy.getScreen_name());
             holder.imb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -73,22 +104,22 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
                 }
             });
 
+
         }
     }
 
     @Override
     public int getItemCount() {
+
         return nearByList.size();
     }
-
 
 
     private boolean is_local(String local_id)
     {
         if(local_id.equalsIgnoreCase("") || local_id.equalsIgnoreCase(null))
-            return  true;
-        return false;
+            return  false;
+        return true;
     }
-
 
 }

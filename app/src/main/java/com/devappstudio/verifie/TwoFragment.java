@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.ContactsContract;
@@ -99,7 +100,9 @@ public class TwoFragment extends Fragment{
 
 
        // prepareMovieData();
-        getContacts();
+        TwoFragment.readContacts task = new readContacts();
+        task.execute("");
+
 
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -112,7 +115,7 @@ public class TwoFragment extends Fragment{
             @Override
             public void onClick(View view, int position) {
                 NearBy movie = movieList.get(position);
-                Toast.makeText(getActivity(), movie.getName() + " is selected!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), movie.getTelephone_number() + " is selected!", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -429,7 +432,6 @@ public class TwoFragment extends Fragment{
     }
 
 
-
     Runnable mHandlerTask = new Runnable()
     {
         @Override
@@ -447,84 +449,81 @@ public class TwoFragment extends Fragment{
 
 
 
+    private class readContacts extends AsyncTask<String, Void, String> {
 
-    void getContacts()
-    {
+        /**
+         * Override this method to perform a computation on a background thread. The
+         * specified parameters are the parameters passed to {@link #execute}
+         * by the caller of this task.
+         * <p>
+         * This method can call {@link #publishProgress} to publish updates
+         * on the UI thread.
+         *
+         * @param params The parameters of the task.
+         * @return A result, defined by the subclass of this task.
+         * @see #onPreExecute()
+         * @see #onPostExecute
+         * @see #publishProgress
+         */
+        @Override
+        protected String doInBackground(String... params) {
+            ContentResolver cr = getActivity().getContentResolver();
+            Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                    null, null, null, null);
 
-
-
-        ContentResolver cr = getActivity().getContentResolver();
-        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null,
-                "DISPLAY_NAME LIKE ''", null, null);
-        if (cursor.moveToFirst()) {
-            String contactId =
-                    cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-            //
-            //  Get all phone numbers.
-            //
-            Cursor phones = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
-            while (phones.moveToNext()) {
-                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                String number = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                String image = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_THUMBNAIL_URI));
-
-                int type = phones.getInt(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
-                if(!RealmController.with(getActivity()).numberRegistered(number))
-                {
+            if (cur.getCount() > 0) {
+                while (cur.moveToNext()) {
                     ContactsList cl = new ContactsList();
-                    cl.setTelephone(number);
-                    cl.setIs_on_verifie("0");
-                    cl.setName(name);
-                    cl.setType("Other");
-                    cl.setFile_name(image);
-                    switch (type) {
-                        case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
-                            // do something with the Home number here...
-                            cl.setType("Home");
 
-                            break;
-                        case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
-                            // do something with the Mobile number here...
-                            cl.setType("Mobile");
+                    String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                    String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                    //String image = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI));
+                    if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+                        System.out.println("name : " + name + ", ID : " + id);
 
-                            break;
-                        case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
-                            // do something with the Work number here...
-                            cl.setType("Work");
-                            break;
+                        Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
+                                new String[]{id}, null);
+                        while (pCur.moveToNext()) {
+                            String phone = pCur.getString(
+                                    pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            System.out.println("phone" + phone);
+                            boolean is_stored = false;
+
+                            Realm realm = Realm.getDefaultInstance();
+                            RealmResults<ContactsList> clst = realm.where(ContactsList.class).equalTo("telephone",phone).findAll();
+                            if(clst.size() > 0)
+                            {
+                                for (int i=0; i<clst.size(); i++)
+                                {
+                                    if(clst.get(i).getIs_on_verifie().equalsIgnoreCase("1"))
+                                    {
+                                        is_stored = true;
+                                    }
+                                }
+
+                            }
+
+
+                            if(!is_stored) {
+                                cl.setTelephone(phone);
+                                cl.setIs_on_verifie("0");
+                                cl.setType("Other");
+                                cl.setFile_name("");
+                                cl.setName(name);
+                                RealmResults <ContactsList> all_cl = realm.where(ContactsList.class).findAll();
+                                cl.setId(all_cl.size()+1);
+                                realm.beginTransaction();
+                                realm.copyToRealm(cl);
+                                realm.commitTransaction();
+                            }
+                        }
+                        pCur.close();
                     }
-                    RealmController.with(getActivity()).addContact(cl);
-
-                }
-             }
-            phones.close();
-
-            //
-            //  Get all email addresses.
-            //
-            /*
-            Cursor emails = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
-                    ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + contactId, null, null);
-            while (emails.moveToNext()) {
-                String email = emails.getString(emails.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-                int type = emails.getInt(emails.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
-                switch (type) {
-                    case ContactsContract.CommonDataKinds.Email.TYPE_HOME:
-                        // do something with the Home email here...
-                        break;
-                    case ContactsContract.CommonDataKinds.Email.TYPE_WORK:
-                        // do something with the Work email here...
-                        break;
                 }
             }
-            emails.close();
-
-            */
+            return null;
         }
-        cursor.close();
-
-
     }
 
 

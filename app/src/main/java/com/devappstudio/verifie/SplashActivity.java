@@ -36,14 +36,13 @@ public class SplashActivity extends Activity {
     private Realm realm;
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_splash);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        //RealmController.with(getApplication()).clearAll();
+        //RealmController.with(getApplication()).clearContacts();
         this.realm = RealmController.with(this).getRealm();
 
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.spin_kit);
