@@ -12,13 +12,26 @@
         android:textOff="Off"
         android:layout_gravity="right"
         android:showText="true"
-        android:thumbTextPadding="10dp"
-        android:padding="8dp"
-        android:layout_margin="5dp"
+        android:thumbTextPadding="@dimen/cardview_default_elevation"
+        android:paddingRight="8dp"
+        android:paddingEnd="8dp"
+        android:switchMinWidth="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
         app:showText="true"
         android:id="@+id/visibility"
         android:thumb="@drawable/switch_thumb"
-        android:track="@drawable/switch_track" />
-    <include layout="@layout/content_main"/>
+        android:track="@drawable/switch_track"
+        android:textSize="10sp"
+        android:textAllCaps="false"
+        android:textStyle="normal|bold"
+        android:textAlignment="center" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 
 </LinearLayout>

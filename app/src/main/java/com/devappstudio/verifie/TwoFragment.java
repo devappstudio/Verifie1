@@ -93,6 +93,8 @@ public class TwoFragment extends Fragment{
 
             }
         });
+        RealmController.with(getActivity()).clearContacts();
+
 
 
 
@@ -477,7 +479,7 @@ public class TwoFragment extends Fragment{
 
                 }
             }
-            mHandler.postDelayed(mHandlerTask, (1000 * 1 * 1));
+            mHandler.postDelayed(mHandlerTask, (1000 * 3 * 1));
         }
     };
 
@@ -520,11 +522,11 @@ public class TwoFragment extends Fragment{
                         while (pCur.moveToNext()) {
                             String phone = pCur.getString(
                                     pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                            System.out.println("phone" + phone);
                             boolean is_stored = false;
 
                             phone = phone.trim();
                             phone = phone.replace("\\s+","");
+                            phone = phone.replace(" ","");
 
                             Realm realm = Realm.getDefaultInstance();
                             RealmResults<ContactsList> clst = realm.where(ContactsList.class).equalTo("telephone",phone).findAll();

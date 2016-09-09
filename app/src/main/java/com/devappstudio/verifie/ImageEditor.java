@@ -28,12 +28,14 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import datastore.Api;
 import datastore.RealmController;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ImageEditor extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;
     private Uri outputFileUri;
+    static String server_id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +56,7 @@ public class ImageEditor extends AppCompatActivity {
             new GetImages(RealmController.with(ImageEditor.this).getUser(1).getFile_name(), profile, imagename).execute() ;
         }
 
-
+        server_id = RealmController.with(ImageEditor.this).getUser(1).getServer_id();
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,27 +123,32 @@ public class ImageEditor extends AppCompatActivity {
 
             }
 
+            uploadMultipart(getApplicationContext(),selectedImageUri.getPath().toString());
+
             //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
         }
     }
 
 
-    public void uploadMultipart(final Context context) {
+    public void uploadMultipart(final Context context,String path) {
         try {
             String uploadId =
-                    new MultipartUploadRequest(context, "http://upload.server.com/path")
-                            .addFileToUpload("/absolute/path/to/your/file", "your-param-name")
+                    new MultipartUploadRequest(context, Api.getApi()+"upload_image")
+                            .addFileToUpload(path,"file_name")
+                            .addParameter("server_id",server_id)
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
                             .setDelegate(new UploadStatusDelegate() {
                                 @Override
                                 public void onProgress(UploadInfo uploadInfo) {
                                     // your code here
+                                    Toast.makeText(getApplicationContext(),uploadInfo.getProgressPercent() +" %",Toast.LENGTH_LONG).show();
                                 }
 
                                 @Override
                                 public void onError(UploadInfo uploadInfo, Exception exception) {
                                     // your code here
+                                    exception.printStackTrace();
                                 }
 
                                 @Override
@@ -149,6 +156,8 @@ public class ImageEditor extends AppCompatActivity {
                                     // your code here
                                     // if you have mapped your server response to a POJO, you can easily get it:
                                     // YourClass obj = new Gson().fromJson(serverResponse.getBodyAsString(), YourClass.class);
+
+
 
                                 }
 

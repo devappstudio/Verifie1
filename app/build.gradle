@@ -66,6 +66,7 @@ android {
         compile 'net.gotev:uploadservice-ftp:3.0.3'
          compile 'net.gotev:uploadservice:3.0.3'
         //compile 'net.gotev:uploadservice-okhttp:3.0.3'
+        compile 'com.googlecode.libphonenumber:libphonenumber:7.2.2'
 //
     }
 

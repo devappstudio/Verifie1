@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -53,24 +56,37 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
                 .inflate(R.layout.nearby_list, parent, false);
         return new MyViewHolder(itemView);
     }
+    static String phone ;
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, final int position) {
         final NearBy nearBy = nearByList.get(position);
         if(is_local(nearBy.getLocal_id()))
         {
+            phone = nearBy.getTelephone_number();
+            try {
+                PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
+                Phonenumber.PhoneNumber pn = null;
+
+                pn = pnu.parse(phone, "GH");
+                phone = pnu.format(pn, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
+
+            } catch (NumberParseException e) {
+                e.printStackTrace();
+            }
+
             // check if the user is registered on verifie or not
             if(nearBy.getOn_verifie().equalsIgnoreCase("0"))
             {
                 //Not On
                 holder.name.setText(nearBy.getName());
-                holder.screen.setText(nearBy.getTelephone_number());
+                holder.screen.setText(phone);
                 holder.imb.setText("Invite");
                 holder.imb.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //TODO SEND GCM TO
-                        System.out.print(position+" Clicked For Request For "+nearBy.getTelephone_number()+" -- "+nearBy.getServer_id());
+                        System.out.print(position+" Clicked For Request For "+phone+" -- "+nearBy.getServer_id());
                     }
                 });
 
@@ -79,12 +95,12 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
             {
                 Picasso.with(context).load(nearBy.getImage_url()).into(holder.img);
                 holder.name.setText(nearBy.getName());
-                holder.screen.setText(nearBy.getScreen_name()+" - "+nearBy.getTelephone_number());
+                holder.screen.setText(nearBy.getScreen_name()+" - "+phone);
                 holder.imb.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //TODO SEND GCM TO
-                        System.out.print(position+" Clicked For Request For "+nearBy.getTelephone_number()+" -- "+nearBy.getServer_id());
+                        System.out.print(position+" Clicked For Request For "+phone+" -- "+nearBy.getServer_id());
                     }
                 });
 
