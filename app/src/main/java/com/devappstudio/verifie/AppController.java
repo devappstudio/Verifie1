@@ -13,6 +13,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+import net.gotev.uploadservice.UploadService;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 
@@ -39,7 +41,7 @@ public class AppController extends android.support.multidex.MultiDexApplication 
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
 
-
+        UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
    //     LeakCanary.install(this);
         mInstance = this;
     }

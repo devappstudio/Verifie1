@@ -14,8 +14,8 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:layout_margin="@dimen/card_margin"
-        android:elevation="3dp"
-        card_view:cardCornerRadius="@dimen/card_album_radius">
+        android:elevation="8dp"
+        card_view:cardCornerRadius="4dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -26,9 +26,12 @@
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:layout_centerHorizontal="true"
-                app:progressRingSize="15dp"
+                app:progressRingSize="25dp"
                 app:max="100"
-                android:elevation="4dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:drawingCacheQuality="high"
+                android:elevation="8dp"
                 app:backgroundRingColor="@color/rotabar_back_ground"
                 app:progressRingColor="@color/rotabar_red_last"
                 app:progress="42"

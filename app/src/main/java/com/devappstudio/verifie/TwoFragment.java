@@ -230,6 +230,7 @@ public class TwoFragment extends Fragment{
                                 {
                                     movieList.clear();
                                     mAdapter.notifyDataSetChanged();
+                                    near_by_offline_users();
                                     Toast.makeText(getActivity(),"Your visibility is off",Toast.LENGTH_LONG).show();
 
                                 }
@@ -432,6 +433,33 @@ public class TwoFragment extends Fragment{
     }
 
 
+    void near_by_offline_users()
+    {
+
+
+        movieList.clear();
+
+        RealmResults<ContactsList> RegisteredCls = RealmController.with(getActivity()).getAllRegisteredContacts();
+        RealmResults<ContactsList> UnRegisteredCls = RealmController.with(getActivity()).getAllUnRegisteredContacts();
+
+        for (int ii = 0; ii < RegisteredCls.size(); ii++)
+        {
+            ContactsList cl = RegisteredCls.get(ii);
+            NearBy dumb = new NearBy(cl.getName(),"",cl.getTelephone(),cl.getServer_id()+"",cl.getFile_name(),cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
+            movieList.add(dumb);
+        }
+
+        for (int ii = 0; ii < UnRegisteredCls.size(); ii++)
+        {
+            ContactsList cl = UnRegisteredCls.get(ii);
+            NearBy dumb = new NearBy(cl.getName(),"",cl.getTelephone(),cl.getServer_id()+"",cl.getFile_name(),cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
+            movieList.add(dumb);
+        }
+
+        mAdapter.notifyDataSetChanged();
+    }
+
+
     Runnable mHandlerTask = new Runnable()
     {
         @Override
@@ -442,8 +470,14 @@ public class TwoFragment extends Fragment{
                 {
                     near_by_users();
                 }
+                else
+
+                {
+                    near_by_offline_users();
+
+                }
             }
-            mHandler.postDelayed(mHandlerTask, (1000 * 5 * 1));
+            mHandler.postDelayed(mHandlerTask, (1000 * 1 * 1));
         }
     };
 
@@ -479,7 +513,6 @@ public class TwoFragment extends Fragment{
                     String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                     //String image = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI));
                     if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                        System.out.println("name : " + name + ", ID : " + id);
 
                         Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
                                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
@@ -490,15 +523,19 @@ public class TwoFragment extends Fragment{
                             System.out.println("phone" + phone);
                             boolean is_stored = false;
 
+                            phone = phone.trim();
+                            phone = phone.replace("\\s+","");
+
                             Realm realm = Realm.getDefaultInstance();
                             RealmResults<ContactsList> clst = realm.where(ContactsList.class).equalTo("telephone",phone).findAll();
                             if(clst.size() > 0)
                             {
                                 for (int i=0; i<clst.size(); i++)
                                 {
-                                    if(clst.get(i).getIs_on_verifie().equalsIgnoreCase("1"))
+                                    if(clst.get(i).getTelephone().equalsIgnoreCase(phone))
                                     {
                                         is_stored = true;
+
                                     }
                                 }
 
@@ -528,3 +565,5 @@ public class TwoFragment extends Fragment{
 
 
 }
+//http://stackoverflow.com/questions/6106859/how-to-format-a-phone-number-using-phonenumberutils
+//https://github.com/googlei18n/libphonenumber/blob/master/README.md
