@@ -2,6 +2,7 @@ package com.devappstudio.verifie;
 
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -13,8 +14,15 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+
+import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
+import net.gotev.uploadservice.UploadNotificationConfig;
+import net.gotev.uploadservice.UploadStatusDelegate;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -116,4 +124,46 @@ public class ImageEditor extends AppCompatActivity {
             //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
         }
     }
+
+
+    public void uploadMultipart(final Context context) {
+        try {
+            String uploadId =
+                    new MultipartUploadRequest(context, "http://upload.server.com/path")
+                            .addFileToUpload("/absolute/path/to/your/file", "your-param-name")
+                            .setNotificationConfig(new UploadNotificationConfig())
+                            .setMaxRetries(2)
+                            .setDelegate(new UploadStatusDelegate() {
+                                @Override
+                                public void onProgress(UploadInfo uploadInfo) {
+                                    // your code here
+                                }
+
+                                @Override
+                                public void onError(UploadInfo uploadInfo, Exception exception) {
+                                    // your code here
+                                }
+
+                                @Override
+                                public void onCompleted(UploadInfo uploadInfo, ServerResponse serverResponse) {
+                                    // your code here
+                                    // if you have mapped your server response to a POJO, you can easily get it:
+                                    // YourClass obj = new Gson().fromJson(serverResponse.getBodyAsString(), YourClass.class);
+
+                                }
+
+                                @Override
+                                public void onCancelled(UploadInfo uploadInfo) {
+                                    // your code here
+                                }
+                            })
+                            .startUpload();
+        } catch (Exception exc) {
+            Log.e("AndroidUploadService", exc.getMessage(), exc);
+        }
+    }
+
+
+
+
 }
