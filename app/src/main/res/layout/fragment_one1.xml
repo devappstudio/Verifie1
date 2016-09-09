@@ -35,6 +35,7 @@
                 app:backgroundRingColor="@color/rotabar_back_ground"
                 app:progressRingColor="@color/rotabar_light_green_second"
                 app:progress="42"
+                android:src="@drawable/placeholder"
                 app:progressRingCap="ROUND"
                 app:progressRingOutline="false"/>
 

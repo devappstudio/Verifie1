@@ -1,7 +1,491 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-</LinearLayout>
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:id="@+id/get_started"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_below="@+id/appbar"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Getting Started"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#016C81"
+                android:textSize="20dp"
+                android:textStyle="bold"/>
+            <View
+                android:layout_width="100dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#016C81"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="Verifie is an initiative which seeks to encourage good sexual health practices. The sex world out there is full of unpleasant surprises thus the need to stay safe."
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/about_one"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="We do not want you catching anything which can affect your life permanently whether curable or not
+            Mind you, some infections, curable as they may be can still end up causing complications such as sterility in both males and females as well as cancers of the prostate, ovary and cervix."
+                android:textAlignment="center"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"
+                android:layout_gravity="center_horizontal"/>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/div_one"
+            android:layout_below="@+id/get_started"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#6D6E70"/>
+        <LinearLayout
+            android:id="@+id/what_we_do"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_below="@+id/div_one"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="What We Do"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#016C81"
+                android:textSize="20dp"
+                android:textStyle="bold"/>
+            <View
+                android:layout_width="80dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#016C81"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="In order to make sure you maintain a healthy sex life we screen for STD infection thus enabling early detection and management to prevent complications in those affected. Tests include but are not limited to:"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"/>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/about_two"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="Remember, it’s not only up to you. Get your partner and other people close to you to get tested."
+                android:textAlignment="center"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"
+                android:layout_gravity="center_horizontal"/>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/div_two"
+            android:layout_below="@+id/what_we_do"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#6D6E70"/>
+        <LinearLayout
+            android:id="@+id/how_to_get_verified"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_below="@+id/div_two"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="How to get verified"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#016C81"
+                android:textSize="20dp"
+                android:textStyle="bold"/>
+            <View
+                android:layout_width="80dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#016C81"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="Simply download the app available on the playstore or the app store for both IOS and android devices, or visit our website www.verifieworld.com"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"/>
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/about_three"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="We ensure confidentiality right from the beginning of the process. You can choose to provide an alias instead of your real name if you so wish when registering and also on the day of testing."
+                android:textAlignment="center"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"
+                android:layout_gravity="center_horizontal"/>
+        </LinearLayout>
+
+        <View
+            android:id="@+id/div_three"
+            android:layout_below="@+id/how_to_get_verified"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#6D6E70"/>
+        <LinearLayout
+            android:id="@+id/where_to_get_verified"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_below="@+id/div_three"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Where to get verified"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#016C81"
+                android:textSize="20dp"
+                android:textStyle="bold"/>
+            <View
+                android:layout_width="80dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#016C81"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="Choose from our list of health facilities the most convenient for you. Find within each facility Verifie correspondents who are ready to assist you at every step. Calling them at least 24hrs before your test will give them ample time to prepare for you.You can also just walk into any of the facilities without giving prior information to get tested.
+"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"/>
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/about_four"/>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/div_four"
+            android:layout_below="@+id/where_to_get_verified"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#6D6E70"/>
+        <LinearLayout
+            android:id="@+id/the_process"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_below="@+id/div_four"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="The process"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#016C81"
+                android:textSize="20dp"
+                android:textStyle="bold"/>
+            <View
+                android:layout_width="80dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#016C81"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="We only require a small sample of you blood and urine. Good hydration before the test won’t be a bad idea. Our team is highly skilled and qualified. You are in good hands."
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"/>
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/about_five"/>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/div_five"
+            android:layout_below="@+id/the_process"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#6D6E70"/>
+        <LinearLayout
+            android:id="@+id/the_app"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_below="@+id/div_five"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="The App"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#016C81"
+                android:textSize="20dp"
+                android:textStyle="bold"/>
+            <View
+                android:layout_width="80dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#016C81"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="This application is available across mobile platforms as well as the internet.It is accessible by everybody but very secure to protect your identity.You may make your status known to friends on request if you so wish and hide it from the rest of the world.Only those who have passed the test obtain a full Rotabar."
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"/>
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/about_six"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="The App also enables you to see those around you who have been verified as well as your verified contacts as long as they allow you. The app provides general information on STIs for all users as well as testing centres. Socialising safely has never been easy."
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"/>
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/about_seven"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="Our main aim is to seamlessly protect you from STDs including HIV No longer do you have to go through that awkward moment of asking if they’ve been tested Now it’s at the tip of your finger.
+
+It’s a simple way to connect people greatly minimising the risk of STI contraction."
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"/>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/div_six"
+            android:layout_below="@+id/the_app"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#6D6E70"/>
+        <LinearLayout
+            android:id="@+id/the_rotabar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_below="@+id/div_six"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="The Rotabar"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#016C81"
+                android:textSize="20dp"
+                android:textStyle="bold"/>
+            <View
+                android:layout_width="80dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#016C81"/>
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/rotabar"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="Integrated within the app is the Rotabar, a smart and intuitive way of ensuring you stay verified all the time. Embedded within the Rotabar is an algorithm which calibrates it to indicate your verified status andrecommends when a recheck is required."
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"/>
+
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/about_eight"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="As recommended by Aids.org, ones HIV status must be checked often. This applies to other STIs as well.  To stay verified we suggest you check your status as often as possible with a maximum interval period of 2 years.The Rotabar works with this recommendation in mind."
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#6D6E70"
+                android:textSize="12dp"
+                android:textStyle="normal"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="We understand sex is an ‘in the moment’ kind of thing but always make sure you are protected and to be extra safe ensure you and your partner are both Verified. "
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#F68B37"
+                android:textSize="12dp"
+                android:textStyle="italic"/>
+
+            <ImageView
+                android:layout_marginTop="15dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo_verifie"/>
+
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>

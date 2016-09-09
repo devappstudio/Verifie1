@@ -3,7 +3,7 @@
     android:shape="rectangle"
     >
     <size
-        android:height="0dp"
+        android:height="15dp"
         />
     <item android:state_checked="true">
         <color android:color="#009900" />

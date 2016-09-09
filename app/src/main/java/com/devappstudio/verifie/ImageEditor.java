@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -24,28 +25,34 @@ import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
 import net.gotev.uploadservice.UploadStatusDelegate;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import datastore.Api;
 import datastore.RealmController;
+import datastore.User;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.realm.Realm;
 
 public class ImageEditor extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;
     private Uri outputFileUri;
     static String server_id;
+    CircleImageView profile;
+    final String imagename ="profile.jpg";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_editor);
 
-        String imagename ="profile";
-        CircleImageView profile = (CircleImageView)findViewById(R.id.profile_image);
+         profile = (CircleImageView)findViewById(R.id.profile_image);
         if(ImageStorage.checkifImageExists(imagename))
         {
-            File file = ImageStorage.getImage("/verifie/profile/"+imagename+".jpg");
+            File file = ImageStorage.getImage("/verifie/profile/"+imagename);
             String path = file.getAbsolutePath();
             if (path != null){
                 Bitmap b = BitmapFactory.decodeFile(path);
@@ -62,7 +69,7 @@ public class ImageEditor extends AppCompatActivity {
             public void onClick(View view) {
                 final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "/verifie/profile/" + File.separator);
                 root.mkdirs();
-                final String fname = "profile";
+                final String fname = imagename;
                 final File sdImageMainDirectory = new File(root, fname);
                 outputFileUri = Uri.fromFile(sdImageMainDirectory);
 
@@ -112,18 +119,33 @@ public class ImageEditor extends AppCompatActivity {
                     isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 }
             }
-
+            String path="";
             Uri selectedImageUri;
             if (isCamera) {
-                selectedImageUri = outputFileUri;
-                Toast.makeText(getApplicationContext(),"Camera Selected",Toast.LENGTH_LONG).show();
+                path = outputFileUri.getPath().toString();
+
             } else {
+                /*
                 selectedImageUri = data == null ? null : data.getData();
-                Toast.makeText(getApplicationContext(),"File Selected",Toast.LENGTH_LONG).show();
+                String uriString = selectedImageUri.toString();
+                File myFile = new File(uriString);
+                path = myFile.getAbsolutePath();
+                */
+
+                Uri uri = data.getData();
+                String[] projection = { MediaStore.Images.Media.DATA };
+
+                Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(projection[0]);
+                 path = cursor.getString(columnIndex); // returns null
+                cursor.close();
 
             }
+            Toast.makeText(getApplicationContext(),path,Toast.LENGTH_LONG).show();
 
-            uploadMultipart(getApplicationContext(),selectedImageUri.getPath().toString());
+            uploadMultipart(getApplicationContext(),path);
 
             //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
         }
@@ -133,16 +155,16 @@ public class ImageEditor extends AppCompatActivity {
     public void uploadMultipart(final Context context,String path) {
         try {
             String uploadId =
-                    new MultipartUploadRequest(context, Api.getApi()+"upload_image")
-                            .addFileToUpload(path,"file_name")
-                            .addParameter("server_id",server_id)
+                    new MultipartUploadRequest(context, Api.getApi() + "upload_image")
+                            .addFileToUpload(path, "file_name")
+                            .addParameter("server_id", server_id)
                             .setNotificationConfig(new UploadNotificationConfig())
                             .setMaxRetries(2)
                             .setDelegate(new UploadStatusDelegate() {
                                 @Override
                                 public void onProgress(UploadInfo uploadInfo) {
                                     // your code here
-                                    Toast.makeText(getApplicationContext(),uploadInfo.getProgressPercent() +" %",Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), uploadInfo.getProgressPercent() + " %", Toast.LENGTH_LONG).show();
                                 }
 
                                 @Override
@@ -156,8 +178,28 @@ public class ImageEditor extends AppCompatActivity {
                                     // your code here
                                     // if you have mapped your server response to a POJO, you can easily get it:
                                     // YourClass obj = new Gson().fromJson(serverResponse.getBodyAsString(), YourClass.class);
+                                    // JSONObject obj = serverResponse.getBodyAsString()
+                                    try {
 
+                                        JSONObject obj = new JSONObject(serverResponse.getBodyAsString());
 
+                                        String location = obj.get("data").toString();
+
+                                        Realm realm = Realm.getDefaultInstance();
+                                        new GetImages(location, profile, imagename).execute() ;
+                                        User us = realm.where(User.class).findFirst();
+                                        us.setFile_name(location);
+                                        realm.beginTransaction();
+                                        realm.copyToRealmOrUpdate(us);
+                                        realm.commitTransaction();
+                                        Log.d("My App", obj.toString());
+                                        Toast.makeText(getApplicationContext(),us.getFile_name(),Toast.LENGTH_LONG).show();
+
+                                    } catch (Throwable t) {
+                                        Log.e("My App", "Could not parse malformed JSON: ");
+                                    }
+
+//                                    new GetImages(RealmController.with(ImageEditor.this).getUser(1).getFile_name(), profile, imagename).execute() ;
 
                                 }
 
@@ -171,8 +213,5 @@ public class ImageEditor extends AppCompatActivity {
             Log.e("AndroidUploadService", exc.getMessage(), exc);
         }
     }
-
-
-
 
 }
