@@ -1,6 +1,7 @@
 package com.devappstudio.verifie;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
@@ -25,10 +27,12 @@ import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
 import net.gotev.uploadservice.UploadStatusDelegate;
 
-import org.json.JSONObject;
-
 import java.io.File;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import datastore.Api;
@@ -43,12 +47,13 @@ public class ImageEditor extends AppCompatActivity {
     static String server_id;
     CircleImageView profile;
     final String imagename ="profile.jpg";
+    TextView nameTv,lastVerifiedTv,imageStatusTv,visibilityStatus;
+    ProgressDialog pd ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_editor);
-
          profile = (CircleImageView)findViewById(R.id.profile_image);
         if(ImageStorage.checkifImageExists(imagename))
         {
@@ -62,6 +67,40 @@ public class ImageEditor extends AppCompatActivity {
         } else {
             new GetImages(RealmController.with(ImageEditor.this).getUser(1).getFile_name(), profile, imagename).execute() ;
         }
+
+        User user = RealmController.with(ImageEditor.this).getUser(1);
+
+        nameTv = (TextView)findViewById(R.id.name);
+        lastVerifiedTv = (TextView)findViewById(R.id.last_verified);
+        imageStatusTv = (TextView)findViewById(R.id.image_status);
+        visibilityStatus = (TextView)findViewById(R.id.visibility_status);
+        nameTv.setText("Full Name : "+user.getFullname());
+        imageStatusTv.setText("Image Status : Not Yet Confirmed");
+
+        if(RealmController.with(ImageEditor.this).hasVisible() && RealmController.with(ImageEditor.this).getVisibility(1).isStatus())
+        {
+            visibilityStatus.setText("Visibility Status : On");
+        }
+        else
+        {
+            visibilityStatus.setText("Visibility Status : Off");
+        }
+
+        SimpleDateFormat simpleDateFormat =
+                new SimpleDateFormat("dd/M/yyyy");
+
+        try {
+            Calendar calendar = Calendar.getInstance();
+            String strDate = "" + simpleDateFormat.format(calendar.getTime());
+
+            Date date1 = simpleDateFormat.parse(strDate);
+            Date date2 = simpleDateFormat.parse("13/10/2017");
+            lastVerifiedTv.setText("Last Confirmed Date : "+date1.getDay()+"/"+date1.getMonth()+"/"+date1.getYear());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
 
         server_id = RealmController.with(ImageEditor.this).getUser(1).getServer_id();
         profile.setOnClickListener(new View.OnClickListener() {
@@ -143,8 +182,6 @@ public class ImageEditor extends AppCompatActivity {
                 cursor.close();
 
             }
-            Toast.makeText(getApplicationContext(),path,Toast.LENGTH_LONG).show();
-
             uploadMultipart(getApplicationContext(),path);
 
             //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
@@ -153,6 +190,7 @@ public class ImageEditor extends AppCompatActivity {
 
 
     public void uploadMultipart(final Context context,String path) {
+        pd = ProgressDialog.show(ImageEditor.this,"Please wait ","Uploading Image",true,false);
         try {
             String uploadId =
                     new MultipartUploadRequest(context, Api.getApi() + "upload_image")
@@ -164,13 +202,23 @@ public class ImageEditor extends AppCompatActivity {
                                 @Override
                                 public void onProgress(UploadInfo uploadInfo) {
                                     // your code here
-                                    Toast.makeText(getApplicationContext(), uploadInfo.getProgressPercent() + " %", Toast.LENGTH_LONG).show();
+                                    if(pd != null)
+                                    {
+                                       pd.setMessage( uploadInfo.getProgressPercent()+" % uploaded ");
+                                    }
+
                                 }
 
                                 @Override
                                 public void onError(UploadInfo uploadInfo, Exception exception) {
                                     // your code here
                                     exception.printStackTrace();
+                                    if(pd != null)
+                                    {
+                                        pd.hide();
+                                    }
+                                    Toast.makeText(getApplicationContext(),"Sorry A Network Error Occurred",Toast.LENGTH_LONG).show();
+
                                 }
 
                                 @Override
@@ -179,33 +227,30 @@ public class ImageEditor extends AppCompatActivity {
                                     // if you have mapped your server response to a POJO, you can easily get it:
                                     // YourClass obj = new Gson().fromJson(serverResponse.getBodyAsString(), YourClass.class);
                                     // JSONObject obj = serverResponse.getBodyAsString()
-                                    try {
+                                    String location = serverResponse.getBodyAsString();
 
-                                        JSONObject obj = new JSONObject(serverResponse.getBodyAsString());
-
-                                        String location = obj.get("data").toString();
-
-                                        Realm realm = Realm.getDefaultInstance();
-                                        new GetImages(location, profile, imagename).execute() ;
-                                        User us = realm.where(User.class).findFirst();
-                                        us.setFile_name(location);
-                                        realm.beginTransaction();
-                                        realm.copyToRealmOrUpdate(us);
-                                        realm.commitTransaction();
-                                        Log.d("My App", obj.toString());
-                                        Toast.makeText(getApplicationContext(),us.getFile_name(),Toast.LENGTH_LONG).show();
-
-                                    } catch (Throwable t) {
-                                        Log.e("My App", "Could not parse malformed JSON: ");
+                                    Realm realm = Realm.getDefaultInstance();
+                                    new GetImages(location, profile, imagename).execute() ;
+                                    User us = realm.where(User.class).findFirst();
+                                    realm.beginTransaction();
+                                    us.setFile_name(location);
+                                    realm.copyToRealmOrUpdate(us);
+                                    realm.commitTransaction();
+                                    if(pd != null)
+                                    {
+                                        pd.hide();
                                     }
-
-//                                    new GetImages(RealmController.with(ImageEditor.this).getUser(1).getFile_name(), profile, imagename).execute() ;
 
                                 }
 
                                 @Override
                                 public void onCancelled(UploadInfo uploadInfo) {
                                     // your code here
+                                    if(pd != null)
+                                    {
+                                        pd.hide();
+                                    }
+
                                 }
                             })
                             .startUpload();
@@ -214,4 +259,19 @@ public class ImageEditor extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(pd != null && pd.isShowing())
+        {
+            pd.hide();
+           pd = null;
+        }
+
+    }
 }

@@ -3,14 +3,18 @@ package com.devappstudio.verifie;
 import android.Manifest;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -46,10 +50,11 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import java.util.ArrayList;
 import java.util.List;
 
+import datastore.ContactsList;
 import datastore.Location_Stats;
 import datastore.RealmController;
 import io.realm.Realm;
-
+import io.realm.RealmResults;
 
 
 public class main extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
@@ -84,11 +89,15 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setLogo(R.drawable.slider_logo);
+
+        // prepareMovieData();
+        main.readContacts task = new main.readContacts();
+        task.execute("");
+
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -561,4 +570,95 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
             }
         }
     }
+
+
+
+
+    private class readContacts extends AsyncTask<String, Void, String> {
+
+        /**
+         * Override this method to perform a computation on a background thread. The
+         * specified parameters are the parameters passed to {@link #execute}
+         * by the caller of this task.
+         * <p>
+         * This method can call {@link #publishProgress} to publish updates
+         * on the UI thread.
+         *
+         * @param params The parameters of the task.
+         * @return A result, defined by the subclass of this task.
+         * @see #onPreExecute()
+         * @see #onPostExecute
+         * @see #publishProgress
+         */
+        @Override
+        protected String doInBackground(String... params) {
+            ContentResolver cr = getContentResolver();
+            Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                    null, null, null, null);
+
+            if (cur.getCount() > 0) {
+                while (cur.moveToNext()) {
+                    ContactsList cl = new ContactsList();
+
+                    String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
+                    String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+                    //String image = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI));
+                    if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
+
+                        Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
+                                new String[]{id}, null);
+                        while (pCur.moveToNext()) {
+                            String phone = pCur.getString(
+                                    pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            boolean is_stored = false;
+
+                            phone = phone.trim();
+                            phone = phone.replace("\\s+","");
+                            phone = phone.replace(" ","");
+
+                            Realm realm = Realm.getDefaultInstance();
+                            RealmResults<ContactsList> clst = realm.where(ContactsList.class).equalTo("telephone",phone).findAll();
+                            if(clst.size() > 0)
+                            {
+                                for (int i=0; i<clst.size(); i++)
+                                {
+                                    if(clst.get(i).getTelephone().equalsIgnoreCase(phone))
+                                    {
+                                        is_stored = true;
+
+                                    }
+                                }
+
+                            }
+
+                            if(!is_stored) {
+
+
+
+
+                                cl.setTelephone(phone);
+                                cl.setIs_on_verifie("0");
+
+                                cl.setType("Other");
+                                cl.setFile_name("");
+                                cl.setName(name);
+                                RealmResults <ContactsList> all_cl = realm.where(ContactsList.class).findAll();
+                                cl.setId( ((int) realm.where(ContactsList.class).maximumInt("id")) + 1);
+                                realm.beginTransaction();
+                                realm.copyToRealm(cl);
+                                realm.commitTransaction();
+                            }
+                        }
+                        pCur.close();
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+
+
+
 }

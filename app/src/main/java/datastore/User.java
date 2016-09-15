@@ -13,7 +13,7 @@ public class User extends RealmObject{
     @PrimaryKey
     private int id;
 
-    private String fullname, telephone,server_id,longitude,latitude,file_name;
+    private String fullname, telephone,server_id,longitude,latitude,file_name,last_verified;
 
     public User(String fullname, String telephone, String server_id, String longitude, String latitude, String file_name) {
         this.fullname = fullname;
@@ -30,6 +30,14 @@ public class User extends RealmObject{
 
     public void setFile_name(String file_name) {
         this.file_name = file_name;
+    }
+
+    public String getLast_verified() {
+        return last_verified;
+    }
+
+    public void setLast_verified(String last_verified) {
+        this.last_verified = last_verified;
     }
 
     public User() {

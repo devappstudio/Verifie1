@@ -220,16 +220,12 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
                         // The user was asked to change settings, but chose not to
 
                         Toast.makeText(MyLocationRequest.this, "Your Location Is Required For Verifie To Function Properly.", Toast.LENGTH_LONG).show();
-                        final Intent intent = new Intent(MyLocationRequest.this, main.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                        startActivity(intent);
                         finish();
                         break;
                     }
                     default:
                     {
+                        finish();
                         break;
                     }
                 }
@@ -249,6 +245,7 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
 
             case CONTACTS_REQUEST:
                 if (canAccessContacts()) {
+
                 }
                 else {
                 }

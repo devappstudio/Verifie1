@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -79,6 +80,7 @@ public class TwoFragment extends Fragment{
         //Just got here check if visibility has been set already
         if(RealmController.with(getActivity()).hasVisible())
         {
+
             visibility.setChecked(RealmController.with(getActivity()).getVisibility(1).isStatus());
         }
         else
@@ -93,6 +95,72 @@ public class TwoFragment extends Fragment{
 
             }
         });
+
+        SearchView search = (SearchView) myView.findViewById( R.id.search);
+        SearchView.OnQueryTextListener listener = new SearchView.OnQueryTextListener(){
+
+            /**
+             * Called when the user submits the query. This could be due to a key press on the
+             * keyboard or due to pressing a submit button.
+             * The listener can override the standard behavior by returning true
+             * to indicate that it has handled the submit request. Otherwise return false to
+             * let the SearchView handle the submission by launching any associated intent.
+             *
+             * @param query the query text that is to be submitted
+             * @return true if the query has been handled by the listener, false to let the
+             * SearchView perform the default action.
+             */
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                query = query.toLowerCase();
+                return false;
+            }
+
+            /**
+             * Called when the query text is changed by the user.
+             *
+             * @param query the new content of the query text field.
+             * @return false if the SearchView should perform the default action of showing any
+             * suggestions if available, true if the action was handled by the listener.
+             */
+            @Override
+            public boolean onQueryTextChange(String query) {
+                query = query.toLowerCase();
+                final List<NearBy> List = new ArrayList<>();
+
+                final List<String> filteredList = new ArrayList<>();
+                for (int i = 0; i< movieList.size(); i++) {
+                    final NearBy text = movieList.get(i);
+                    if (text.getTelephone_number().contains(query)) {
+                        List.add(movieList.get(i));
+                    }
+                    else
+                    {
+                        if (text.getName().contains(query)) {
+                            List.add(movieList.get(i));
+                        }
+                        else
+                        {
+                            if (text.getScreen_name().contains(query)) {
+                                List.add(movieList.get(i));
+                            }
+                        }
+
+                    }
+                }
+                mAdapter = new NearByAdaptor(List,getContext());
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+                recyclerView.setLayoutManager(mLayoutManager);
+                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerView.setAdapter(mAdapter);
+                return true;
+            }
+        };
+
+        search.setOnQueryTextListener(listener);
+
+
         RealmController.with(getActivity()).clearContacts();
 
 
@@ -126,6 +194,7 @@ public class TwoFragment extends Fragment{
             }
         }));
 
+        near_by_offline_users();
 
         return myView;
     }
@@ -240,6 +309,7 @@ public class TwoFragment extends Fragment{
                             }
                             else
                             {
+                                near_by_offline_users();
                             }
 
                         }
@@ -257,6 +327,7 @@ public class TwoFragment extends Fragment{
             public void onErrorResponse(VolleyError error) {
                 dialog.hide();
                 Toast.makeText(getActivity(),"Sorry A Network Error Occurred",Toast.LENGTH_LONG).show();
+                near_by_offline_users();
 
                 error.printStackTrace();
             }
@@ -306,12 +377,15 @@ public class TwoFragment extends Fragment{
                                 {
                                      user = new Visibility(false);
                                     visibility.setChecked(false);
+                                    near_by_offline_users();
 
                                 }
                                 if(response.get("data").toString().equalsIgnoreCase("1"))
                                 {
                                      user = new Visibility(true);
                                     visibility.setChecked(true);
+                                    near_by_offline_users();
+
                                 }
 
                                 realm.beginTransaction();
@@ -320,12 +394,16 @@ public class TwoFragment extends Fragment{
                             }
                             else
                             {
+                                near_by_offline_users();
+
                             }
 
                         }
                         catch (Exception e)
                         {
                             e.printStackTrace();
+                            near_by_offline_users();
+
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -335,6 +413,8 @@ public class TwoFragment extends Fragment{
                 dialog.hide();
                 Toast.makeText(getActivity(),"Sorry A Network Error Occurred",Toast.LENGTH_LONG).show();
                 error.printStackTrace();
+                near_by_offline_users();
+
             }
         }) {
             @Override
@@ -374,6 +454,9 @@ public class TwoFragment extends Fragment{
                                 RealmResults<ContactsList> RegisteredCls = RealmController.with(getActivity()).getAllRegisteredContacts();
                                 RealmResults<ContactsList> UnRegisteredCls = RealmController.with(getActivity()).getAllUnRegisteredContacts();
 
+                                RegisteredCls.sort("name",true);
+                                UnRegisteredCls.sort("name",true);
+
                                 for (int ii = 0; ii < RegisteredCls.size(); ii++)
                                 {
                                     ContactsList cl = RegisteredCls.get(ii);
@@ -406,6 +489,7 @@ public class TwoFragment extends Fragment{
                             }
                             else
                             {
+                                near_by_offline_users();
 
                             }
 
@@ -413,6 +497,8 @@ public class TwoFragment extends Fragment{
                         catch (Exception e)
                         {
                             e.printStackTrace();
+                            near_by_offline_users();
+
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -420,6 +506,8 @@ public class TwoFragment extends Fragment{
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
+                near_by_offline_users();
+
             }
         }) {
             @Override
@@ -437,12 +525,15 @@ public class TwoFragment extends Fragment{
 
     void near_by_offline_users()
     {
-
-
+        
         movieList.clear();
 
         RealmResults<ContactsList> RegisteredCls = RealmController.with(getActivity()).getAllRegisteredContacts();
         RealmResults<ContactsList> UnRegisteredCls = RealmController.with(getActivity()).getAllUnRegisteredContacts();
+
+
+        RegisteredCls.sort("name",true);
+        UnRegisteredCls.sort("name",true);
 
         for (int ii = 0; ii < RegisteredCls.size(); ii++)
         {

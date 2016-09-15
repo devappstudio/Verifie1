@@ -13,9 +13,9 @@
     <item name="darkred" type="color">#FFCC0000</item>
     <item name="white" type="color">#FFFFFF</item>
     <item name="grey" type="color">#A9A9A9</item>
-    <color name="primaryColor">#ff0000</color>
-    <color name="primaryColorDark">#d81b60</color>
-    <color name="accent_color">#880e4f</color>\<!-- Screens background color-->
+    <color name="primaryColor">#E9282A</color>
+    <color name="primaryColorDark">#E9282A</color>
+    <color name="accent_color">#E9282A</color>\<!-- Screens background color-->
     <color name="bg_screen2">#20d2bb</color>
     <color name="bg_screen3">#3395ff</color>
     <color name="colorAccent">#FF4081</color>

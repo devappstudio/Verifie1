@@ -51,6 +51,7 @@ import java.util.Locale;
 
 import datastore.Api;
 import datastore.RealmController;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
@@ -77,6 +78,7 @@ public class OneFragment extends Fragment{
     private TextView[] dots;
     private int[] layouts;
     private TextView percentage;
+    CircleImageView cimv;
     private Button btnSkip, btnNext;
     static private Float level = 0f;
     private Uri fileUri; // file url to store image/video
@@ -162,6 +164,8 @@ public class OneFragment extends Fragment{
         profile.setProgress(level);
 
         profile.startAnimation();
+        cimv = (CircleImageView)myView.findViewById(R.id.profile_image);
+        cimv.setImageResource(R.drawable.panic);
 
         percentage = (TextView)myView.findViewById(R.id.percent_view) ;
         String imagename ="profile";
@@ -266,7 +270,7 @@ public class OneFragment extends Fragment{
 
         mViewPager.setAdapter(mCardAdapter);
         mViewPager.setPageTransformer(false, mCardShadowTransformer);
-        mViewPager.setOffscreenPageLimit(5);
+        mViewPager.setOffscreenPageLimit(10);
         mViewPager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
