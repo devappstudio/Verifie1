@@ -217,9 +217,7 @@ public class RealmController {
     // add new contact
     public void addContact(ContactsList cl)
     {
-        int last = getAllContacts().size();
-        last ++;
-        cl.setId(last);
+
         realm.beginTransaction();
         realm.copyToRealm(cl);
         realm.commitTransaction();
@@ -246,5 +244,6 @@ public class RealmController {
         RealmResults<ContactsList> cl = realm.where(ContactsList.class).equalTo("telephone",number).findAll();
         return cl.first();
     }
+
 
 }

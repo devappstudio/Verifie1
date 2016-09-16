@@ -31,7 +31,7 @@
                 android:layout_marginTop="10dp"
                 android:elevation="8dp"
                 android:drawingCacheQuality="high"
-                android:src="@drawable/placeholder"
+                android:src="@drawable/circular"
                 app:backgroundRingColor="@color/rotabar_back_ground"
                 app:progressRingColor="@color/rotabar_light_green_second"
                 app:progress="42"

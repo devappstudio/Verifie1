@@ -83,7 +83,7 @@ public class SplashActivity extends Activity {
 
                 try {
                     // Thread will sleep for 5 seconds
-                    sleep(5*1000);
+                    //sleep(5*1000);
 
 
                     Intent intent=new Intent(getBaseContext(),MyLocationRequest.class);

@@ -151,7 +151,7 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
                 //final LocationSettingsStates state = result.getLocationSettingsStates();
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
-                        final Intent intent = new Intent(MyLocationRequest.this, main.class);
+                        final Intent intent = new Intent(MyLocationRequest.this, AppSetup.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -207,7 +207,7 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
                     case Activity.RESULT_OK:
                     {
                         // All required changes were successfully made
-                        final Intent intent = new Intent(MyLocationRequest.this, main.class);
+                        final Intent intent = new Intent(MyLocationRequest.this, AppSetup.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);

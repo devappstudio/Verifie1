@@ -13,13 +13,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -127,8 +127,6 @@ public class TwoFragment extends Fragment{
             public boolean onQueryTextChange(String query) {
                 query = query.toLowerCase();
                 final List<NearBy> List = new ArrayList<>();
-
-                final List<String> filteredList = new ArrayList<>();
                 for (int i = 0; i< movieList.size(); i++) {
                     final NearBy text = movieList.get(i);
                     if (text.getTelephone_number().contains(query)) {
@@ -161,7 +159,7 @@ public class TwoFragment extends Fragment{
         search.setOnQueryTextListener(listener);
 
 
-        RealmController.with(getActivity()).clearContacts();
+       // RealmController.with(getActivity()).clearContacts();
 
 
 
@@ -170,10 +168,9 @@ public class TwoFragment extends Fragment{
 
 
        // prepareMovieData();
-        TwoFragment.readContacts task = new readContacts();
+ /*       TwoFragment.readContacts task = new readContacts();
         task.execute("");
-
-
+*/
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);

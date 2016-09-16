@@ -3,21 +3,28 @@ package com.devappstudio.verifie;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.text.Html;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +34,21 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.kuassivi.view.ProgressProfileView;
+import com.squareup.picasso.Picasso;
+
+import net.gotev.uploadservice.MultipartUploadRequest;
+import net.gotev.uploadservice.ServerResponse;
+import net.gotev.uploadservice.UploadInfo;
+import net.gotev.uploadservice.UploadNotificationConfig;
+import net.gotev.uploadservice.UploadStatusDelegate;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -39,6 +60,7 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -46,15 +68,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import datastore.Api;
 import datastore.RealmController;
+import datastore.User;
+import datastore.VerificationStatus;
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static android.app.Activity.RESULT_CANCELED;
-import static android.app.Activity.RESULT_OK;
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 
 public class OneFragment extends Fragment{
@@ -84,6 +109,7 @@ public class OneFragment extends Fragment{
     private Uri fileUri; // file url to store image/video
     private static List<CardView> mViews;
     private static List<ContactLocations> mData;
+    static String server_id;
 
     // LogCat tag
     private static final String TAG = OneFragment.class.getSimpleName();
@@ -100,7 +126,7 @@ public class OneFragment extends Fragment{
     static String filePath;
     long totalSize = 0;
 
-
+    ProgressProfileView profile;
 
     public OneFragment() {
         // Required empty public constructor
@@ -115,8 +141,20 @@ public class OneFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        final Realm realm = Realm.getDefaultInstance();
 
-
+        RealmResults<VerificationStatus> vs = realm.where(VerificationStatus.class).findAll();
+        if(vs.isEmpty())
+        {
+            VerificationStatus user = new VerificationStatus();
+            realm.beginTransaction();
+            user.setId(1);
+            user.setDate_to_expire("13/09/2015");
+            user.setDate_verified("13/09/2015");
+            realm.copyToRealmOrUpdate(user);
+            realm.commitTransaction();
+        }
+        VerificationStatus vss = realm.where(VerificationStatus.class).findAll().first();
         SimpleDateFormat simpleDateFormat =
                 new SimpleDateFormat("dd/M/yyyy");
 
@@ -125,12 +163,11 @@ public class OneFragment extends Fragment{
             String strDate = "" + simpleDateFormat.format(calendar.getTime());
 
             Date date1 = simpleDateFormat.parse(strDate);
-            Date date2 = simpleDateFormat.parse("13/10/2017");
+            Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
             Long t =  printDifference(date1, date2)/7;
             if(t > 52)
             {
                 level =  (float)(t/52)*100;
-
             }
             else
             {
@@ -159,7 +196,7 @@ public class OneFragment extends Fragment{
         {
              myView = inflater.inflate(R.layout.fragment_one2, container, false);
         }
-        ProgressProfileView profile = (ProgressProfileView) myView.findViewById(R.id.profile);
+        profile = (ProgressProfileView) myView.findViewById(R.id.profile);
 
         profile.setProgress(level);
 
@@ -168,31 +205,32 @@ public class OneFragment extends Fragment{
         cimv.setImageResource(R.drawable.panic);
 
         percentage = (TextView)myView.findViewById(R.id.percent_view) ;
-        String imagename ="profile";
-        if(ImageStorage.checkifImageExists(imagename))
-        {
-            File file = ImageStorage.getImage("/verifie/profile/"+imagename+".jpg");
-            String path = file.getAbsolutePath();
-            if (path != null){
-                Bitmap b = BitmapFactory.decodeFile(path);
-                profile.setImageBitmap(b);
 
-            }
-        } else {
-            new GetImages(RealmController.with(getActivity()).getUser(1).getFile_name(), profile, imagename).execute() ;
+        Realm Mrealm = Realm.getDefaultInstance();
+        String url = Mrealm.where(User.class).findAll().first().getFile_name();
+        server_id = Mrealm.where(User.class).findAll().first().getServer_id();
+        try {
+            Picasso.with(getActivity()).load(url).into(profile);
+        }
+        catch (Exception e)
+        {
+            System.out.println(url);
+            e.printStackTrace();
         }
 
 
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // captureImage();
-                final Intent intent = new Intent(getActivity(), ImageEditor.class);
+                captureImage();
+               /* final Intent intent = new Intent(getActivity(), ImageEditor.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 getActivity().startActivity(intent);
                 getActivity().finish();
+                */
+
             }
         });
 
@@ -437,48 +475,50 @@ public class OneFragment extends Fragment{
     /**
      * Launching camera app to capture image
      */
-    private void captureImage() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    final String imagename ="profile.jpg";
+    private Uri outputFileUri;
+    private static final int SELECT_PICTURE = 1;
 
-        fileUri = getOutputMediaFileUri(MEDIA_TYPE_IMAGE);
-        filePath = fileUri.getPath();
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-        // start the image capture Intent
-        OneFragment.this.startActivityForResult(intent, CAMERA_CAPTURE_IMAGE_REQUEST_CODE);
+    private void captureImage() {
+
+        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "/verifie/profile/" + File.separator);
+        root.mkdirs();
+        final String fname = imagename;
+        final File sdImageMainDirectory = new File(root, fname);
+        outputFileUri = Uri.fromFile(sdImageMainDirectory);
+
+        // Camera.
+        final List<Intent> cameraIntents = new ArrayList<Intent>();
+        final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        final PackageManager packageManager = getActivity().getPackageManager();
+        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+        for(ResolveInfo res : listCam) {
+            final String packageName = res.activityInfo.packageName;
+            final Intent intent = new Intent(captureIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(packageName);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            cameraIntents.add(intent);
+        }
+
+        // Filesystem.
+        final Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+        // Chooser of filesystem options.
+        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+
+        // Add the camera options.
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[cameraIntents.size()]));
+
+        startActivityForResult(chooserIntent, SELECT_PICTURE);
     }
 
     /**
      * Receiving activity result method will be called after closing the camera
      * */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // if the result is capturing Image
 
-        if (requestCode == CAMERA_CAPTURE_IMAGE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-
-                // successfully captured the image
-                // launching upload activity
-                launchUploadActivity(true);
-
-
-            } else if (resultCode == RESULT_CANCELED) {
-
-                // user cancelled Image capture
-                Toast.makeText(getActivity(),
-                        "User cancelled image capture", Toast.LENGTH_SHORT)
-                        .show();
-
-            } else {
-                // failed to capture image
-                Toast.makeText(getActivity(),
-                        "Sorry! Failed to capture image", Toast.LENGTH_SHORT)
-                        .show();
-            }
-        } else {
-            super.onActivityResult( requestCode,  resultCode,  data);
-        }
-    }
     private void launchUploadActivity(boolean isImage){
         new UploadFileToServer().execute();
     }
@@ -633,6 +673,191 @@ public class OneFragment extends Fragment{
     public static float dpToPixels(int dp, Context context) {
         return dp * (context.getResources().getDisplayMetrics().density);
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        // super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SELECT_PICTURE && resultCode == Activity.RESULT_OK) {
+            final boolean isCamera;
+            Uri ur;
 
+            if (data == null) {
+                isCamera = true;
+            } else {
+                final String action = data.getAction();
+                if (action == null) {
+                    isCamera = false;
+                } else {
+                    isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                }
+            }
+            String path="";
+            Uri selectedImageUri;
+            if (isCamera) {
+                Toast.makeText(getContext(),"Camera",Toast.LENGTH_LONG).show();
+                ur = outputFileUri;
+                path = outputFileUri.getPath().toString();
+
+            } else {
+                /*
+                selectedImageUri = data == null ? null : data.getData();
+                String uriString = selectedImageUri.toString();
+                File myFile = new File(uriString);
+                path = myFile.getAbsolutePath();
+                */
+                Toast.makeText(getContext(),"File",Toast.LENGTH_LONG).show();
+
+                Uri uri = data.getData();
+                ur = uri;
+                String[] projection = { MediaStore.Images.Media.DATA };
+
+                Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(projection[0]);
+                path = cursor.getString(columnIndex); // returns null
+                cursor.close();
+
+            }
+            uploadMultipart(getContext(),path);
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), ur);
+                profile.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//            uploadImage();
+            //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
+        }
+    }
+
+
+    public void uploadMultipart(final Context context,String path) {
+        try {
+            String uploadId =
+                    new MultipartUploadRequest(context, Api.getApi() + "upload_image")
+                            .addFileToUpload(path, "file_name")
+                            .addParameter("server_id", server_id)
+                            .setNotificationConfig(new UploadNotificationConfig())
+                            .setMaxRetries(2)
+                            .setDelegate(new UploadStatusDelegate() {
+                                @Override
+                                public void onProgress(UploadInfo uploadInfo) {
+                                    // your code here
+//                                    if(pd != null)
+//                                    {
+//                                        pd.setMessage( uploadInfo.getProgressPercent()+" % uploaded ");
+//                                    }
+
+                                }
+
+                                @Override
+                                public void onError(UploadInfo uploadInfo, Exception exception) {
+                                    // your code here
+                                    exception.printStackTrace();
+//                                    if(pd != null)
+//                                    {
+//                                        pd.hide();
+//                                    }
+//                                    Toast.makeText(getApplicationContext(),"Sorry A Network Error Occurred",Toast.LENGTH_LONG).show();
+
+                                }
+
+                                @Override
+                                public void onCompleted(UploadInfo uploadInfo, ServerResponse serverResponse) {
+                                    // your code here
+                                    // if you have mapped your server response to a POJO, you can easily get it:
+                                    // YourClass obj = new Gson().fromJson(serverResponse.getBodyAsString(), YourClass.class);
+                                    // JSONObject obj = serverResponse.getBodyAsString()
+                                    String location = serverResponse.getBodyAsString();
+
+                                    Realm realm = Realm.getDefaultInstance();
+//                                    new GetImages(location, profile, imagename).execute() ;
+                                    Picasso.with(getActivity()).load(location).into(profile);
+
+                                    User us = realm.where(User.class).findFirst();
+                                    realm.beginTransaction();
+                                    us.setFile_name(location);
+                                    realm.copyToRealmOrUpdate(us);
+                                    realm.commitTransaction();
+//                                    if(pd != null)
+//                                    {
+//                                        pd.hide();
+//                                    }
+
+                                }
+
+                                @Override
+                                public void onCancelled(UploadInfo uploadInfo) {
+                                    // your code here
+//                                    if(pd != null)
+//                                    {
+//                                        pd.hide();
+//                                    }
+
+                                }
+                            })
+                            .startUpload();
+        } catch (Exception exc) {
+            Log.e("AndroidUploadService", exc.getMessage(), exc);
+        }
+    }
+
+    private void uploadImage(){
+        //Showing the progress dialog
+        final ProgressDialog loading = ProgressDialog.show(getActivity(),"Uploading...","Please wait...",false,false);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Api.getApi() + "upload_image",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        //Disimissing the progress dialog
+                        loading.dismiss();
+                        //Showing toast message of the response
+                        Toast.makeText(getActivity(), s , Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        //Dismissing the progress dialog
+                        loading.dismiss();
+
+                        //Showing toast
+                        Toast.makeText(getContext(), volleyError.getMessage().toString(), Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                //Converting Bitmap to String
+                String image = getStringImage(bitmap);
+
+                //Getting Image Name
+                //String name = editTextName.getText().toString().trim();
+
+                //Creating parameters
+                Map<String,String> params = new Hashtable<String, String>();
+
+                //Adding parameters
+                params.put("file_name", image);
+                params.put("server_id", server_id);
+
+                //returning parameters
+                return params;
+            }
+        };
+
+        //Creating a Request Queue
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+
+        //Adding request to the queue
+        requestQueue.add(stringRequest);
+    }
+    public String getStringImage(Bitmap bmp){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        return encodedImage;
+    }
+    private Bitmap bitmap;
 
 }
