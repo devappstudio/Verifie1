@@ -12,14 +12,13 @@ public class SentRequests extends RealmObject {
     @PrimaryKey
     private int id;
 
-    private String id_receipent,time_sent,time_replied;
-    private Boolean status;
+    private String id_receipent,time_sent,time_replied,status;
     private int reply;
 
     public SentRequests() {
     }
 
-    public SentRequests(int id, String id_receipent, String time_sent, String time_replied, Boolean status, int reply) {
+    public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply) {
         this.id = id;
         this.id_receipent = id_receipent;
         this.time_sent = time_sent;
@@ -61,11 +60,11 @@ public class SentRequests extends RealmObject {
         this.time_replied = time_replied;
     }
 
-    public Boolean getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

@@ -19,6 +19,7 @@ import com.github.ybq.android.spinkit.style.ThreeBounce;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import datastore.Api;
 import datastore.ContactsList;
+import datastore.Facilities;
 import datastore.User;
 import datastore.VerificationStatus;
 import io.realm.Realm;
@@ -232,6 +234,7 @@ public class AppSetup extends AppCompatActivity {
             ContentResolver cr = getContentResolver();
             Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                     null, null, null, null);
+            loadFacilities();
 
             if (cur.getCount() > 0) {
                 while (cur.moveToNext()) {
@@ -356,5 +359,80 @@ public class AppSetup extends AppCompatActivity {
                     */
             isReceiverRegistered = true;
         }
+    }
+
+
+
+    void loadFacilities()
+    {
+        final String tag = "new_user_logn";
+
+        final Realm realm = Realm.getDefaultInstance();
+        User clst = realm.where(User.class).findAll().first();
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("id_user", clst.getServer_id());
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                Api.getApi()+"load_facilities",new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.print(response.toString());
+                        try {
+
+                            JSONArray jaa = response.getJSONArray("data");
+
+                            for (int i=0; i< jaa.length(); i++)
+                            {
+
+                                JSONObject object = (JSONObject) jaa.get(i);
+                                RealmResults<Facilities> f = realm.where(Facilities.class).equalTo("server_id",object.get("id").toString()).findAll();
+
+                                if(f.isEmpty())
+                                {
+                                    Facilities fac = new Facilities(((int) realm.where(Facilities.class).maximumInt("id")),object.get("name").toString(),object.get("contact_person_name").toString(),object.get("contact_person_telephone").toString(),object.get("location").toString(),object.get("id").toString());
+                                    realm.beginTransaction();
+                                    realm.copyToRealm(fac);
+                                    realm.commitTransaction();
+                                }
+                                else
+                                {
+                                    Facilities fac = f.first();
+                                    realm.beginTransaction();
+                                    fac.setName(object.get("name").toString());
+                                    fac.setContact_person(object.get("contact_person_name").toString());
+                                    fac.setContact_phone(object.get("contact_person_telephone").toString());
+                                    fac.setLocation(object.get("location").toString());
+                                    realm.copyToRealmOrUpdate(fac);
+                                    realm.commitTransaction();
+                                }
+
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+        };
+// Adding request to request queue
+
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
+
     }
 }

@@ -2,13 +2,10 @@ package com.devappstudio.verifie;
 
 
 import android.app.Dialog;
-import android.content.ContentResolver;
 import android.content.Context;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +26,9 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -96,6 +96,9 @@ public class TwoFragment extends Fragment{
             }
         });
 
+        TwoFragment.readContacts task = new TwoFragment.readContacts();
+        task.execute("");
+
         SearchView search = (SearchView) myView.findViewById( R.id.search);
         SearchView.OnQueryTextListener listener = new SearchView.OnQueryTextListener(){
 
@@ -132,18 +135,11 @@ public class TwoFragment extends Fragment{
                     if (text.getTelephone_number().contains(query)) {
                         List.add(movieList.get(i));
                     }
-                    else
-                    {
-                        if (text.getName().contains(query)) {
-                            List.add(movieList.get(i));
-                        }
-                        else
-                        {
-                            if (text.getScreen_name().contains(query)) {
-                                List.add(movieList.get(i));
-                            }
-                        }
-
+                    if (text.getName().contains(query)) {
+                        List.add(movieList.get(i));
+                    }
+                    if (text.getScreen_name().contains(query)) {
+                        List.add(movieList.get(i));
                     }
                 }
                 mAdapter = new NearByAdaptor(List,getContext());
@@ -567,7 +563,7 @@ public class TwoFragment extends Fragment{
 
                 }
             }
-            mHandler.postDelayed(mHandlerTask, (1000 * 3 * 1));
+            mHandler.postDelayed(mHandlerTask, (1000 * 2 * 1));
         }
     };
 
@@ -591,69 +587,151 @@ public class TwoFragment extends Fragment{
          */
         @Override
         protected String doInBackground(String... params) {
-            ContentResolver cr = getActivity().getContentResolver();
-            Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-                    null, null, null, null);
+            check_on_verifie();
 
-            if (cur.getCount() > 0) {
-                while (cur.moveToNext()) {
-                    ContactsList cl = new ContactsList();
-
-                    String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
-                    String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                    //String image = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI));
-                    if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-
-                        Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
-                                ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
-                                new String[]{id}, null);
-                        while (pCur.moveToNext()) {
-                            String phone = pCur.getString(
-                                    pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                            boolean is_stored = false;
-
-                            phone = phone.trim();
-                            phone = phone.replace("\\s+","");
-                            phone = phone.replace(" ","");
-
-                            Realm realm = Realm.getDefaultInstance();
-                            RealmResults<ContactsList> clst = realm.where(ContactsList.class).equalTo("telephone",phone).findAll();
-                            if(clst.size() > 0)
-                            {
-                                for (int i=0; i<clst.size(); i++)
-                                {
-                                    if(clst.get(i).getTelephone().equalsIgnoreCase(phone))
-                                    {
-                                        is_stored = true;
-
-                                    }
-                                }
-
-                            }
-
-
-                            if(!is_stored) {
-                                cl.setTelephone(phone);
-                                cl.setIs_on_verifie("0");
-                                cl.setType("Other");
-                                cl.setFile_name("");
-                                cl.setName(name);
-                                RealmResults <ContactsList> all_cl = realm.where(ContactsList.class).findAll();
-                                cl.setId(all_cl.size()+1);
-                                realm.beginTransaction();
-                                realm.copyToRealm(cl);
-                                realm.commitTransaction();
-                            }
-                        }
-                        pCur.close();
-                    }
-                }
-            }
             return null;
         }
     }
 
 
+    void  check_on_verifie()
+    {
+        final Realm trealm = Realm.getDefaultInstance();
+        final RealmResults<ContactsList> cl = trealm.where(ContactsList.class).equalTo("is_on_verifie","0").findAll();
+
+        for (int i=0; i<cl.size();i++)
+        {
+
+            String phone = cl.get(i).getTelephone();
+            try {
+                PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
+                Phonenumber.PhoneNumber pn = null;
+
+                pn = pnu.parse(phone, "GH");
+                phone = pnu.format(pn, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
+
+            } catch (NumberParseException e) {
+                e.printStackTrace();
+            }
+
+            final String tag = "new_user_logn";
+            phone = phone.trim();
+            phone = phone.replace("\\s+","");
+            phone = phone.replace(" ","");
+
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("telephone", phone);
+            final int finalI = i;
+            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                    Api.getApi()+"check_is_on_verifie",new JSONObject(params),
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            System.out.print(response.toString());
+                            try {
+
+                                if(response.get("status").toString().equalsIgnoreCase("1"))
+                                {
+                                    ContactsList contactsList = cl.get(finalI);
+
+                                    trealm.beginTransaction();
+                                    contactsList.setIs_on_verifie("1");
+                                    trealm.copyToRealmOrUpdate(contactsList);
+                                    trealm.commitTransaction();
+                                    near_by_offline_users();
+                                }
+                                else
+                                {
+                                    check_on_verifie1(cl.get(finalI));
+                                }
+
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+// Adding request to request queue
+            AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
+
+        }
+
+    }
+
+    void  check_on_verifie1(final ContactsList contactsList)
+    {
+
+        String phone = contactsList.getTelephone();
+        phone = phone.trim();
+        phone = phone.replace("\\s+","");
+        phone = phone.replace(" ","");
+
+            final String tag = "new_user_logn";
+
+        final Realm trealm = Realm.getDefaultInstance();
+
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("telephone", phone);
+            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                    Api.getApi()+"check_is_on_verifie",new JSONObject(params),
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            System.out.print(response.toString());
+                            try {
+
+                                if(response.get("status").toString().equalsIgnoreCase("1"))
+                                {
+                                    trealm.beginTransaction();
+                                    contactsList.setIs_on_verifie("1");
+                                    trealm.copyToRealmOrUpdate(contactsList);
+                                    trealm.commitTransaction();
+                                    near_by_offline_users();
+
+                                }
+
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+// Adding request to request queue
+            AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
+
+        }
+
+
+
 }
-//http://stackoverflow.com/questions/6106859/how-to-format-a-phone-number-using-phonenumberutils
-//https://github.com/googlei18n/libphonenumber/blob/master/README.md
+
+//

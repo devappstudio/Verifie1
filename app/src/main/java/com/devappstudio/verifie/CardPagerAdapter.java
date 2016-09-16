@@ -50,6 +50,14 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
                 .inflate(R.layout.adapter, container, false);
         container.addView(view);
         CardView cardView = (CardView) view.findViewById(R.id.cardView);
+
+        TextView title = (TextView) view.findViewById(R.id.facility_name);
+        TextView location = (TextView) view.findViewById(R.id.facility_location);
+
+        location.setText(mData.get(position).getLocation());
+        title.setText(mData.get(position).getName());
+
+
         final Dialog dialog = new Dialog(container.getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.centers_layout);

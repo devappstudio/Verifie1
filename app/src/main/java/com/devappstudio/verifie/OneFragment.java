@@ -39,6 +39,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.kuassivi.view.ProgressProfileView;
@@ -59,6 +60,8 @@ import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -68,12 +71,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import datastore.Api;
+import datastore.Facilities;
 import datastore.RealmController;
 import datastore.User;
 import datastore.VerificationStatus;
@@ -154,6 +159,7 @@ public class OneFragment extends Fragment{
             realm.copyToRealmOrUpdate(user);
             realm.commitTransaction();
         }
+        loadFacilities();
         VerificationStatus vss = realm.where(VerificationStatus.class).findAll().first();
         SimpleDateFormat simpleDateFormat =
                 new SimpleDateFormat("dd/M/yyyy");
@@ -291,12 +297,24 @@ public class OneFragment extends Fragment{
 
         mData = new ArrayList<>();
         mViews = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            ContactLocations cl  = new ContactLocations();
-            cl.setLocation("Location address");
-            cl.setName("Name Of Hospital");
-            cl.setPerson("Name Of Contact Person");
-            cl.setTelephone("+233262141279");
+        ContactLocations cl  = new ContactLocations();
+        cl.setLocation("Test : Location");
+        cl.setName("Test Facility");
+        cl.setPerson("Alexander ");
+        cl.setTelephone("+233244419419");
+        mData.add(cl);
+        mViews.add(null);
+
+        final Realm realm1 = Realm.getDefaultInstance();
+
+        RealmResults<Facilities> facilities = realm1.where(Facilities.class).findAll();
+        for (int i = 0; i < facilities.size(); i++) {
+            cl  = new ContactLocations();
+            Facilities facility = facilities.get(i);
+            cl.setLocation(facility.getLocation());
+            cl.setName(facility.getName());
+            cl.setPerson(facility.getContact_person());
+            cl.setTelephone(facility.getContact_phone());
             mData.add(cl);
             mViews.add(null);
         }
@@ -859,5 +877,83 @@ public class OneFragment extends Fragment{
         return encodedImage;
     }
     private Bitmap bitmap;
+
+
+
+
+    void loadFacilities()
+    {
+        final String tag = "new_user_logn";
+
+        final Realm realm = Realm.getDefaultInstance();
+        User clst = realm.where(User.class).findAll().first();
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("id_user", clst.getServer_id());
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                Api.getApi()+"load_facilities",new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.print(response.toString());
+                        try {
+
+                            JSONArray jaa = response.getJSONArray("data");
+
+                            for (int i=0; i< jaa.length(); i++)
+                            {
+
+                                JSONObject object = (JSONObject) jaa.get(i);
+                                RealmResults<Facilities> f = realm.where(Facilities.class).equalTo("server_id",object.get("id").toString()).findAll();
+
+                                if(f.isEmpty())
+                                {
+                                    Facilities fac = new Facilities(((int) realm.where(Facilities.class).maximumInt("id")),object.get("name").toString(),object.get("contact_person_name").toString(),object.get("contact_person_telephone").toString(),object.get("location").toString(),object.get("id").toString());
+                                    realm.beginTransaction();
+                                    realm.copyToRealm(fac);
+                                    realm.commitTransaction();
+                                }
+                                else
+                                {
+                                    Facilities fac = f.first();
+                                    realm.beginTransaction();
+                                    fac.setName(object.get("name").toString());
+                                    fac.setContact_person(object.get("contact_person_name").toString());
+                                    fac.setContact_phone(object.get("contact_person_telephone").toString());
+                                    fac.setLocation(object.get("location").toString());
+                                    realm.copyToRealmOrUpdate(fac);
+                                    realm.commitTransaction();
+                                }
+
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                loadFacilities();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+        };
+// Adding request to request queue
+
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
+
+    }
+
 
 }

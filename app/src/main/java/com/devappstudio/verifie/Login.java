@@ -321,6 +321,7 @@ public class Login extends Activity {
                                     RealmController.with(getApplication()).clearAll();
 
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
+                                    user.setFile_name(jo_stock.get("file_name").toString());
                                     realm.beginTransaction();
                                     realm.copyToRealm(user);
                                     realm.commitTransaction();
