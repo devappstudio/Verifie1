@@ -4,10 +4,10 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <android.support.v7.widget.AppCompatImageView
-        android:layout_width="match_parent"
+    <ImageView
+        android:layout_width="wrap_content"
         android:id="@+id/imageView"
-        android:scaleType="center"
+        android:scaleType="fitStart"
         android:layout_height="match_parent" />
 
 </LinearLayout>

@@ -16,7 +16,10 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import datastore.ReceivedRequests;
+import datastore.SentRequests;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.realm.Realm;
 
 /**
  * Created by root on 8/1/16.
@@ -95,6 +98,7 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
             {
                 Picasso.with(context).load(nearBy.getImage_url()).into(holder.img);
                 holder.name.setText(nearBy.getName());
+                holder.imb.setText(get_button(nearBy.getServer_id()));
                 holder.screen.setText(nearBy.getScreen_name()+" - "+phone);
                 holder.imb.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -103,7 +107,6 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
                         System.out.print(position+" Clicked For Request For "+phone+" -- "+nearBy.getServer_id());
                     }
                 });
-
             }
 
         }
@@ -112,6 +115,7 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
             Picasso.with(context).load(nearBy.getImage_url()).into(holder.img);
             holder.name.setText(nearBy.getName());
             holder.screen.setText(nearBy.getScreen_name());
+            holder.imb.setText(get_button(nearBy.getServer_id()));
             holder.imb.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -130,6 +134,58 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
         return nearByList.size();
     }
 
+    String get_button(String server_id)
+    {
+        String text="Request";
+
+
+        Realm realm = Realm.getDefaultInstance();
+
+        if(realm.where(ReceivedRequests.class).contains("id_send",server_id).findAll().isEmpty())
+        {
+            //we have not received request from this user
+            //lets check if we have sent to user
+            if(realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().isEmpty())
+            {
+                // we havent sent yet
+                text = "Request";
+            }
+            else
+            {
+                //we have sent so lets check the result
+                if(realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().getReply() == 1)
+                {
+                    //accepted
+                    text = "View RotaBar";
+
+                }
+                else
+                {
+                    //request denied
+                    text = "Request Denied";
+                }
+            }
+
+
+
+        }
+        else
+        {
+            //we have received request from this user so lets see the result
+            if(realm.where(ReceivedRequests.class).contains("id_send",server_id).findAll().first().getStatus().equalsIgnoreCase("0"))
+            {
+                //Pending
+                text = "Pending Request";
+            }
+            else
+            {
+                //not pending we have replied
+                text = "Request";
+            }
+        }
+
+        return  text;
+    }
 
     private boolean is_local(String local_id)
     {

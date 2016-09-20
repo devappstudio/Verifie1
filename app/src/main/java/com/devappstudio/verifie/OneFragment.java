@@ -10,9 +10,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,7 +32,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,10 +107,15 @@ public class OneFragment extends Fragment{
     String url;
     int number_slides = 3;
     private ViewPager viewPager;
+    private ViewPager viewPager1;
     private MyViewPagerAdapter myViewPagerAdapter;
+    private MyViewPagerAdapter1 myViewPagerAdapter1;
     private LinearLayout dotsLayout;
+    private LinearLayout dotsLayout1;
     private TextView[] dots;
+    private TextView[] dots1;
     private int[] layouts;
+    private int[] layouts1;
     private TextView percentage;
     CircleImageView cimv;
     private Button btnSkip, btnNext;
@@ -190,105 +199,34 @@ public class OneFragment extends Fragment{
         View myView = null;
         myView = inflater.inflate(R.layout.fragment_one, container, false);
 
+        viewPager1 = (ViewPager) myView.findViewById(R.id.view_pager1);
+        dotsLayout1 = (LinearLayout) myView.findViewById(R.id.layoutDots1);
+
+
+        layouts1 = new int[1];
+
         if(level <= 25f)
         {
-             myView = inflater.inflate(R.layout.fragment_one, container, false);
+             layouts1[0] = R.layout.top1;
         }
        if(level > 25f && level <= 65)
         {
-             myView = inflater.inflate(R.layout.fragment_one1, container, false);
+            layouts1[0] = R.layout.top2;
         }
        if(level > 65f && level <= 100)
         {
-             myView = inflater.inflate(R.layout.fragment_one2, container, false);
-        }
-        profile = (ProgressProfileView) myView.findViewById(R.id.profile);
-
-        profile.setProgress(level);
-
-        profile.startAnimation();
-        cimv = (CircleImageView)myView.findViewById(R.id.profile_image);
-        cimv.setImageResource(R.drawable.panic);
-
-        percentage = (TextView)myView.findViewById(R.id.percent_view) ;
-
-        Realm Mrealm = Realm.getDefaultInstance();
-        String url = Mrealm.where(User.class).findAll().first().getFile_name();
-        server_id = Mrealm.where(User.class).findAll().first().getServer_id();
-        try {
-            Picasso.with(getActivity()).load(url).into(profile);
-        }
-        catch (Exception e)
-        {
-            System.out.println(url);
-            e.printStackTrace();
+            layouts1[0] = R.layout.top3;
         }
 
+        layouts1[1] = R.layout.second_top;
 
-        profile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                captureImage();
-               /* final Intent intent = new Intent(getActivity(), ImageEditor.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                getActivity().startActivity(intent);
-                getActivity().finish();
-                */
 
-            }
-        });
+        // adding bottom dots
+        addBottomDots1(0);
 
-        profile.getAnimator().addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
-        });
-        profile.getAnimator().addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                percentage.setText(animation.getAnimatedValue().toString()+"%");
-                /*
-                Float dd = (Float)Float.parseFloat(animation.getAnimatedValue().toString());
-                if(dd <= 25f )
-                {
-                    profile.setProgressRingColor(R.color.rotabar_red_last);
-                   // profile.set
-                }
-
-                if(dd <= 65f && dd > 25f)
-                {
-                  //  profile.setProgressRingColor(R.color.rotabar_light_green_second);
-                }
-              if(dd < 100f && dd > 65f)
-                {
-                   // profile.setProgressRingColor(R.color.rotabar_green_first);
-                }
-            if(dd > 100f)
-                {
-                   // profile.setProgressRingColor(R.color.darkgreen);
-                }
-                */
-
-            }
-        });
+        myViewPagerAdapter1 = new MyViewPagerAdapter1();
+        viewPager1.setAdapter(myViewPagerAdapter1);
+        viewPager1.addOnPageChangeListener(viewPagerPageChangeListener1);
 
 
 
@@ -373,6 +311,24 @@ public class OneFragment extends Fragment{
         if (dots.length > 0)
             dots[currentPage].setTextColor(colorsActive[currentPage]);
     }
+    private void addBottomDots1(int currentPage) {
+        dots = new TextView[layouts1.length];
+
+        int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
+        int[] colorsInactive = getResources().getIntArray(R.array.array_dot_inactive);
+
+        dotsLayout1.removeAllViews();
+        for (int i = 0; i < dots.length; i++) {
+            dots[i] = new TextView(getActivity());
+            dots[i].setText(Html.fromHtml("&#8226;"));
+            dots[i].setTextSize(35);
+            dots[i].setTextColor(colorsInactive[currentPage]);
+            dotsLayout1.addView(dots[i]);
+        }
+
+        if (dots.length > 0)
+            dots[currentPage].setTextColor(colorsActive[currentPage]);
+    }
 
     private int getItem(int i) {
         return viewPager.getCurrentItem() + i;
@@ -380,6 +336,34 @@ public class OneFragment extends Fragment{
 
     //  viewpager change listener
     ViewPager.OnPageChangeListener viewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
+
+        @Override
+        public void onPageSelected(int position) {
+            addBottomDots(position);
+
+            // changing the next button text 'NEXT' / 'GOT IT'
+            if (position == layouts.length - 1) {
+                // last page. make button text to GOT IT
+
+            } else {
+                // still pages are left
+
+            }
+        }
+
+        @Override
+        public void onPageScrolled(int arg0, float arg1, int arg2) {
+
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int arg0) {
+
+        }
+    };
+
+    //  viewpager change listener
+    ViewPager.OnPageChangeListener viewPagerPageChangeListener1 = new ViewPager.OnPageChangeListener() {
 
         @Override
         public void onPageSelected(int position) {
@@ -415,9 +399,9 @@ public class OneFragment extends Fragment{
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             layoutInflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            android.support.v7.widget.AppCompatImageView iv;
+            ImageView iv;
             View view = layoutInflater.inflate(layouts[position], container, false);
-            iv = (android.support.v7.widget.AppCompatImageView)view.findViewById(R.id.imageView);
+            iv = (ImageView)view.findViewById(R.id.imageView);
             Bitmap icon = null;
             if(position == 0)
             {
@@ -446,6 +430,150 @@ public class OneFragment extends Fragment{
         @Override
         public int getCount() {
             return layouts.length;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object obj) {
+            return view == obj;
+        }
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            View view = (View) object;
+            container.removeView(view);
+        }
+    }
+
+
+    public class MyViewPagerAdapter1 extends PagerAdapter {
+        private LayoutInflater layoutInflater;
+
+        public MyViewPagerAdapter1() {
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            layoutInflater = (LayoutInflater)getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            ImageView iv;
+            View view = layoutInflater.inflate(layouts1[position], container, false);
+            if(position == 0)
+            {
+                profile = (ProgressProfileView) view.findViewById(R.id.profile);
+
+                profile.setProgress(level);
+
+                profile.startAnimation();
+                cimv = (CircleImageView)view.findViewById(R.id.profile_image);
+                cimv.setImageResource(R.drawable.panic);
+
+                percentage = (TextView)view.findViewById(R.id.percent_view) ;
+
+                Realm Mrealm = Realm.getDefaultInstance();
+                String url = Mrealm.where(User.class).findAll().first().getFile_name();
+                server_id = Mrealm.where(User.class).findAll().first().getServer_id();
+                try {
+                    Picasso.with(getActivity()).load(url).into(profile);
+                }
+                catch (Exception e)
+                {
+                    System.out.println(url);
+                    e.printStackTrace();
+                }
+
+
+                profile.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        captureImage();
+               /* final Intent intent = new Intent(getActivity(), ImageEditor.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                getActivity().startActivity(intent);
+                getActivity().finish();
+                */
+
+                    }
+                });
+
+                profile.getAnimator().addListener(new Animator.AnimatorListener() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationCancel(Animator animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animator animation) {
+
+                    }
+                });
+                profile.getAnimator().addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        percentage.setText(animation.getAnimatedValue().toString()+"%");
+                /*
+                Float dd = (Float)Float.parseFloat(animation.getAnimatedValue().toString());
+                if(dd <= 25f )
+                {
+                    profile.setProgressRingColor(R.color.rotabar_red_last);
+                   // profile.set
+                }
+
+                if(dd <= 65f && dd > 25f)
+                {
+                  //  profile.setProgressRingColor(R.color.rotabar_light_green_second);
+                }
+              if(dd < 100f && dd > 65f)
+                {
+                   // profile.setProgressRingColor(R.color.rotabar_green_first);
+                }
+            if(dd > 100f)
+                {
+                   // profile.setProgressRingColor(R.color.darkgreen);
+                }
+                */
+
+                    }
+                });
+
+
+
+
+            }
+           if(position == 1)
+            {
+                Resources res = getResources();
+                Drawable drawable = res.getDrawable(R.drawable.background1);
+                ProgressBar mProgress = (ProgressBar) view.findViewById(R.id.progressbar1);
+                mProgress.setProgress(25);   // Main Progress
+                mProgress.setSecondaryProgress(50); // Secondary Progress
+                mProgress.setMax(100); // Maximum Progress
+                mProgress.setProgressDrawable(drawable);
+/*
+                ObjectAnimator animation = ObjectAnimator.ofInt(mProgress, "progress", 0, progress[i]);
+                animation.setDuration(990);
+                animation.setInterpolator(new DecelerateInterpolator());
+                animation.start();
+                */
+            }
+
+            container.addView(view);
+
+            return view;
+        }
+
+        @Override
+        public int getCount() {
+            return layouts1.length;
         }
 
         @Override

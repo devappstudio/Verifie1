@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:text="Send Request To View Rotabar ?"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3"
+        android:textSize="24sp"
+        android:layout_margin="20dp"
+        android:textStyle="normal|bold"
+        android:textAlignment="center" />
+
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:orientation="horizontal"
+       android:layout_height="wrap_content">
+       <Button
+           android:text="Continue"
+           android:layout_width="0dp"
+           android:layout_weight="1"
+           android:background="@color/accent_color"
+           android:textColor="@color/white"
+           android:layout_marginLeft="15dp"
+           android:layout_marginStart="15dp"
+           android:layout_marginEnd="15dp"
+           android:layout_marginRight="15dp"
+           android:layout_height="wrap_content"
+           android:id="@+id/send_request"
+           android:textSize="18sp" />
+       <Button
+           android:text="Cancel"
+           android:layout_width="0dp"
+           android:layout_weight="1"
+           android:layout_marginLeft="15dp"
+           android:layout_marginStart="15dp"
+           android:layout_marginEnd="15dp"
+           android:layout_marginRight="15dp"
+           android:background="@color/blue"
+           android:textColor="@color/white"
+           android:layout_height="wrap_content"
+           android:id="@+id/cancel"
+           android:textSize="18sp" />
+   </LinearLayout>
+</LinearLayout>

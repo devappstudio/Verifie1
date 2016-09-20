@@ -5,7 +5,7 @@
     android:id="@+id/activity_verify__registration"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background"
+    android:background="@drawable/background1"
     tools:context="com.devappstudio.verifie.Verify_Registration">
 
     <RelativeLayout

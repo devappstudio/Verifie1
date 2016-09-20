@@ -10,11 +10,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.SmsManager;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SearchView;
 import android.widget.Switch;
@@ -41,6 +44,8 @@ import java.util.Map;
 import datastore.Api;
 import datastore.ContactsList;
 import datastore.RealmController;
+import datastore.ReceivedRequests;
+import datastore.SentRequests;
 import datastore.User;
 import datastore.Visibility;
 import io.realm.Realm;
@@ -116,7 +121,26 @@ public class TwoFragment extends Fragment{
             @Override
             public boolean onQueryTextSubmit(String query) {
                 query = query.toLowerCase();
-                return false;
+                final List<NearBy> List = new ArrayList<>();
+                for (int i = 0; i< movieList.size(); i++) {
+                    final NearBy text = movieList.get(i);
+                    if (text.getTelephone_number().startsWith(query) || text.getTelephone_number().contains(query) || text.getTelephone_number().endsWith(query)) {
+                        List.add(movieList.get(i));
+                    }
+                    if (text.getName().toLowerCase().contains(query) || text.getName().toLowerCase().startsWith(query) || text.getName().toLowerCase().endsWith(query)) {
+                        List.add(movieList.get(i));
+                    }
+                    if (text.getScreen_name().toLowerCase().contains(query) || text.getScreen_name().toLowerCase().startsWith(query) || text.getScreen_name().toLowerCase().endsWith(query)) {
+                        List.add(movieList.get(i));
+                    }
+                }
+                mAdapter = new NearByAdaptor(List,getContext());
+                RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+                recyclerView.setLayoutManager(mLayoutManager);
+                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerView.setAdapter(mAdapter);
+                return true;
             }
 
             /**
@@ -132,13 +156,13 @@ public class TwoFragment extends Fragment{
                 final List<NearBy> List = new ArrayList<>();
                 for (int i = 0; i< movieList.size(); i++) {
                     final NearBy text = movieList.get(i);
-                    if (text.getTelephone_number().contains(query)) {
+                    if (text.getTelephone_number().startsWith(query) || text.getTelephone_number().contains(query) || text.getTelephone_number().endsWith(query)) {
                         List.add(movieList.get(i));
                     }
-                    if (text.getName().contains(query)) {
+                    if (text.getName().toLowerCase().contains(query) || text.getName().toLowerCase().startsWith(query) || text.getName().toLowerCase().endsWith(query)) {
                         List.add(movieList.get(i));
                     }
-                    if (text.getScreen_name().contains(query)) {
+                    if (text.getScreen_name().toLowerCase().contains(query) || text.getScreen_name().toLowerCase().startsWith(query) || text.getScreen_name().toLowerCase().endsWith(query)) {
                         List.add(movieList.get(i));
                     }
                 }
@@ -178,7 +202,26 @@ public class TwoFragment extends Fragment{
             @Override
             public void onClick(View view, int position) {
                 NearBy movie = movieList.get(position);
-                Toast.makeText(getActivity(), movie.getTelephone_number() + " is selected!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), movie.getServer_id() + " is selected!", Toast.LENGTH_SHORT).show();
+                if(movie.getServer_id().equalsIgnoreCase("0"))
+                {
+                    //Not On service so only invitation
+
+                    try {
+                        SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage(movie.getTelephone_number(), null, "Check out verifie on your smart phone download it at https://drive.google.com/open?id=0B_hBEdD_-DHUcVFjWnZTb01ZMEk", null, null);
+                        Toast.makeText(getContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+                    }
+
+                    catch (Exception e) {
+                        Toast.makeText(getActivity(), "SMS faild, please try again.", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    call_method(movie.getServer_id(),movie);
+                }
             }
 
             @Override
@@ -729,6 +772,125 @@ public class TwoFragment extends Fragment{
             AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
 
         }
+
+
+    void call_method(String server_id, final NearBy nearBy)
+    {
+        String text="Request";
+
+
+        final Dialog dialog = new Dialog(getContext());
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        Realm realm = Realm.getDefaultInstance();
+
+        if(realm.where(ReceivedRequests.class).contains("id_send",server_id).findAll().isEmpty())
+        {
+            //we have not received request from this user
+            //lets check if we have sent to user
+            if(realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().isEmpty())
+            {
+                // we havent sent yet
+                text = "Request";
+                dialog.setContentView(R.layout.request_bar);
+                Button allow = (Button)dialog.findViewById(R.id.send_request);
+                Button deny = (Button)dialog.findViewById(R.id.cancel);
+                deny.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+                allow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        requestRotabar(nearBy.getServer_id());
+                    }
+                });
+
+            }
+            else
+            {
+                //we have sent so lets check the result
+                if(realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().getReply() == 1)
+                {
+                    //accepted
+                    text = "View RotaBar";
+                    dialog.setContentView(R.layout.request_denied);
+
+                }
+                else
+                {
+                    //request denied
+                    text = "Request Denied";
+                    dialog.setContentView(R.layout.request_denied);
+                }
+            }
+
+
+
+        }
+        else
+        {
+            //we have received request from this user so lets see the result
+            if(realm.where(ReceivedRequests.class).contains("id_send",server_id).findAll().first().getStatus().equalsIgnoreCase("0"))
+            {
+                //Pending
+                text = "Pending Request";
+                dialog.setContentView(R.layout.reply_request);
+                Button allow = (Button)dialog.findViewById(R.id.send_request);
+                Button deny = (Button)dialog.findViewById(R.id.cancel);
+                deny.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+                allow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        replyRequest(nearBy.getServer_id());
+                    }
+                });
+
+            }
+            else
+            {
+                //not pending we have replied
+                text = "Request";
+                dialog.setContentView(R.layout.request_bar);
+                Button allow = (Button)dialog.findViewById(R.id.send_request);
+                Button deny = (Button)dialog.findViewById(R.id.cancel);
+                deny.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        dialog.dismiss();
+                    }
+                });
+                allow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        requestRotabar(nearBy.getServer_id());
+                    }
+                });
+
+
+            }
+        }
+        dialog.show();
+    }
+
+
+
+    void requestRotabar(String server_id)
+    {
+
+    }
+    void replyRequest(String server_id)
+    {
+
+    }
+
 
 
 
