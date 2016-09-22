@@ -203,7 +203,7 @@ public class OneFragment extends Fragment{
         dotsLayout1 = (LinearLayout) myView.findViewById(R.id.layoutDots1);
 
 
-        layouts1 = new int[1];
+        layouts1 = new int[2];
 
         if(level <= 25f)
         {
@@ -312,22 +312,22 @@ public class OneFragment extends Fragment{
             dots[currentPage].setTextColor(colorsActive[currentPage]);
     }
     private void addBottomDots1(int currentPage) {
-        dots = new TextView[layouts1.length];
+        dots1 = new TextView[layouts1.length];
 
         int[] colorsActive = getResources().getIntArray(R.array.array_dot_active);
         int[] colorsInactive = getResources().getIntArray(R.array.array_dot_inactive);
 
         dotsLayout1.removeAllViews();
-        for (int i = 0; i < dots.length; i++) {
-            dots[i] = new TextView(getActivity());
-            dots[i].setText(Html.fromHtml("&#8226;"));
-            dots[i].setTextSize(35);
-            dots[i].setTextColor(colorsInactive[currentPage]);
-            dotsLayout1.addView(dots[i]);
+        for (int i = 0; i < dots1.length; i++) {
+            dots1[i] = new TextView(getActivity());
+            dots1[i].setText(Html.fromHtml("&#8226;"));
+            dots1[i].setTextSize(35);
+            dots1[i].setTextColor(colorsInactive[currentPage]);
+            dotsLayout1.addView(dots1[i]);
         }
 
-        if (dots.length > 0)
-            dots[currentPage].setTextColor(colorsActive[currentPage]);
+        if (dots1.length > 0)
+            dots1[currentPage].setTextColor(colorsActive[currentPage]);
     }
 
     private int getItem(int i) {

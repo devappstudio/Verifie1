@@ -672,15 +672,17 @@ public class TwoFragment extends Fragment{
                         public void onResponse(JSONObject response) {
                             System.out.print(response.toString());
                             try {
+                                final Realm rrealm = Realm.getDefaultInstance();
+
 
                                 if(response.get("status").toString().equalsIgnoreCase("1"))
                                 {
                                     ContactsList contactsList = cl.get(finalI);
 
-                                    trealm.beginTransaction();
+                                    rrealm.beginTransaction();
                                     contactsList.setIs_on_verifie("1");
-                                    trealm.copyToRealmOrUpdate(contactsList);
-                                    trealm.commitTransaction();
+                                    rrealm.copyToRealmOrUpdate(contactsList);
+                                    rrealm.commitTransaction();
                                     near_by_offline_users();
                                 }
                                 else
@@ -726,8 +728,6 @@ public class TwoFragment extends Fragment{
 
             final String tag = "new_user_logn";
 
-        final Realm trealm = Realm.getDefaultInstance();
-
             Map<String, String> params = new HashMap<String, String>();
             params.put("telephone", phone);
             JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
@@ -740,10 +740,11 @@ public class TwoFragment extends Fragment{
 
                                 if(response.get("status").toString().equalsIgnoreCase("1"))
                                 {
-                                    trealm.beginTransaction();
+                                    final Realm rrealm = Realm.getDefaultInstance();
+                                    rrealm.beginTransaction();
                                     contactsList.setIs_on_verifie("1");
-                                    trealm.copyToRealmOrUpdate(contactsList);
-                                    trealm.commitTransaction();
+                                    rrealm.copyToRealmOrUpdate(contactsList);
+                                    rrealm.commitTransaction();
                                     near_by_offline_users();
 
                                 }
