@@ -48,6 +48,21 @@ public class SplashActivity extends Activity {
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.spin_kit);
         ChasingDots doubleBounce = new ChasingDots();
         progressBar.setIndeterminateDrawable(doubleBounce);
+/*
+
+        Realm rr = Realm.getDefaultInstance();
+        rr.beginTransaction();
+        rr.clear(ContactsList.class);
+        rr.clear(ApprovedRequests.class);
+        rr.clear(Facilities.class);
+        rr.clear(Location_Stats.class);
+        rr.clear(ReceivedRequests.class);
+        rr.clear(SentRequests.class);
+        rr.clear(User.class);
+        rr.clear(VerificationStatus.class);
+        rr.clear(Visibility.class);
+        rr.commitTransaction();
+*/
 
 
         Thread background = new Thread() {

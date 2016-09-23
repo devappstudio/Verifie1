@@ -38,6 +38,7 @@ public class AppSetup extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private ProgressBar mRegistrationProgressBar;
+
     private boolean isReceiverRegistered;
 
     @Override
@@ -48,6 +49,7 @@ public class AppSetup extends AppCompatActivity {
         ThreeBounce doubleBounce = new ThreeBounce();
         progressBar.setIndeterminateDrawable(doubleBounce);
         registerReceiver();
+
         if (checkPlayServices()) {
             // Start IntentService to register this application with GCM.
             Intent intent = new Intent(this, RegistrationIntentService.class);
@@ -209,10 +211,6 @@ public class AppSetup extends AppCompatActivity {
 
     }
 
-
-
-
-
     private class readContacts extends AsyncTask<String, Void, String> {
 
         /**
@@ -360,8 +358,6 @@ public class AppSetup extends AppCompatActivity {
             isReceiverRegistered = true;
         }
     }
-
-
 
     void loadFacilities()
     {

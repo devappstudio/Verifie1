@@ -82,9 +82,11 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
             if(nearBy.getOn_verifie().equalsIgnoreCase("0"))
             {
                 //Not On
+
                 holder.name.setText(nearBy.getName());
                 holder.screen.setText(phone);
                 holder.imb.setText("Invite");
+                holder.img.setImageResource(R.drawable.circular);
                 holder.imb.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -96,6 +98,7 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
             }
             else
             {
+                if(!nearBy.getOn_verifie().equalsIgnoreCase("0") && !nearBy.getScreen_name().equalsIgnoreCase(""))
                 Picasso.with(context).load(nearBy.getImage_url()).into(holder.img);
                 holder.name.setText(nearBy.getName());
                 holder.imb.setText(get_button(nearBy.getServer_id()));
@@ -108,7 +111,6 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
                     }
                 });
             }
-
         }
         else
         {
@@ -163,6 +165,17 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
                 {
                     //request denied
                     text = "Request Denied";
+                    if (realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().getTime_replied().equalsIgnoreCase(""))
+                    {
+                        //request denied
+                        text = "Pending Reply";
+                        //dialog.setContentView(R.layout.request_denied);
+                    }
+                    else
+                    {
+                        //request denied
+                        text = "Request Denied";
+                    }
                 }
             }
 

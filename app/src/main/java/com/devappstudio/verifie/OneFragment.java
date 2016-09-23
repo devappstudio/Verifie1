@@ -367,7 +367,7 @@ public class OneFragment extends Fragment{
 
         @Override
         public void onPageSelected(int position) {
-            addBottomDots(position);
+            addBottomDots1(position);
 
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == layouts.length - 1) {
@@ -554,10 +554,16 @@ public class OneFragment extends Fragment{
                 Resources res = getResources();
                 Drawable drawable = res.getDrawable(R.drawable.background1);
                 ProgressBar mProgress = (ProgressBar) view.findViewById(R.id.progressbar1);
-                mProgress.setProgress(25);   // Main Progress
-                mProgress.setSecondaryProgress(50); // Secondary Progress
+                mProgress.setProgress(level.intValue());   // Main Progress
+                mProgress.setSecondaryProgress(level.intValue() + 20); // Secondary Progress
                 mProgress.setMax(100); // Maximum Progress
                 mProgress.setProgressDrawable(drawable);
+                TextView percentage = (TextView)view.findViewById(R.id.percentage);
+                percentage.setText(level.intValue()+"%");
+
+                TextView last_verified,recommended_verification,centre_verified;
+
+
 /*
                 ObjectAnimator animation = ObjectAnimator.ofInt(mProgress, "progress", 0, progress[i]);
                 animation.setDuration(990);

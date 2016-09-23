@@ -2,7 +2,10 @@ package com.devappstudio.verifie;
 
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telephony.SmsManager;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -36,12 +38,17 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import datastore.Api;
+import datastore.ApprovedRequests;
 import datastore.ContactsList;
 import datastore.RealmController;
 import datastore.ReceivedRequests;
@@ -80,7 +87,15 @@ public class TwoFragment extends Fragment{
         recyclerView = (RecyclerView) myView.findViewById(R.id.recycler_view);
         mAdapter = new NearByAdaptor(movieList,getContext());
         this.realm = RealmController.with(this).getRealm();
-
+        /**
+         * TODO
+         *
+        Realm rro = Realm.getDefaultInstance();
+        rro.beginTransaction();
+        rro.clear(SentRequests.class);
+        rro.clear(ReceivedRequests.class);
+        rro.commitTransaction();
+*/
         visibility = (Switch)myView.findViewById(R.id.visibility);
         //Just got here check if visibility has been set already
         if(RealmController.with(getActivity()).hasVisible())
@@ -203,18 +218,20 @@ public class TwoFragment extends Fragment{
             public void onClick(View view, int position) {
                 NearBy movie = movieList.get(position);
                 //Toast.makeText(getActivity(), movie.getServer_id() + " is selected!", Toast.LENGTH_SHORT).show();
-                if(movie.getServer_id().equalsIgnoreCase("0"))
+                if(movie.getOn_verifie().equalsIgnoreCase("0"))
                 {
                     //Not On service so only invitation
 
                     try {
-                        SmsManager smsManager = SmsManager.getDefault();
-                        smsManager.sendTextMessage(movie.getTelephone_number(), null, "Check out verifie on your smart phone download it at https://drive.google.com/open?id=0B_hBEdD_-DHUcVFjWnZTb01ZMEk", null, null);
-                        Toast.makeText(getContext(), "SMS sent.", Toast.LENGTH_LONG).show();
+                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                        sendIntent.putExtra("sms_body", "Check out verifie on your smart phone download it at https://drive.google.com/open?id=0B_hBEdD_-DHUcVFjWnZTb01ZMEk");
+                        sendIntent.setType("vnd.android-dir/mms-sms");
+                        sendIntent.setData(Uri.parse("sms:"+movie.getTelephone_number()));
+                        getActivity().startActivity(sendIntent);
                     }
 
                     catch (Exception e) {
-                        Toast.makeText(getActivity(), "SMS faild, please try again.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "SMS failed, please try again.", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                 }
@@ -397,7 +414,7 @@ public class TwoFragment extends Fragment{
         Map<String, String> params = new HashMap<String, String>();
         params.put("server_id", RealmController.with(getActivity()).getUser(1).getServer_id());
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                Api.getApi()+"chek_user_visibility",new JSONObject(params),
+                Api.getApi()+"check_user_visibility",new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -447,7 +464,7 @@ public class TwoFragment extends Fragment{
             @Override
             public void onErrorResponse(VolleyError error) {
                 dialog.hide();
-                Toast.makeText(getActivity(),"Sorry A Network Error Occurred",Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(),"Sorry A Network Error Occurred Visibility",Toast.LENGTH_LONG).show();
                 error.printStackTrace();
                 near_by_offline_users();
 
@@ -496,14 +513,14 @@ public class TwoFragment extends Fragment{
                                 for (int ii = 0; ii < RegisteredCls.size(); ii++)
                                 {
                                     ContactsList cl = RegisteredCls.get(ii);
-                                    NearBy dumb = new NearBy(cl.getName(),"",cl.getTelephone(),cl.getServer_id()+"",cl.getFile_name(),cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
+                                    NearBy dumb = new NearBy(cl.getName(),cl.getFile_name(),cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
                                     movieList.add(dumb);
                                 }
 
                                 for (int ii = 0; ii < UnRegisteredCls.size(); ii++)
                                 {
                                     ContactsList cl = UnRegisteredCls.get(ii);
-                                    NearBy dumb = new NearBy(cl.getName(),"",cl.getTelephone(),cl.getServer_id()+"",cl.getFile_name(),cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
+                                    NearBy dumb = new NearBy(cl.getName(),cl.getFile_name(),cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
                                     movieList.add(dumb);
                                 }
 
@@ -574,14 +591,14 @@ public class TwoFragment extends Fragment{
         for (int ii = 0; ii < RegisteredCls.size(); ii++)
         {
             ContactsList cl = RegisteredCls.get(ii);
-            NearBy dumb = new NearBy(cl.getName(),"",cl.getTelephone(),cl.getServer_id()+"",cl.getFile_name(),cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
+            NearBy dumb = new NearBy(cl.getName(),cl.getFile_name(),cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
             movieList.add(dumb);
         }
 
         for (int ii = 0; ii < UnRegisteredCls.size(); ii++)
         {
             ContactsList cl = UnRegisteredCls.get(ii);
-            NearBy dumb = new NearBy(cl.getName(),"",cl.getTelephone(),cl.getServer_id()+"",cl.getFile_name(),cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
+            NearBy dumb = new NearBy(cl.getName(),"",cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
             movieList.add(dumb);
         }
 
@@ -649,10 +666,8 @@ public class TwoFragment extends Fragment{
             try {
                 PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
                 Phonenumber.PhoneNumber pn = null;
-
                 pn = pnu.parse(phone, "GH");
                 phone = pnu.format(pn, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
-
             } catch (NumberParseException e) {
                 e.printStackTrace();
             }
@@ -662,93 +677,33 @@ public class TwoFragment extends Fragment{
             phone = phone.replace("\\s+","");
             phone = phone.replace(" ","");
 
+            final String phon = phone;
+
             Map<String, String> params = new HashMap<String, String>();
             params.put("telephone", phone);
-            final int finalI = i;
+            final int finalI = cl.get(i).getId();
             JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                     Api.getApi()+"check_is_on_verifie",new JSONObject(params),
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
-                            System.out.print(response.toString());
-                            try {
-                                final Realm rrealm = Realm.getDefaultInstance();
-
-
-                                if(response.get("status").toString().equalsIgnoreCase("1"))
-                                {
-                                    ContactsList contactsList = cl.get(finalI);
-
-                                    rrealm.beginTransaction();
-                                    contactsList.setIs_on_verifie("1");
-                                    rrealm.copyToRealmOrUpdate(contactsList);
-                                    rrealm.commitTransaction();
-                                    near_by_offline_users();
-                                }
-                                else
-                                {
-                                    check_on_verifie1(cl.get(finalI));
-                                }
-
-                            }
-                            catch (Exception e)
-                            {
-                                e.printStackTrace();
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    error.printStackTrace();
-
-                }
-            }) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    HashMap<String, String> headers = new HashMap<String, String>();
-                    headers.put("Content-Type", "application/json; charset=utf-8");
-                    return headers;
-                }
-            };
-// Adding request to request queue
-            AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
-
-        }
-
-    }
-
-    void  check_on_verifie1(final ContactsList contactsList)
-    {
-
-        String phone = contactsList.getTelephone();
-        phone = phone.trim();
-        phone = phone.replace("\\s+","");
-        phone = phone.replace(" ","");
-
-            final String tag = "new_user_logn";
-
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("telephone", phone);
-            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                    Api.getApi()+"check_is_on_verifie",new JSONObject(params),
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            System.out.print(response.toString());
+                            System.out.print(response.toString()+ " Telephone "+phon);
                             try {
 
                                 if(response.get("status").toString().equalsIgnoreCase("1"))
                                 {
                                     final Realm rrealm = Realm.getDefaultInstance();
+                                    ContactsList contactsList = rrealm.where(ContactsList.class).equalTo("id",finalI).findFirst();
+                                    JSONObject jo_stock = (JSONObject) response.get("data");
                                     rrealm.beginTransaction();
                                     contactsList.setIs_on_verifie("1");
+                                    contactsList.setServer_id(jo_stock.get("id").toString());
+                                    contactsList.setFile_name(jo_stock.get("file_name").toString());
+                                    contactsList.setScreen_name(jo_stock.get("screen_name").toString());
                                     rrealm.copyToRealmOrUpdate(contactsList);
                                     rrealm.commitTransaction();
                                     near_by_offline_users();
-
                                 }
-
                             }
                             catch (Exception e)
                             {
@@ -760,6 +715,7 @@ public class TwoFragment extends Fragment{
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     error.printStackTrace();
+
                 }
             }) {
                 @Override
@@ -771,9 +727,8 @@ public class TwoFragment extends Fragment{
             };
 // Adding request to request queue
             AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
-
         }
-
+    }
 
     void call_method(String server_id, final NearBy nearBy)
     {
@@ -805,6 +760,7 @@ public class TwoFragment extends Fragment{
                 allow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        dialog.dismiss();
                         requestRotabar(nearBy.getServer_id());
                     }
                 });
@@ -817,14 +773,70 @@ public class TwoFragment extends Fragment{
                 {
                     //accepted
                     text = "View RotaBar";
-                    dialog.setContentView(R.layout.request_denied);
+                   // dialog.setContentView(R.layout.view_rotabar);
+
+                    SimpleDateFormat simpleDateFormat =
+                            new SimpleDateFormat("dd/M/yyyy");
+                    Float level = 0f;
+
+
+                    try {
+                        Calendar calendar = Calendar.getInstance();
+                        String strDate = "" + simpleDateFormat.format(calendar.getTime());
+                        ApprovedRequests vss = realm.where(ApprovedRequests.class).equalTo("server_id",server_id).findAll().last();
+                        Date date1 = simpleDateFormat.parse(strDate);
+                        Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
+                        Long t =  printDifference(date1, date2)/7;
+                        if(t > 52)
+                        {
+                            level =  (float)(t/52)*100;
+                        }
+                        else
+                        {
+                            level =  (float)(52/t)*100;
+
+                        }
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        level = 50f;
+                    }
+
+
+
+                    if(level <= 25f)
+                    {
+                        dialog.setContentView(R.layout.top1);
+                    }
+                    if(level > 25f && level <= 65)
+                    {
+                        dialog.setContentView(R.layout.top2);
+                    }
+                    if(level > 65f && level <= 100)
+                    {
+                        dialog.setContentView(R.layout.top3);
+                    }
+
+
+
 
                 }
                 else
                 {
-                    //request denied
-                    text = "Request Denied";
-                    dialog.setContentView(R.layout.request_denied);
+                    if (realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().getTime_replied().equalsIgnoreCase(""))
+                    {
+                        //request denied
+                        text = "Request Denied";
+                        //dialog.setContentView(R.layout.request_denied);
+                        Toast.makeText(getContext(),"Request Still Pending Reply",Toast.LENGTH_LONG).show();
+                    }
+                    else
+                    {
+                        //request denied
+                        text = "Request Denied";
+                        dialog.setContentView(R.layout.request_denied);
+                    }
+
                 }
             }
 
@@ -845,12 +857,15 @@ public class TwoFragment extends Fragment{
                     @Override
                     public void onClick(View view) {
                         dialog.dismiss();
+                        replyRequest(nearBy.getServer_id(),""+0);
+
                     }
                 });
                 allow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        replyRequest(nearBy.getServer_id());
+                        dialog.dismiss();
+                        replyRequest(nearBy.getServer_id(),""+1);
                     }
                 });
 
@@ -871,6 +886,7 @@ public class TwoFragment extends Fragment{
                 allow.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        dialog.dismiss();
                         requestRotabar(nearBy.getServer_id());
                     }
                 });
@@ -883,16 +899,169 @@ public class TwoFragment extends Fragment{
 
 
 
-    void requestRotabar(String server_id)
+    void requestRotabar(final String server_id)
     {
 
+                // Tag used to cancel the request
+                  //  System.out.println("Sending To -- "+server_id);
+
+                //`users`(`id`, `fullname`, `login_type`, `security_code`, `extra_code`, `id_from_provider`, `telephone`, `file_blob`, `file_name`, `is_visible`, `visibility_code`, ``, ``, ``, ``, ``)
+                final String tag = "new_user_login";
+                final ProgressDialog pd = ProgressDialog.show(getActivity(),"Contacting Server ..."," Please Wait Submitting Your Request ...", true);
+
+                Realm rea = Realm.getDefaultInstance();
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("to_user", server_id);
+                params.put("server_id", rea.where(User.class).findAll().first().getServer_id());
+                pd.show();
+
+                JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                        Api.getApi()+"request_rollarbar",new JSONObject(params),
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                               // System.out.print(response.toString());
+                                pd.hide();
+                                try {
+                                    Long tsLong = System.currentTimeMillis()/1000;
+                                    String tsr = tsLong.toString();
+
+                                    Realm io = Realm.getDefaultInstance();
+                                    // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
+                                    io.beginTransaction();
+                                    SentRequests sr = new SentRequests((int)io.where(SentRequests.class).maximumInt("id")+1,server_id,tsr,"","0",0);
+                                    io.copyToRealm(sr);
+                                    io.commitTransaction();
+
+                                }
+                                catch (Exception e)
+                                {
+                                    e.printStackTrace();
+                                   // Toast.makeText(getActivity(), "Sorry An Error Occurred Please Try Again Later", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(),"Sorry A Network Error Occurred Please Try Again Later",Toast.LENGTH_LONG).show();
+                        error.printStackTrace();
+                        pd.hide();
+                    }
+                }) {
+                    @Override
+                    public Map<String, String> getHeaders() throws AuthFailureError {
+                        HashMap<String, String> headers = new HashMap<String, String>();
+                        headers.put("Content-Type", "application/json; charset=utf-8");
+                        return headers;
+                    }
+                };
+// Adding request to request queue
+                AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
+
+
+
+            //send request to server
+
+
+
     }
-    void replyRequest(String server_id)
+    void replyRequest(final String server_id, final String reply)
     {
 
+        // Tag used to cancel the request
+
+        //`users`(`id`, `fullname`, `login_type`, `security_code`, `extra_code`, `id_from_provider`, `telephone`, `file_blob`, `file_name`, `is_visible`, `visibility_code`, ``, ``, ``, ``, ``)
+        final String tag = "new_user_login";
+        final ProgressDialog pd = ProgressDialog.show(getActivity(),"Contacting Server ..."," Please Wait Submitting Your Reply ...", true);
+
+        Realm rea = Realm.getDefaultInstance();
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("to_user", server_id);
+        params.put("reply", reply);
+        params.put("server_id", rea.where(User.class).findAll().first().getServer_id());
+        pd.show();
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                Api.getApi()+"reply_rollarbar",new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        System.out.print(response.toString());
+                        pd.hide();
+                        try {
+
+                            Long tsLong = System.currentTimeMillis()/1000;
+                            String tsr = tsLong.toString();
+
+                            Realm io = Realm.getDefaultInstance();
+                            // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
+                            io.beginTransaction();
+                            ReceivedRequests rr = io.where(ReceivedRequests.class).equalTo("id_send",server_id).findAll().last();
+                            rr.removeFromRealm();
+                            io.commitTransaction();
+
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(),"Sorry A Network Error Occurred Please Try Again Later",Toast.LENGTH_LONG).show();
+                error.printStackTrace();
+                pd.hide();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+        };
+// Adding request to request queue
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
+
+        //send request to server
+
+
     }
 
 
+
+    public Long printDifference(Date startDate, Date endDate){
+
+        //milliseconds
+        long different = endDate.getTime() - startDate.getTime();
+
+        System.out.println("startDate : " + startDate);
+        System.out.println("endDate : "+ endDate);
+        System.out.println("different : " + different);
+
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+
+        long elapsedDays = different / daysInMilli;
+        different = different % daysInMilli;
+
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+
+        long elapsedMinutes = different / minutesInMilli;
+        different = different % minutesInMilli;
+
+        long elapsedSeconds = different / secondsInMilli;
+
+        return elapsedDays;
+
+
+    }
 
 
 }
