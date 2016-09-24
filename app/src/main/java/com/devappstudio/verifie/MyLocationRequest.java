@@ -23,6 +23,7 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class MyLocationRequest extends Activity  implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener{
     LocationRequest mLocationRequest;
@@ -84,6 +85,13 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this).build();
             mGoogleApiClient.connect();
+            final Intent intent = new Intent(MyLocationRequest.this, AppSetup.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent);
+            finish();
+
 
         }
 

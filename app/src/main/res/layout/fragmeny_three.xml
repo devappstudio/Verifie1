@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/get_started"
             android:layout_width="match_parent"
@@ -106,6 +106,201 @@
                 android:textColor="#6D6E70"
                 android:textSize="14sp"
                 android:textStyle="normal"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_gravity="center_horizontal"
+                android:textAlignment="center"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:textAlignment="center"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:layout_marginBottom="5dp"
+                        android:layout_height="wrap_content">
+                        <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/light_blue"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/cardview_dark_background"
+                            android:text="Chlamydia"
+                            android:layout_gravity="center"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:textAlignment="center"
+                            android:textStyle="normal"
+                            android:elevation="1dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:layout_marginBottom="5dp"
+                        android:layout_height="wrap_content">
+                        <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/light_blue"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/cardview_dark_background"
+                            android:text="Gonorrhoea"
+                            android:layout_gravity="center"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:textAlignment="center"
+                            android:textStyle="normal"
+                            android:elevation="1dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:layout_marginBottom="5dp"
+                        android:layout_height="wrap_content">
+                        <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/light_blue"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/cardview_dark_background"
+                            android:text="Syphilis"
+                            android:layout_gravity="center"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:textAlignment="center"
+
+                            android:textStyle="normal"
+                            android:elevation="1dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_gravity="center_horizontal"
+                    android:textAlignment="center"
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:layout_marginBottom="5dp"
+                        android:layout_height="wrap_content">
+                        <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/light_blue"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/cardview_dark_background"
+                            android:text="Hepatitis B"
+                            android:textAlignment="center"
+
+                            android:layout_gravity="center"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:textStyle="normal"
+                            android:elevation="1dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:layout_marginBottom="5dp"
+                        android:layout_height="wrap_content">
+                        <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/light_blue"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/cardview_dark_background"
+                            android:text="Hepatitis C"
+                            android:layout_gravity="center"
+                            android:textAlignment="center"
+
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:textStyle="normal"
+                            android:elevation="1dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="5dp"
+                        android:layout_weight="1"
+                        android:layout_marginBottom="5dp"
+                        android:layout_height="wrap_content">
+                        <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:layout_marginEnd="5dp"
+                            android:layout_marginRight="5dp"
+                            android:layout_gravity="center"
+                            android:background="@drawable/light_blue"
+                            />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textColor="@color/cardview_dark_background"
+                            android:text="HIV"
+                            android:layout_gravity="center"
+                            android:textAlignment="center"
+
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:textStyle="normal"
+                            android:elevation="1dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
@@ -117,6 +312,19 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:text="Remember, it’s not only up to you. Get your partner and other people close to you to get tested."
+                android:textAlignment="center"
+                android:textColor="#6D6E70"
+                android:textSize="14sp"
+                android:textStyle="normal"
+                android:layout_gravity="center_horizontal"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text=""
+                android:id="@+id/list_tests"
                 android:textAlignment="center"
                 android:textColor="#6D6E70"
                 android:textSize="14sp"
@@ -342,7 +550,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:src="@drawable/about_six"/>
+                android:src="@drawable/app"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -422,7 +630,7 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:inputType="textMultiLine"
-                android:text="Integrated within the app is the Rotabar, a smart and intuitive way of ensuring you stay verified all the time. Embedded within the Rotabar is an algorithm which calibrates it to indicate your verified status andrecommends when a recheck is required."
+                android:text="Integrated within the app is the Rotabar, a smart and intuitive way of ensuring you stay verified all the time. Embedded within the Rotabar is an algorithm which calibrates it to indicate your verified status and recommends when a recheck is required."
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
@@ -448,6 +656,64 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:textSize="14sp"
                 android:textStyle="normal"/>
 
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/div_seven"
+            android:layout_below="@+id/the_rotabar"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="#6D6E70"/>
+        <LinearLayout
+            android:id="@+id/the_panic_btn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_below="@+id/div_seven"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="The Panic Button"
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#016C81"
+                android:textSize="22sp"
+                android:textStyle="bold"/>
+            <View
+                android:layout_width="80dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_gravity="center_horizontal"
+                android:background="#016C81"/>
+            <ImageView
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:src="@drawable/panic"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:inputType="textMultiLine"
+                android:text="In the event of an imminent threat to one’s reproductive health,  we engineered this feature to provide solutions to your predicament. Don’t fret! Let’s do the fretting for you. Fill out our enquiry form which pops up once you hit the panic button and sit back and allow us to do the rest for you.
+Based on an embedded algorithm in the App, we will evaluate your situation and recommend a course of action. This includes directing you to the right avenue for further solutions if need be.
+For instance in the event of fear of contacting an STD through unprotected sex, hit the panic button, let us evaluate the situation and then recommend the course of action. Did you know taking oral antiretroviral drugs soon after exposure to HIV may reduce risk of acquiring the infection?
+This and more information  is readily available at the push of a button,  with medical experts and resource persons ready to assist you remedy the situation.
+Services recommended while using our App are discounted!
+Remember your confidentiality is our topmost priority. "
+                android:textAlignment="center"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#6D6E70"
+                android:textSize="14sp"
+                android:textStyle="normal"/>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -466,9 +732,26 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:layout_marginTop="15dp"
                 android:layout_marginBottom="15dp"
                 android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
                 android:src="@drawable/logo_verifie"/>
 
         </LinearLayout>
+        <View
+            android:id="@+id/div_end"
+            android:layout_below="@+id/the_panic_btn"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/white"/>
+        <View
+            android:id="@+id/div_end1"
+            android:layout_below="@+id/div_end"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center_horizontal"
+            android:background="@color/white"/>
     </RelativeLayout>
 </ScrollView>
