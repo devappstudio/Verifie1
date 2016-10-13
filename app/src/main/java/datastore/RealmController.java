@@ -60,7 +60,6 @@ public class RealmController {
 
         realm.refresh();
     }
-
     //clear all objects from Book.class
     public void clearAll() {
 
@@ -68,7 +67,7 @@ public class RealmController {
         realm.clear(User.class);
         realm.commitTransaction();
     }
-  public void clearContacts() {
+    public void clearContacts() {
 
         realm.beginTransaction();
         realm.clear(ContactsList.class);
@@ -85,21 +84,20 @@ public class RealmController {
 
     //clear all objects from Book.class
     public void clearAllLocation() {
-
+/*
         realm.beginTransaction();
         realm.clear(Location_Stats.class);
         realm.commitTransaction();
+        */
     }
 
     //find all objects in the Book.class
     public RealmResults<Visibility> getVisibility() {
-
         return realm.where(Visibility.class).findAll();
     }
 
     //find all objects in the Book.class
     public RealmResults<Location_Stats> getLocations() {
-
         return realm.where(Location_Stats.class).findAll();
     }
 

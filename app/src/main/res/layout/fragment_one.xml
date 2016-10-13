@@ -59,7 +59,7 @@
         android:layout_marginBottom="5dp"
         card_view:cardCornerRadius="@dimen/card_album_radius">
 
-        <android.support.v4.view.ViewPager
+        <cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

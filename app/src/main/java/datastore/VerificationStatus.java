@@ -12,7 +12,7 @@ public class VerificationStatus  extends RealmObject {
     @PrimaryKey
     private int id;
 
-    private String date_verified,date_to_expire;
+    private String date_verified,date_to_expire,centre="";
 
 
 
@@ -49,5 +49,21 @@ public class VerificationStatus  extends RealmObject {
 
     public void setDate_to_expire(String date_to_expire) {
         this.date_to_expire = date_to_expire;
+    }
+
+
+    public VerificationStatus(int id, String date_verified, String date_to_expire, String centre) {
+        this.id = id;
+        this.date_verified = date_verified;
+        this.date_to_expire = date_to_expire;
+        this.centre = centre;
+    }
+
+    public String getCentre() {
+        return centre;
+    }
+
+    public void setCentre(String centre) {
+        this.centre = centre;
     }
 }

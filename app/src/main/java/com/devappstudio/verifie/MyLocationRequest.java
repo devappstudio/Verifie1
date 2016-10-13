@@ -23,7 +23,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class MyLocationRequest extends Activity  implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener{
     LocationRequest mLocationRequest;
@@ -67,7 +66,6 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
     private static final int READ_EXTERNAL_REQUEST=INITIAL_REQUEST+5;
     private static final int WRITE_EXTERNAL_REQUEST=INITIAL_REQUEST+6;
 
-
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,9 +89,19 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
             finish();
-
-
         }
+        mGoogleApiClient = new GoogleApiClient.Builder(getApplication())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).build();
+        mGoogleApiClient.connect();
+        final Intent intent = new Intent(MyLocationRequest.this, AppSetup.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+        finish();
+
 
 
 
@@ -104,6 +112,18 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
     @Override
     protected void onResume() {
         super.onResume();
+        mGoogleApiClient = new GoogleApiClient.Builder(getApplication())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).build();
+        mGoogleApiClient.connect();
+        final Intent intent = new Intent(MyLocationRequest.this, AppSetup.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        startActivity(intent);
+        finish();
+
     }
 
 
@@ -293,6 +313,13 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
 
             case READ_EXTERNAL_REQUEST:
                 if (canReadExternal()) {
+                    final Intent intent = new Intent(MyLocationRequest.this, AppSetup.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
+                    finish();
+
                 }
                 else {
                 }
@@ -300,8 +327,16 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
 
             case WRITE_EXTERNAL_REQUEST:
                 if (canWriteExternal()) {
+
+                    final Intent intent = new Intent(MyLocationRequest.this, AppSetup.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
+                    finish();
                 }
                 else {
+                   finish();
                 }
                 break;
         }

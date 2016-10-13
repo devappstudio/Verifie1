@@ -118,6 +118,7 @@ public class AppSetup extends AppCompatActivity {
                                 realm.beginTransaction();
                                 user.setId(1);
                                 user.setDate_to_expire(jo_stock.get("expiry").toString());
+                                user.setCentre(jo_stock.get("facility").toString());
                                 user.setDate_verified(jo_stock.get("current").toString());
                                 realm.copyToRealmOrUpdate(user);
 

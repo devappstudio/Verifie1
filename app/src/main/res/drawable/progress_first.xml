@@ -18,7 +18,7 @@
                 <gradient
                     android:angle="0"
                     android:endColor="@color/rotabar_red_last"
-                    android:startColor="@color/rotabar_red_last" />
+                    android:startColor="@color/rotabar_light_green_second" />
             </shape>
         </clip>
     </item>

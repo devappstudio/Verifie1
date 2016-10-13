@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -48,6 +49,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.kuassivi.view.ProgressProfileView;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import net.gotev.uploadservice.MultipartUploadRequest;
 import net.gotev.uploadservice.ServerResponse;
@@ -81,6 +83,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
 import datastore.Api;
 import datastore.Facilities;
 import datastore.RealmController;
@@ -89,6 +92,8 @@ import datastore.VerificationStatus;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.Realm;
 import io.realm.RealmResults;
+
+import static android.app.Activity.RESULT_OK;
 
 
 public class OneFragment extends Fragment{
@@ -106,7 +111,7 @@ public class OneFragment extends Fragment{
 
     String url;
     int number_slides = 3;
-    private ViewPager viewPager;
+    private AutoScrollViewPager viewPager;
     private ViewPager viewPager1;
     private MyViewPagerAdapter myViewPagerAdapter;
     private MyViewPagerAdapter1 myViewPagerAdapter1;
@@ -168,6 +173,7 @@ public class OneFragment extends Fragment{
             realm.copyToRealmOrUpdate(user);
             realm.commitTransaction();
         }
+        new GetStatus().execute();
         loadFacilities();
         VerificationStatus vss = realm.where(VerificationStatus.class).findAll().first();
         SimpleDateFormat simpleDateFormat =
@@ -275,7 +281,9 @@ public class OneFragment extends Fragment{
         mCardShadowTransformer.enableScaling(true);
 
 
-        viewPager = (ViewPager) myView.findViewById(R.id.view_pager);
+        viewPager = (AutoScrollViewPager) myView.findViewById(R.id.view_pager);
+        viewPager.setCycle(true);
+        viewPager.setBorderAnimation(true);
         dotsLayout = (LinearLayout) myView.findViewById(R.id.layoutDots);
 
         layouts = new int[number_slides];
@@ -291,6 +299,7 @@ public class OneFragment extends Fragment{
         myViewPagerAdapter = new MyViewPagerAdapter();
         viewPager.setAdapter(myViewPagerAdapter);
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener);
+        viewPager.startAutoScroll();
         return myView;
     }
     private void addBottomDots(int currentPage) {
@@ -339,7 +348,10 @@ public class OneFragment extends Fragment{
 
         @Override
         public void onPageSelected(int position) {
-            addBottomDots(position);
+            Activity activity = getActivity();
+            if (isAdded() && activity != null) {
+                addBottomDots(position);
+            }
 
             // changing the next button text 'NEXT' / 'GOT IT'
             if (position == layouts.length - 1) {
@@ -503,6 +515,7 @@ public class OneFragment extends Fragment{
 
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        percentage.setText(level.intValue()+"%");
 
                     }
 
@@ -519,7 +532,6 @@ public class OneFragment extends Fragment{
                 profile.getAnimator().addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animation) {
-                        percentage.setText(animation.getAnimatedValue().toString()+"%");
                 /*
                 Float dd = (Float)Float.parseFloat(animation.getAnimatedValue().toString());
                 if(dd <= 25f )
@@ -553,15 +565,41 @@ public class OneFragment extends Fragment{
             {
                 Resources res = getResources();
                 Drawable drawable = res.getDrawable(R.drawable.background1);
+
                 ProgressBar mProgress = (ProgressBar) view.findViewById(R.id.progressbar1);
                 mProgress.setProgress(level.intValue());   // Main Progress
                 mProgress.setSecondaryProgress(level.intValue() + 20); // Secondary Progress
                 mProgress.setMax(100); // Maximum Progress
+
+                if(level <= 25f)
+                {
+                    drawable = res.getDrawable(R.drawable.background1);
+                }
+                if(level > 25f && level <= 65)
+                {
+                    drawable = res.getDrawable(R.drawable.progress_first);
+                }
+                if(level > 65f && level <= 100)
+                {
+                    drawable = res.getDrawable(R.drawable.progress_deep);
+                }
                 mProgress.setProgressDrawable(drawable);
+
+
                 TextView percentage = (TextView)view.findViewById(R.id.percentage);
                 percentage.setText(level.intValue()+"%");
 
-                TextView last_verified,recommended_verification,centre_verified;
+                //TextView last_verified,recommended_verification,centre_verified;
+                Realm rr = Realm.getDefaultInstance();
+                VerificationStatus verificationStatus = rr.where(VerificationStatus.class).findFirst();
+                TextView last_verified = (TextView) view.findViewById(R.id.last_verified);
+                TextView recommended_verification = (TextView) view.findViewById(R.id.next);
+                TextView centre_verified = (TextView) view.findViewById(R.id.centre);
+
+                last_verified.setText("Last Verified :"+verificationStatus.getDate_verified());
+                recommended_verification.setText("Recommended Verification Date :"+verificationStatus.getDate_to_expire());
+                centre_verified.setText("Center :"+verificationStatus.getCentre());
+
 
 
 /*
@@ -775,6 +813,42 @@ public class OneFragment extends Fragment{
         }
 
     }
+    private class GetStatus extends AsyncTask<Void, Integer, String> {
+        ProgressDialog pd;
+
+         @Override
+        protected void onPreExecute() {
+            // setting progress bar to zero
+
+             super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... progress) {
+            // Making progress bar visible
+
+            // updating progress bar value
+
+            // updating percentage value
+        }
+
+        @Override
+        protected String doInBackground(Void... params) {
+           get_user();
+            return "True";
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.e(TAG, "Response from server: " + result);
+            // showing the server response in an alert dialog
+          //  showAlert(result);
+
+            super.onPostExecute(result);
+        }
+
+    }
 
     /**
      * Creating file uri to store image/video
@@ -828,7 +902,7 @@ public class OneFragment extends Fragment{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SELECT_PICTURE && resultCode == Activity.RESULT_OK) {
+        if (requestCode == SELECT_PICTURE && resultCode == RESULT_OK) {
             final boolean isCamera;
             Uri ur;
 
@@ -845,9 +919,10 @@ public class OneFragment extends Fragment{
             String path="";
             Uri selectedImageUri;
             if (isCamera) {
-                Toast.makeText(getContext(),"Camera",Toast.LENGTH_LONG).show();
+               // Toast.makeText(getContext(),"Camera",Toast.LENGTH_LONG).show();
                 ur = outputFileUri;
                 path = outputFileUri.getPath().toString();
+                selectedImageUri = outputFileUri;
 
             } else {
                 /*
@@ -856,10 +931,11 @@ public class OneFragment extends Fragment{
                 File myFile = new File(uriString);
                 path = myFile.getAbsolutePath();
                 */
-                Toast.makeText(getContext(),"File",Toast.LENGTH_LONG).show();
+               // Toast.makeText(getContext(),"File",Toast.LENGTH_LONG).show();
 
                 Uri uri = data.getData();
                 ur = uri;
+                selectedImageUri = ur;
                 String[] projection = { MediaStore.Images.Media.DATA };
 
                 Cursor cursor = getActivity().getContentResolver().query(uri, projection, null, null, null);
@@ -870,7 +946,9 @@ public class OneFragment extends Fragment{
                 cursor.close();
 
             }
-            uploadMultipart(getContext(),path);
+            CropImage.activity(selectedImageUri)
+                    .start(getContext(), this);
+           // TODO uploadMultipart(getContext(),path);
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), ur);
                 profile.setImageBitmap(bitmap);
@@ -879,6 +957,24 @@ public class OneFragment extends Fragment{
             }
 //            uploadImage();
             //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
+        }
+
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            Uri resultUri = null;
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                resultUri = result.getUri();
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+            uploadMultipart(getContext(),resultUri.getPath().toString());
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), resultUri);
+                profile.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1074,6 +1170,152 @@ public class OneFragment extends Fragment{
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
                 loadFacilities();
+            }
+        }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "application/json; charset=utf-8");
+                return headers;
+            }
+        };
+// Adding request to request queue
+
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
+
+    }
+
+
+    void get_user()
+    {
+      System.out.println("Called Get User");
+//        Toast.makeText(getActivity(),"Checking",Toast.LENGTH_LONG).show();
+
+        //`users`(`id`, `fullname`, `login_type`, `security_code`, `extra_code`, `id_from_provider`, `telephone`, `file_blob`, `file_name`, `is_visible`, `visibility_code`, ``, ``, ``, ``, ``)
+        final String tag = "new_user_logn";
+        System.out.println("Started");
+
+        final Realm realm = Realm.getDefaultInstance();
+        User clst = realm.where(User.class).findAll().first();
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("id_user", clst.getServer_id());
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                Api.getApi()+"user_status",new JSONObject(params),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        final Realm realm1 = Realm.getDefaultInstance();
+                        System.out.print("result "+response.toString());
+                        try {
+
+                            if(response.get("status").toString().equalsIgnoreCase("1"))
+                            {
+                                JSONObject jo_stock = (JSONObject) response.get("data");
+                                // JSONObject jo_company = response.getJSONObject("company");
+                                //JSONObject jo_user = response.getJSONObject("user");
+                                //save user
+                                // save company
+                                //Toast.makeText(getActivity(),jo_stock.toString(),Toast.LENGTH_LONG).show();
+
+
+                                VerificationStatus user = new VerificationStatus();
+                                //realm1.clear(VerificationStatus.class);
+
+                                realm1.beginTransaction();
+                                user.setId(1);
+                                user.setDate_to_expire(jo_stock.get("expiry").toString());
+                                user.setDate_verified(jo_stock.get("current").toString());
+                                user.setCentre(jo_stock.get("facility").toString());
+                                realm1.copyToRealmOrUpdate(user);
+                                realm1.commitTransaction();
+                            }
+                            else
+                            {
+                                RealmResults<VerificationStatus> vs = realm1.where(VerificationStatus.class).findAll();
+                                if(vs.isEmpty())
+                                {
+                                    VerificationStatus user = new VerificationStatus();
+                                    realm1.beginTransaction();
+                                    user.setId(1);
+                                    user.setDate_to_expire("13/09/2015");
+                                    user.setDate_verified("13/09/2015");
+                                    realm1.copyToRealmOrUpdate(user);
+                                    realm1.commitTransaction();
+                                }
+                                else
+                                {
+                                    /*
+                                    VerificationStatus vv = vs.first();
+                                    realm.beginTransaction();
+                                    vv.setDate_to_expire("13/09/2015");
+                                    vv.setDate_verified("13/09/2015");
+                                    realm.copyToRealmOrUpdate(vv);
+                                    realm.commitTransaction();
+                                    */
+                                }
+                            }
+
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                            RealmResults<VerificationStatus>vs = realm1.where(VerificationStatus.class).findAll();
+                            if(vs.isEmpty())
+                            {
+                                VerificationStatus user = new VerificationStatus();
+                                realm1.beginTransaction();
+                                user.setId(1);
+                                user.setDate_to_expire("13/09/2015");
+                                user.setDate_verified("13/09/2015");
+                                realm1.copyToRealmOrUpdate(user);
+                                realm1.commitTransaction();
+                            }
+                            else
+                            {
+                                /*
+                                VerificationStatus vv = vs.first();
+                                realm.beginTransaction();
+                                vv.setDate_to_expire("13/09/2015");
+                                vv.setDate_verified("13/09/2015");
+                                realm.copyToRealmOrUpdate(vv);
+                                realm.commitTransaction();
+                                */
+                            }
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                final Realm realm1 = Realm.getDefaultInstance();
+                RealmResults<VerificationStatus>vs = realm1.where(VerificationStatus.class).findAll();
+                if(vs.isEmpty())
+                {
+                    VerificationStatus user = new VerificationStatus();
+                    realm1.beginTransaction();
+                    user.setId(1);
+                    user.setDate_to_expire("13/09/2015");
+                    user.setDate_verified("13/09/2015");
+                    realm1.copyToRealmOrUpdate(user);
+                    realm1.commitTransaction();
+                }
+                else
+                {
+                    /*
+                    VerificationStatus vv = vs.first();
+                    realm.beginTransaction();
+                    vv.setDate_to_expire("13/09/2015");
+                    vv.setDate_verified("13/09/2015");
+                    realm.copyToRealmOrUpdate(vv);
+                    realm.commitTransaction();
+                    */
+                }
+                get_user();
+                System.out.println("Error Occurred In Here");
+                error.printStackTrace();
             }
         }) {
             @Override

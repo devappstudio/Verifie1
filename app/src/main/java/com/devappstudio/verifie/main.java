@@ -26,6 +26,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
@@ -46,12 +51,20 @@ import com.pusher.client.Pusher;
 import com.pusher.client.channel.Channel;
 import com.pusher.client.channel.SubscriptionEventListener;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import datastore.Api;
 import datastore.Location_Stats;
 import datastore.RealmController;
+import datastore.User;
+import datastore.VerificationStatus;
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 
 public class main extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
@@ -90,7 +103,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setLogo(R.drawable.slider_logo);
-
+/*
         Pusher pusher = new Pusher("b92833487bc47f83ac76");
         //  pusher.setCluster("eu");
 
@@ -105,7 +118,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         });
 
         pusher.connect();
-
+*/
 
         // prepareMovieData();
 
@@ -117,8 +130,8 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
 //        setupTabIcons();
 
-        this.realm = RealmController.with(getApplication()).getRealm();
 
+        this.realm = RealmController.with(getApplication()).getRealm();
         if (mGoogleApiClient == null) {
             // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
             // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -160,7 +173,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
                                 // Show the dialog by calling
                                 // startResolutionForResult(),
                                 // and check the result in onActivityResult().
-                                status.startResolutionForResult(main.this, 45240610);
+                                status.startResolutionForResult(main.this, 1024);
                             } catch (IntentSender.SendIntentException e) {
                                 // Ignore the error.
                                 e.printStackTrace();
@@ -186,6 +199,8 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         } else {
         }
 
+
+
         //TODO  update_user_location  new_user_location near_users_get
 
     }
@@ -200,7 +215,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
@@ -244,7 +259,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
                 try {
                     // Show the dialog by calling startResolutionForResult(), and check the result
                     // in onActivityResult().
-                    status.startResolutionForResult(getParent(), 45240610);
+                    status.startResolutionForResult(getParent(), 1024);
                 } catch (IntentSender.SendIntentException e) {
                     Log.i(TAG, "PendingIntent unable to execute request.");
                 }
@@ -352,15 +367,26 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         }
         mLastLocation = LocationServices.FusedLocationApi
                 .getLastLocation(mGoogleApiClient);
+        final Realm realm1 = Realm.getDefaultInstance();
 
         if (mLastLocation != null) {
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
-            RealmController.with(getApplication()).clearAllLocation();
-            Location_Stats ls = new Location_Stats(longitude, latitude);
-            realm.beginTransaction();
-            realm.copyToRealm(ls);
-            realm.commitTransaction();
+            final Location_Stats ls = new Location_Stats(longitude, latitude);
+
+            try{
+
+                realm1.beginTransaction();
+                realm1.copyToRealmOrUpdate(ls);
+                realm1.commitTransaction();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                realm.cancelTransaction();
+            }
+
+
 
         } else {
 
@@ -567,22 +593,26 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == 45240610)
+        if(requestCode == 1024)
         {
             switch (resultCode) {
                 case Activity.RESULT_OK:
                     Log.i(TAG, "User agreed to make required location settings changes.");
-                    startLocationUpdates();
+                    final Intent intent = new Intent(main.this, AppSetup.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(intent);
+                    finish();
                     break;
                 case Activity.RESULT_CANCELED:
                     Log.i(TAG, "User chose not to make required location settings changes.");
                     break;
             }
         }
-        else
-        {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+
     }
+
+
 
 }
