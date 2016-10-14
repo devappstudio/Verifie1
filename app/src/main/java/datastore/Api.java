@@ -7,6 +7,7 @@ package datastore;
 public class Api {
 
     public static final String api = "http://verifie.devappstudio.com/index.php/api_v1/";
+    public static final String image_end = "http://verifie.devappstudio.com/index.php/auth/user_image/";
     // File upload url (replace the ip with your server address)
     public static final String FILE_UPLOAD_URL = "http://192.168.0.104/AndroidFileUpload/fileUpload.php";
 
@@ -15,5 +16,10 @@ public class Api {
 
     public static String getApi() {
         return api;
+    }
+
+    public static String getImage_end()
+    {
+        return image_end;
     }
 }

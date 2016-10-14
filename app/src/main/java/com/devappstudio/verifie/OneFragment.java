@@ -40,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -173,8 +174,7 @@ public class OneFragment extends Fragment{
             realm.copyToRealmOrUpdate(user);
             realm.commitTransaction();
         }
-        new GetStatus().execute();
-        loadFacilities();
+        //loadFacilities();
         VerificationStatus vss = realm.where(VerificationStatus.class).findAll().first();
         SimpleDateFormat simpleDateFormat =
                 new SimpleDateFormat("dd/M/yyyy");
@@ -813,42 +813,6 @@ public class OneFragment extends Fragment{
         }
 
     }
-    private class GetStatus extends AsyncTask<Void, Integer, String> {
-        ProgressDialog pd;
-
-         @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-
-             super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            // Making progress bar visible
-
-            // updating progress bar value
-
-            // updating percentage value
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-           get_user();
-            return "True";
-        }
-
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.e(TAG, "Response from server: " + result);
-            // showing the server response in an alert dialog
-          //  showAlert(result);
-
-            super.onPostExecute(result);
-        }
-
-    }
 
     /**
      * Creating file uri to store image/video
@@ -1020,7 +984,7 @@ public class OneFragment extends Fragment{
 
                                     Realm realm = Realm.getDefaultInstance();
 //                                    new GetImages(location, profile, imagename).execute() ;
-                                    Picasso.with(getActivity()).load(location).into(profile);
+                                    Picasso.with(getActivity()).load(Api.getImage_end()+server_id).into(profile);
 
                                     User us = realm.where(User.class).findFirst();
                                     realm.beginTransaction();
@@ -1107,229 +1071,6 @@ public class OneFragment extends Fragment{
         return encodedImage;
     }
     private Bitmap bitmap;
-
-
-
-
-    void loadFacilities()
-    {
-        final String tag = "new_user_logn";
-
-        final Realm realm = Realm.getDefaultInstance();
-        User clst = realm.where(User.class).findAll().first();
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("id_user", clst.getServer_id());
-
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                Api.getApi()+"load_facilities",new JSONObject(params),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        System.out.print(response.toString());
-                        try {
-
-                            JSONArray jaa = response.getJSONArray("data");
-
-                            for (int i=0; i< jaa.length(); i++)
-                            {
-
-                                JSONObject object = (JSONObject) jaa.get(i);
-                                RealmResults<Facilities> f = realm.where(Facilities.class).equalTo("server_id",object.get("id").toString()).findAll();
-
-                                if(f.isEmpty())
-                                {
-                                    Facilities fac = new Facilities(((int) realm.where(Facilities.class).maximumInt("id")),object.get("name").toString(),object.get("contact_person_name").toString(),object.get("contact_person_telephone").toString(),object.get("location").toString(),object.get("id").toString());
-                                    realm.beginTransaction();
-                                    realm.copyToRealm(fac);
-                                    realm.commitTransaction();
-                                }
-                                else
-                                {
-                                    Facilities fac = f.first();
-                                    realm.beginTransaction();
-                                    fac.setName(object.get("name").toString());
-                                    fac.setContact_person(object.get("contact_person_name").toString());
-                                    fac.setContact_phone(object.get("contact_person_telephone").toString());
-                                    fac.setLocation(object.get("location").toString());
-                                    realm.copyToRealmOrUpdate(fac);
-                                    realm.commitTransaction();
-                                }
-
-                            }
-
-                        }
-                        catch (Exception e)
-                        {
-
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                error.printStackTrace();
-                loadFacilities();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                return headers;
-            }
-        };
-// Adding request to request queue
-
-        AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
-
-    }
-
-
-    void get_user()
-    {
-      System.out.println("Called Get User");
-//        Toast.makeText(getActivity(),"Checking",Toast.LENGTH_LONG).show();
-
-        //`users`(`id`, `fullname`, `login_type`, `security_code`, `extra_code`, `id_from_provider`, `telephone`, `file_blob`, `file_name`, `is_visible`, `visibility_code`, ``, ``, ``, ``, ``)
-        final String tag = "new_user_logn";
-        System.out.println("Started");
-
-        final Realm realm = Realm.getDefaultInstance();
-        User clst = realm.where(User.class).findAll().first();
-
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("id_user", clst.getServer_id());
-
-        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                Api.getApi()+"user_status",new JSONObject(params),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        final Realm realm1 = Realm.getDefaultInstance();
-                        System.out.print("result "+response.toString());
-                        try {
-
-                            if(response.get("status").toString().equalsIgnoreCase("1"))
-                            {
-                                JSONObject jo_stock = (JSONObject) response.get("data");
-                                // JSONObject jo_company = response.getJSONObject("company");
-                                //JSONObject jo_user = response.getJSONObject("user");
-                                //save user
-                                // save company
-                                //Toast.makeText(getActivity(),jo_stock.toString(),Toast.LENGTH_LONG).show();
-
-
-                                VerificationStatus user = new VerificationStatus();
-                                //realm1.clear(VerificationStatus.class);
-
-                                realm1.beginTransaction();
-                                user.setId(1);
-                                user.setDate_to_expire(jo_stock.get("expiry").toString());
-                                user.setDate_verified(jo_stock.get("current").toString());
-                                user.setCentre(jo_stock.get("facility").toString());
-                                realm1.copyToRealmOrUpdate(user);
-                                realm1.commitTransaction();
-                            }
-                            else
-                            {
-                                RealmResults<VerificationStatus> vs = realm1.where(VerificationStatus.class).findAll();
-                                if(vs.isEmpty())
-                                {
-                                    VerificationStatus user = new VerificationStatus();
-                                    realm1.beginTransaction();
-                                    user.setId(1);
-                                    user.setDate_to_expire("13/09/2015");
-                                    user.setDate_verified("13/09/2015");
-                                    realm1.copyToRealmOrUpdate(user);
-                                    realm1.commitTransaction();
-                                }
-                                else
-                                {
-                                    /*
-                                    VerificationStatus vv = vs.first();
-                                    realm.beginTransaction();
-                                    vv.setDate_to_expire("13/09/2015");
-                                    vv.setDate_verified("13/09/2015");
-                                    realm.copyToRealmOrUpdate(vv);
-                                    realm.commitTransaction();
-                                    */
-                                }
-                            }
-
-                        }
-                        catch (Exception e)
-                        {
-                            e.printStackTrace();
-                            RealmResults<VerificationStatus>vs = realm1.where(VerificationStatus.class).findAll();
-                            if(vs.isEmpty())
-                            {
-                                VerificationStatus user = new VerificationStatus();
-                                realm1.beginTransaction();
-                                user.setId(1);
-                                user.setDate_to_expire("13/09/2015");
-                                user.setDate_verified("13/09/2015");
-                                realm1.copyToRealmOrUpdate(user);
-                                realm1.commitTransaction();
-                            }
-                            else
-                            {
-                                /*
-                                VerificationStatus vv = vs.first();
-                                realm.beginTransaction();
-                                vv.setDate_to_expire("13/09/2015");
-                                vv.setDate_verified("13/09/2015");
-                                realm.copyToRealmOrUpdate(vv);
-                                realm.commitTransaction();
-                                */
-                            }
-
-                        }
-                    }
-                }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                final Realm realm1 = Realm.getDefaultInstance();
-                RealmResults<VerificationStatus>vs = realm1.where(VerificationStatus.class).findAll();
-                if(vs.isEmpty())
-                {
-                    VerificationStatus user = new VerificationStatus();
-                    realm1.beginTransaction();
-                    user.setId(1);
-                    user.setDate_to_expire("13/09/2015");
-                    user.setDate_verified("13/09/2015");
-                    realm1.copyToRealmOrUpdate(user);
-                    realm1.commitTransaction();
-                }
-                else
-                {
-                    /*
-                    VerificationStatus vv = vs.first();
-                    realm.beginTransaction();
-                    vv.setDate_to_expire("13/09/2015");
-                    vv.setDate_verified("13/09/2015");
-                    realm.copyToRealmOrUpdate(vv);
-                    realm.commitTransaction();
-                    */
-                }
-                get_user();
-                System.out.println("Error Occurred In Here");
-                error.printStackTrace();
-            }
-        }) {
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> headers = new HashMap<String, String>();
-                headers.put("Content-Type", "application/json; charset=utf-8");
-                return headers;
-            }
-        };
-// Adding request to request queue
-
-        AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
-
-    }
 
 
 }

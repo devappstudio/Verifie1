@@ -324,7 +324,6 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:text=""
-                android:id="@+id/list_tests"
                 android:textAlignment="center"
                 android:textColor="#6D6E70"
                 android:textSize="14sp"
@@ -746,7 +745,6 @@ Remember your confidentiality is our topmost priority. "
             android:layout_gravity="center_horizontal"
             android:background="@color/white"/>
         <View
-            android:id="@+id/div_end1"
             android:layout_below="@+id/div_end"
             android:layout_width="match_parent"
             android:layout_height="0.5dp"

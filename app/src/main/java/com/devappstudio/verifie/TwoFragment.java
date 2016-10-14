@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -116,8 +117,6 @@ public class TwoFragment extends Fragment{
             }
         });
 
-        TwoFragment.readContacts task = new TwoFragment.readContacts();
-        task.execute("");
 
         SearchView search = (SearchView) myView.findViewById( R.id.search);
         SearchView.OnQueryTextListener listener = new SearchView.OnQueryTextListener(){
@@ -393,6 +392,8 @@ public class TwoFragment extends Fragment{
             }
         };
 // Adding request to request queue
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
 
     }
@@ -478,6 +479,7 @@ public class TwoFragment extends Fragment{
             }
         };
 // Adding request to request queue
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
 
     }
@@ -571,6 +573,7 @@ public class TwoFragment extends Fragment{
             }
         };
 // Adding request to request queue
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
 
     }
@@ -631,24 +634,9 @@ public class TwoFragment extends Fragment{
 
     private class readContacts extends AsyncTask<String, Void, String> {
 
-        /**
-         * Override this method to perform a computation on a background thread. The
-         * specified parameters are the parameters passed to {@link #execute}
-         * by the caller of this task.
-         * <p>
-         * This method can call {@link #publishProgress} to publish updates
-         * on the UI thread.
-         *
-         * @param params The parameters of the task.
-         * @return A result, defined by the subclass of this task.
-         * @see #onPreExecute()
-         * @see #onPostExecute
-         * @see #publishProgress
-         */
         @Override
         protected String doInBackground(String... params) {
             check_on_verifie();
-
             return null;
         }
     }
@@ -726,6 +714,7 @@ public class TwoFragment extends Fragment{
                 }
             };
 // Adding request to request queue
+            jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
         }
     }
@@ -957,7 +946,9 @@ public class TwoFragment extends Fragment{
                     }
                 };
 // Adding request to request queue
-                AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
 
 
 
@@ -1024,6 +1015,7 @@ public class TwoFragment extends Fragment{
             }
         };
 // Adding request to request queue
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
 
         //send request to server

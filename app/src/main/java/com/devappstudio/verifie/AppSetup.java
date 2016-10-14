@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.ProgressBar;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -18,6 +19,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.github.ybq.android.spinkit.style.ThreeBounce;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -60,6 +64,7 @@ public class AppSetup extends AppCompatActivity {
         RealmResults<ContactsList> clst = realm.where(ContactsList.class).findAll();
         if (clst.isEmpty())
         {
+            loadFacilities();
             AppSetup.readContacts task = new AppSetup.readContacts();
             task.execute("");
         }
@@ -208,6 +213,8 @@ public class AppSetup extends AppCompatActivity {
         };
 // Adding request to request queue
 
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
 
     }
@@ -289,6 +296,7 @@ public class AppSetup extends AppCompatActivity {
                     }
                 }
             }
+            check_on_verifie();
             return null;
         }
 
@@ -428,8 +436,88 @@ public class AppSetup extends AppCompatActivity {
             }
         };
 // Adding request to request queue
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
 
     }
+
+
+    void  check_on_verifie()
+    {
+        final Realm trealm = Realm.getDefaultInstance();
+        final RealmResults<ContactsList> cl = trealm.where(ContactsList.class).equalTo("is_on_verifie","0").findAll();
+
+        for (int i=0; i<cl.size();i++)
+        {
+
+            String phone = cl.get(i).getTelephone();
+            try {
+                PhoneNumberUtil pnu = PhoneNumberUtil.getInstance();
+                Phonenumber.PhoneNumber pn = null;
+                pn = pnu.parse(phone, "GH");
+                phone = pnu.format(pn, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
+            } catch (NumberParseException e) {
+                e.printStackTrace();
+            }
+
+            final String tag = "new_user_logn";
+            phone = phone.trim();
+            phone = phone.replace("\\s+","");
+            phone = phone.replace(" ","");
+
+            final String phon = phone;
+
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("telephone", phone);
+            final int finalI = cl.get(i).getId();
+            JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                    Api.getApi()+"check_is_on_verifie",new JSONObject(params),
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            System.out.print(response.toString()+ " Telephone "+phon);
+                            try {
+
+                                if(response.get("status").toString().equalsIgnoreCase("1"))
+                                {
+                                    final Realm rrealm = Realm.getDefaultInstance();
+                                    ContactsList contactsList = rrealm.where(ContactsList.class).equalTo("id",finalI).findFirst();
+                                    JSONObject jo_stock = (JSONObject) response.get("data");
+                                    rrealm.beginTransaction();
+                                    contactsList.setIs_on_verifie("1");
+                                    contactsList.setServer_id(jo_stock.get("id").toString());
+                                    contactsList.setFile_name(jo_stock.get("file_name").toString());
+                                    contactsList.setScreen_name(jo_stock.get("screen_name").toString());
+                                    rrealm.copyToRealmOrUpdate(contactsList);
+                                    rrealm.commitTransaction();
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    error.printStackTrace();
+
+                }
+            }) {
+                @Override
+                public Map<String, String> getHeaders() throws AuthFailureError {
+                    HashMap<String, String> headers = new HashMap<String, String>();
+                    headers.put("Content-Type", "application/json; charset=utf-8");
+                    return headers;
+                }
+            };
+// Adding request to request queue
+            jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
+        }
+    }
+
+
 }

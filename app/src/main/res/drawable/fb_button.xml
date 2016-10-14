@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list
-    xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:drawable="@drawable/layer_4_001" android:left="0px" />
-    <item android:drawable="@drawable/vector_smart_object_003" android:left="0px" android:height="20dp" />
-    <item android:drawable="@drawable/layer_2_001"
-        android:left="80dp"/>
-</layer-list>

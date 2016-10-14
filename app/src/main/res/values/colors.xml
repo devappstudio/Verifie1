@@ -3,9 +3,7 @@
     <item name="blue" type="color">#33b5e5</item>
     <item name="light_blue" type="color">#28AAE6</item>
     <item name="green" type="color">#FF99CC00</item>
-    <item name="orange" type="color">#FFFFBB33</item>
     <item name="red" type="color">#FFFF4444</item>
-    <item name="darkgreen" type="color">#FF669900</item>
     <item name="rotabar_back_ground" type="color">#faf6d0</item>
     <item name="rotabar_green_first" type="color">#6aa604</item>
     <item name="rotabar_light_green_second" type="color">#b1f98d</item>
@@ -20,30 +18,19 @@
     <color name="bg_screen2">#20d2bb</color>
     <color name="bg_screen3">#3395ff</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorOAccent">#4889F1</color>
     <color name="colorMagenta">#FF00FF</color>
 
 
     <!-- dots inactive colors -->
-    <color name="dot_dark_screen1">#d1395c</color>
-    <color name="dot_dark_screen2">#14a895</color>
     <color name="dot_dark_screen3">#2278d4</color>
 
     <!-- dots active colors -->
-    <color name="dot_light_screen1">#f98da5</color>
-    <color name="dot_light_screen2">#8cf9eb</color>
-    <color name="dot_light_screen3">#93c6fd</color>
 
     <array name="array_dot_active">
         <item>@color/white</item>
         <item>@color/white</item>
         <item>@color/white</item>
         <item>@color/white</item>
-    </array>
-   <array name="test_gradient">
-        <item>@color/rotabar_back_ground</item>
-        <item>@color/rotabar_green_first</item>
-        <item>@color/rotabar_red_last</item>
     </array>
 
     <array name="array_dot_inactive">
