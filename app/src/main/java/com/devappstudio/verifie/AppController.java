@@ -44,7 +44,9 @@ public class AppController extends android.support.multidex.MultiDexApplication 
         UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
    //     LeakCanary.install(this);
         mInstance = this;
+
     }
+
 
     public static synchronized AppController getInstance() {
         return mInstance;
@@ -88,6 +90,8 @@ public class AppController extends android.support.multidex.MultiDexApplication 
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(newBase);
+
         MultiDex.install(this);
+       // super.attachBaseContext();
     }
 }

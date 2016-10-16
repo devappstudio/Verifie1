@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.kuassivi.view.ProgressProfileView
+            android:id="@+id/profile"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            app:progressRingSize="25dp"
+            app:max="100"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:elevation="8dp"
+            android:drawingCacheQuality="high"
+            android:src="@drawable/circular"
+            app:backgroundRingColor="@color/rotabar_back_ground"
+            app:progressRingColor="@color/rotabar_red_last"
+            app:progress="42"
+            android:layout_centerHorizontal="true"
+            app:progressRingCap="ROUND"
+            app:progressRingOutline="false"
+            android:layout_marginLeft="@dimen/card_padding" />
+
+
+        <TextView
+            android:text="0%"
+            android:textColor="@color/primaryColorDark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/profile"
+            android:layout_toEndOf="@+id/profile"
+            android:layout_marginBottom="20dp"
+            android:id="@+id/percent_view"
+            android:textSize="18sp" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:src="@drawable/verified"
+            android:layout_toRightOf="@id/percent_view"
+            android:layout_toEndOf="@id/percent_view"
+            android:layout_marginBottom="10dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp" />
+
+    </RelativeLayout>
+</LinearLayout>

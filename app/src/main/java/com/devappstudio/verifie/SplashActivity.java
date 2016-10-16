@@ -79,7 +79,7 @@ public class SplashActivity extends Activity {
 
                     // After 5 seconds redirect to another intent
 
-                    Intent intent=new Intent(getBaseContext(),Login.class);
+                    Intent intent=new Intent(SplashActivity.this,Login.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -102,14 +102,12 @@ public class SplashActivity extends Activity {
                     sleep(2*1000);
 
 
-                    Intent intent=new Intent(getBaseContext(),MyLocationRequest.class);
+                    Intent intent=new Intent(SplashActivity.this,MyLocationRequest.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
                     finish();
-
-
                 } catch (Exception e) {
 
                 }

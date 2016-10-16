@@ -776,6 +776,8 @@ public class TwoFragment extends Fragment{
                         Date date1 = simpleDateFormat.parse(strDate);
                         Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
                         Long t =  printDifference(date1, date2)/7;
+                        System.out.println("Difference "+t);
+                        /*
                         if(t > 52)
                         {
                             level =  (float)(t/52)*100;
@@ -785,6 +787,7 @@ public class TwoFragment extends Fragment{
                             level =  (float)(52/t)*100;
 
                         }
+                        */
 
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -795,15 +798,15 @@ public class TwoFragment extends Fragment{
 
                     if(level <= 25f)
                     {
-                        dialog.setContentView(R.layout.top1);
+                        dialog.setContentView(R.layout.pop1);
                     }
                     if(level > 25f && level <= 65)
                     {
-                        dialog.setContentView(R.layout.top2);
+                        dialog.setContentView(R.layout.pop2);
                     }
                     if(level > 65f && level <= 100)
                     {
-                        dialog.setContentView(R.layout.top3);
+                        dialog.setContentView(R.layout.pop3);
                     }
 
 

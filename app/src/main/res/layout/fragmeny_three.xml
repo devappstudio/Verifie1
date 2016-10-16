@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools2="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:orientation="vertical">
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -23,14 +23,16 @@
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
                 android:textSize="22dp"
-                android:textStyle="bold"/>
+                
+                android:textStyle="bold"
+                tools2:ignore="MissingPrefix" />
             <View
                 android:layout_width="100dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal"
                 android:background="#016C81"/>
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -42,14 +44,17 @@
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
                 android:textSize="14sp"
-                android:textStyle="normal"/>
+                fontPath="fonts/nueva.ttf"
+
+                android:textStyle="normal"
+                tools2:ignore="MissingPrefix" />
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:src="@drawable/about_one"
                 />
 
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -60,9 +65,11 @@
                 android:textColor="#6D6E70"
                 android:textSize="14sp"
                 android:textStyle="normal"
-                android:layout_gravity="center_horizontal"/>
-        </LinearLayout>
+                fontPath="fonts/nueva.ttf"
 
+                android:layout_gravity="center_horizontal"
+                tools2:ignore="MissingPrefix" />
+        </LinearLayout>
         <View
             android:id="@+id/div_one"
             android:layout_below="@+id/get_started"
@@ -78,22 +85,25 @@
             android:layout_gravity="center_vertical"
             android:layout_below="@+id/div_one"
             android:orientation="vertical">
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="What We Do"
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
+                fontPath="fonts/nueva.ttf"
+
                 android:textSize="20sp"
-                android:textStyle="bold"/>
+                android:textStyle="bold"
+                tools2:ignore="MissingPrefix" />
             <View
                 android:layout_width="80dp"
                 android:layout_height="1dp"
                 android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal"
                 android:background="#016C81"/>
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -104,8 +114,11 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
+                fontPath="fonts/nueva.ttf"
+
                 android:textSize="14sp"
-                android:textStyle="normal"/>
+                android:textStyle="normal"
+                tools2:ignore="MissingPrefix" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:orientation="vertical"
@@ -135,7 +148,7 @@
                             android:background="@drawable/light_blue"
                             />
 
-                        <TextView
+                        <com.devappstudio.verifie.MyTextView
                             android:layout_width="wrap_content"
                             android:textColor="@color/cardview_dark_background"
                             android:text="Chlamydia"
@@ -143,8 +156,11 @@
                             android:layout_height="wrap_content"
                             android:textSize="14sp"
                             android:textAlignment="center"
+                            fontPath="fonts/nueva.ttf"
+
                             android:textStyle="normal"
-                            android:elevation="1dp" />
+                            android:elevation="1dp"
+                            tools2:ignore="MissingPrefix" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -163,7 +179,7 @@
                             android:background="@drawable/light_blue"
                             />
 
-                        <TextView
+                        <com.devappstudio.verifie.MyTextView
                             android:layout_width="wrap_content"
                             android:textColor="@color/cardview_dark_background"
                             android:text="Gonorrhoea"
@@ -171,8 +187,11 @@
                             android:layout_height="wrap_content"
                             android:textSize="14sp"
                             android:textAlignment="center"
+                            fontPath="fonts/nueva.ttf"
+
                             android:textStyle="normal"
-                            android:elevation="1dp" />
+                            android:elevation="1dp"
+                            tools2:ignore="MissingPrefix" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -191,7 +210,7 @@
                             android:background="@drawable/light_blue"
                             />
 
-                        <TextView
+                        <com.devappstudio.verifie.MyTextView
                             android:layout_width="wrap_content"
                             android:textColor="@color/cardview_dark_background"
                             android:text="Syphilis"
@@ -199,9 +218,11 @@
                             android:layout_height="wrap_content"
                             android:textSize="14sp"
                             android:textAlignment="center"
+                            fontPath="fonts/nueva.ttf"
 
                             android:textStyle="normal"
-                            android:elevation="1dp" />
+                            android:elevation="1dp"
+                            tools2:ignore="MissingPrefix" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -228,17 +249,19 @@
                             android:background="@drawable/light_blue"
                             />
 
-                        <TextView
+                        <com.devappstudio.verifie.MyTextView
                             android:layout_width="wrap_content"
                             android:textColor="@color/cardview_dark_background"
                             android:text="Hepatitis B"
                             android:textAlignment="center"
+                            fontPath="fonts/nueva.ttf"
 
                             android:layout_gravity="center"
                             android:layout_height="wrap_content"
                             android:textSize="14sp"
                             android:textStyle="normal"
-                            android:elevation="1dp" />
+                            android:elevation="1dp"
+                            tools2:ignore="MissingPrefix" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -257,17 +280,19 @@
                             android:background="@drawable/light_blue"
                             />
 
-                        <TextView
+                        <com.devappstudio.verifie.MyTextView
                             android:layout_width="wrap_content"
                             android:textColor="@color/cardview_dark_background"
                             android:text="Hepatitis C"
                             android:layout_gravity="center"
                             android:textAlignment="center"
+                            fontPath="fonts/nueva.ttf"
 
                             android:layout_height="wrap_content"
                             android:textSize="14sp"
                             android:textStyle="normal"
-                            android:elevation="1dp" />
+                            android:elevation="1dp"
+                            tools2:ignore="MissingPrefix" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -286,17 +311,19 @@
                             android:background="@drawable/light_blue"
                             />
 
-                        <TextView
+                        <com.devappstudio.verifie.MyTextView
                             android:layout_width="wrap_content"
                             android:textColor="@color/cardview_dark_background"
                             android:text="HIV"
                             android:layout_gravity="center"
                             android:textAlignment="center"
-
+                            fontPath="fonts/nueva.ttf"
+                            tools2:ignore="MissingPrefix"
                             android:layout_height="wrap_content"
                             android:textSize="14sp"
                             android:textStyle="normal"
-                            android:elevation="1dp" />
+                            android:elevation="1dp"
+                            />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -306,7 +333,7 @@
                 android:layout_height="220dp"
                 android:src="@drawable/about_two"/>
 
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -316,9 +343,12 @@
                 android:textColor="#6D6E70"
                 android:textSize="14sp"
                 android:textStyle="normal"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:layout_gravity="center_horizontal"/>
 
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
@@ -327,10 +357,12 @@
                 android:textAlignment="center"
                 android:textColor="#6D6E70"
                 android:textSize="14sp"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:textStyle="normal"
                 android:layout_gravity="center_horizontal"/>
         </LinearLayout>
-
         <View
             android:id="@+id/div_two"
             android:layout_below="@+id/what_we_do"
@@ -346,7 +378,7 @@
             android:layout_gravity="center_vertical"
             android:layout_below="@+id/div_two"
             android:orientation="vertical">
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -355,6 +387,9 @@
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
                 android:textSize="22sp"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:textStyle="bold"/>
             <View
                 android:layout_width="80dp"
@@ -362,7 +397,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal"
                 android:background="#016C81"/>
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -374,6 +409,9 @@
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
                 android:textSize="14sp"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:textStyle="normal"/>
             <ImageView
                 android:layout_marginTop="10dp"
@@ -381,7 +419,7 @@
                 android:layout_height="220dp"
                 android:src="@drawable/about_three"/>
 
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -391,10 +429,12 @@
                 android:textAlignment="center"
                 android:textColor="#6D6E70"
                 android:textSize="14sp"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:textStyle="normal"
                 android:layout_gravity="center_horizontal"/>
         </LinearLayout>
-
         <View
             android:id="@+id/div_three"
             android:layout_below="@+id/how_to_get_verified"
@@ -410,7 +450,7 @@
             android:layout_gravity="center_vertical"
             android:layout_below="@+id/div_three"
             android:orientation="vertical">
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -418,6 +458,9 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:textSize="22sp"
                 android:textStyle="bold"/>
             <View
@@ -426,7 +469,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal"
                 android:background="#016C81"/>
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -440,6 +483,9 @@
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
                 android:textSize="14sp"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:textStyle="normal"/>
             <ImageView
                 android:layout_marginTop="10dp"
@@ -448,7 +494,6 @@
                 android:src="@drawable/about_four"/>
 
         </LinearLayout>
-
         <View
             android:id="@+id/div_four"
             android:layout_below="@+id/where_to_get_verified"
@@ -464,7 +509,7 @@
             android:layout_gravity="center_vertical"
             android:layout_below="@+id/div_four"
             android:orientation="vertical">
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
@@ -472,6 +517,9 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:textSize="22sp"
                 android:textStyle="bold"/>
             <View
@@ -480,7 +528,7 @@
                 android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal"
                 android:background="#016C81"/>
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -491,6 +539,9 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:textSize="14sp"
                 android:textStyle="normal"/>
             <ImageView
@@ -500,7 +551,6 @@
                 android:src="@drawable/about_five"/>
 
         </LinearLayout>
-
         <View
             android:id="@+id/div_five"
             android:layout_below="@+id/the_process"
@@ -516,11 +566,14 @@
             android:layout_gravity="center_vertical"
             android:layout_below="@+id/div_five"
             android:orientation="vertical">
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="The App"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
@@ -532,12 +585,15 @@
                 android:layout_marginTop="5dp"
                 android:layout_gravity="center_horizontal"
                 android:background="#016C81"/>
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:inputType="textMultiLine"
                 android:text="This application is available across mobile platforms as well as the internet.It is accessible by everybody but very secure to protect your identity.You may make your status known to friends on request if you so wish and hide it from the rest of the world.Only those who have passed the test obtain a full Rotabar."
                 android:textAlignment="center"
@@ -550,12 +606,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:src="@drawable/app"/>
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:inputType="textMultiLine"
                 android:text="The App also enables you to see those around you who have been verified as well as your verified contacts as long as they allow you. The app provides general information on STIs for all users as well as testing centres. Socialising safely has never been easy."
                 android:textAlignment="center"
@@ -568,10 +627,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:src="@drawable/about_seven"/>
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:inputType="textMultiLine"
@@ -585,7 +647,6 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:textStyle="normal"/>
 
         </LinearLayout>
-
         <View
             android:id="@+id/div_six"
             android:layout_below="@+id/the_app"
@@ -601,11 +662,14 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
             android:layout_gravity="center_vertical"
             android:layout_below="@+id/div_six"
             android:orientation="vertical">
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="The Rotabar"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
@@ -622,10 +686,13 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:src="@drawable/rotabar"/>
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:inputType="textMultiLine"
@@ -641,13 +708,16 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:src="@drawable/about_eight"/>
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:inputType="textMultiLine"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:text="As recommended by Aids.org, ones HIV status must be checked often. This applies to other STIs as well.  To stay verified we suggest you check your status as often as possible with a maximum interval period of 2 years.The Rotabar works with this recommendation in mind."
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
@@ -657,7 +727,6 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
 
 
         </LinearLayout>
-
         <View
             android:id="@+id/div_seven"
             android:layout_below="@+id/the_rotabar"
@@ -673,11 +742,14 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
             android:layout_gravity="center_vertical"
             android:layout_below="@+id/div_seven"
             android:orientation="vertical">
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="The Panic Button"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
@@ -694,9 +766,12 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:src="@drawable/panic"/>
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
@@ -713,11 +788,14 @@ Remember your confidentiality is our topmost priority. "
                 android:textSize="14sp"
                 android:textStyle="normal"/>
 
-            <TextView
+            <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginLeft="15dp"
+                fontPath="fonts/nueva.ttf"
+                tools2:ignore="MissingPrefix"
+
                 android:layout_marginRight="15dp"
                 android:inputType="textMultiLine"
                 android:text="We understand sex is an ‘in the moment’ kind of thing but always make sure you are protected and to be extra safe ensure you and your partner are both Verified. "
