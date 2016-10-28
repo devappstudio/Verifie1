@@ -523,8 +523,8 @@ public class MyLocationService extends Service implements LocationListener,
                                     VerificationStatus user = new VerificationStatus();
                                     realm1.beginTransaction();
                                     user.setId(1);
-                                    user.setDate_to_expire("13/09/2015");
-                                    user.setDate_verified("13/09/2015");
+                                    user.setDate_to_expire("N/A");
+                                    user.setDate_verified("N/A");
                                     realm1.copyToRealmOrUpdate(user);
                                     realm1.commitTransaction();
                                 }
@@ -552,8 +552,8 @@ public class MyLocationService extends Service implements LocationListener,
                                 VerificationStatus user = new VerificationStatus();
                                 realm1.beginTransaction();
                                 user.setId(1);
-                                user.setDate_to_expire("13/09/2015");
-                                user.setDate_verified("13/09/2015");
+                                user.setDate_to_expire("N/A");
+                                user.setDate_verified("N/A");
                                 realm1.copyToRealmOrUpdate(user);
                                 realm1.commitTransaction();
                             }
@@ -582,8 +582,8 @@ public class MyLocationService extends Service implements LocationListener,
                     VerificationStatus user = new VerificationStatus();
                     realm1.beginTransaction();
                     user.setId(1);
-                    user.setDate_to_expire("13/09/2015");
-                    user.setDate_verified("13/09/2015");
+                    user.setDate_to_expire("N/A");
+                    user.setDate_verified("N/A");
                     realm1.copyToRealmOrUpdate(user);
                     realm1.commitTransaction();
                 }

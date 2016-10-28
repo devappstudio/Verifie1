@@ -676,8 +676,8 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
                                     VerificationStatus user = new VerificationStatus();
                                     realm.beginTransaction();
                                     user.setId(1);
-                                    user.setDate_to_expire("13/09/2015");
-                                    user.setDate_verified("13/09/2015");
+                                    user.setDate_to_expire("N/A");
+                                    user.setDate_verified("N/A");
                                     realm.copyToRealmOrUpdate(user);
                                     realm.commitTransaction();
                                 }
@@ -726,8 +726,8 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
                         VerificationStatus user = new VerificationStatus();
                         realm.beginTransaction();
                         user.setId(1);
-                        user.setDate_to_expire("13/09/2015");
-                        user.setDate_verified("13/09/2015");
+                        user.setDate_to_expire("N/A");
+                        user.setDate_verified("N/A");
                         realm.copyToRealmOrUpdate(user);
                         realm.commitTransaction();
 

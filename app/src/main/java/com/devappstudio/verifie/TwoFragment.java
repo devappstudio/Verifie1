@@ -32,6 +32,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.nearby.Nearby;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -559,14 +560,20 @@ public class TwoFragment extends Fragment{
                                 {
                                     ContactsList cl = RegisteredCls.get(ii);
                                     NearBy dumb = new NearBy(cl.getName(),cl.getFile_name(),cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
-                                    movieList.add(dumb);
+                                    if(check_new(dumb))
+                                    {
+                                        movieList.add(dumb);
+                                    }
                                 }
 
                                 for (int ii = 0; ii < UnRegisteredCls.size(); ii++)
                                 {
                                     ContactsList cl = UnRegisteredCls.get(ii);
                                     NearBy dumb = new NearBy(cl.getName(),cl.getFile_name(),cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
-                                    movieList.add(dumb);
+                                    if(check_new(dumb))
+                                    {
+                                        movieList.add(dumb);
+                                    }
                                 }
 
                                 JSONArray jaa = response.getJSONArray("data");
@@ -579,7 +586,10 @@ public class TwoFragment extends Fragment{
                                     if(!us.getServer_id().equalsIgnoreCase(object.get("id").toString()))
                                     {
                                         NearBy dumb = new NearBy(object.get("fullname").toString(),object.get("file_name").toString(),object.get("telephone").toString(),object.get("id").toString(),object.get("screen_name").toString());
-                                        movieList.add(dumb);
+                                        if(check_new(dumb))
+                                        {
+                                            movieList.add(dumb);
+                                        }
                                     }
 
                                 }
@@ -638,14 +648,20 @@ public class TwoFragment extends Fragment{
         {
             ContactsList cl = RegisteredCls.get(ii);
             NearBy dumb = new NearBy(cl.getName(),cl.getFile_name(),cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
-            movieList.add(dumb);
+            if(check_new(dumb))
+            {
+                movieList.add(dumb);
+            }
         }
 
         for (int ii = 0; ii < UnRegisteredCls.size(); ii++)
         {
             ContactsList cl = UnRegisteredCls.get(ii);
             NearBy dumb = new NearBy(cl.getName(),"",cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
-            movieList.add(dumb);
+            if(check_new(dumb))
+            {
+                movieList.add(dumb);
+            }
         }
 
         mAdapter.notifyDataSetChanged();
@@ -838,23 +854,33 @@ public class TwoFragment extends Fragment{
 
                     SimpleDateFormat simpleDateFormat =
                             new SimpleDateFormat("dd/M/yyyy");
+
                     Float level = 0f;
+
 
                     try {
                         Calendar calendar = Calendar.getInstance();
                         String strDate = "" + simpleDateFormat.format(calendar.getTime());
                         ApprovedRequests vss = realm.where(ApprovedRequests.class).equalTo("server_id",server_id).findAll().last();
-                        Date date1 = simpleDateFormat.parse(strDate);
-                        Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
-                        Long t =  printDifference(date1, date2)/7;
-                        //System.out.println("Difference "+t+ " "+vss.getDate_to_expire()+" "+date1.toString());
+                        if(vss.getDate_to_expire().equalsIgnoreCase("N/A"))
+                        {
+                            Date date1 = simpleDateFormat.parse(strDate);
+                            Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
+                            Long t =  printDifference(date1, date2)/7;
+                            //System.out.println("Difference "+t+ " "+vss.getDate_to_expire()+" "+date1.toString());
 
-                        float tt = t/52f;
-                        level =  tt*100;
+                            float tt = t/52f;
+                            level =  tt*100;
+
+                        }
+                        else
+                        {
+                            level = 0f;
+                        }
 
                     } catch (ParseException e) {
                         e.printStackTrace();
-                        level = 50f;
+                        level = 0f;
                     }
 
 
@@ -878,7 +904,7 @@ public class TwoFragment extends Fragment{
                     profile.startAnimation();
 
                     TextView percentage = (TextView)dialog.findViewById(R.id.percent_view) ;
-                    percentage.setText(level.intValue()+"%");
+                    percentage.setText("8%");
 
 
                     Realm Mrealm = Realm.getDefaultInstance();
@@ -1192,6 +1218,25 @@ public class TwoFragment extends Fragment{
 
 
     }
+
+
+
+    boolean check_new(NearBy dumb)
+    {
+
+            for (int i=0; i<movieList.size(); i++)
+            {
+                NearBy temp = movieList.get(i);
+                if(dumb.getTelephone_number().equalsIgnoreCase(temp.getTelephone_number()))
+                {
+                    return false;
+                }
+
+            }
+
+        return  true;
+    }
+
 
 }
 

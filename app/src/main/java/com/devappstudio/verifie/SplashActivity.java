@@ -70,7 +70,7 @@ public class SplashActivity extends Activity {
 
 
         Realm rr = Realm.getDefaultInstance();
-        /*
+/*
         rr.beginTransaction();
         rr.clear(ContactsList.class);
         rr.clear(ApprovedRequests.class);
@@ -82,7 +82,7 @@ public class SplashActivity extends Activity {
         rr.clear(VerificationStatus.class);
         rr.clear(Visibility.class);
         rr.commitTransaction();
-        */
+*/
 
 
         Thread background = new Thread() {

@@ -53,13 +53,11 @@ public class AppSetup extends AppCompatActivity {
         ThreeBounce doubleBounce = new ThreeBounce();
         progressBar.setIndeterminateDrawable(doubleBounce);
         registerReceiver();
-
         if (checkPlayServices()) {
             // Start IntentService to register this application with GCM.
             Intent intent = new Intent(this, RegistrationIntentService.class);
             startService(intent);
         }
-
         Realm realm = Realm.getDefaultInstance();
 
         RealmResults<ContactsList> clst = realm.where(ContactsList.class).findAll();
@@ -125,8 +123,6 @@ public class AppSetup extends AppCompatActivity {
                                 //JSONObject jo_user = response.getJSONObject("user");
                                 //save user
                                 // save company
-
-
                                 VerificationStatus user = new VerificationStatus();
                                 realm.beginTransaction();
                                 user.setId(1);
@@ -152,8 +148,8 @@ public class AppSetup extends AppCompatActivity {
                                     VerificationStatus user = new VerificationStatus();
                                     realm.beginTransaction();
                                     user.setId(1);
-                                    user.setDate_to_expire("13/09/2015");
-                                    user.setDate_verified("13/09/2015");
+                                    user.setDate_to_expire("N/A");
+                                    user.setDate_verified("N/A");
                                     realm.copyToRealmOrUpdate(user);
                                     realm.commitTransaction();
                                 }
@@ -225,8 +221,8 @@ public class AppSetup extends AppCompatActivity {
                         VerificationStatus user = new VerificationStatus();
                         realm.beginTransaction();
                         user.setId(1);
-                        user.setDate_to_expire("13/09/2015");
-                        user.setDate_verified("13/09/2015");
+                        user.setDate_to_expire("N/A");
+                        user.setDate_verified("N/A");
                         realm.copyToRealmOrUpdate(user);
                         realm.commitTransaction();
 

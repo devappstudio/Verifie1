@@ -170,8 +170,8 @@ public class OneFragment extends Fragment{
                 VerificationStatus user = new VerificationStatus();
                 realm.beginTransaction();
                 user.setId(1);
-                user.setDate_to_expire("13/09/2015");
-                user.setDate_verified("13/09/2015");
+                user.setDate_to_expire("N/A");
+                user.setDate_verified("N/A");
                 realm.copyToRealmOrUpdate(user);
                 realm.commitTransaction();
 
@@ -183,8 +183,8 @@ public class OneFragment extends Fragment{
                    VerificationStatus user = new VerificationStatus();
                    realm.beginTransaction();
                    user.setId(1);
-                   user.setDate_to_expire("13/09/2015");
-                   user.setDate_verified("13/09/2015");
+                   user.setDate_to_expire("N/A");
+                   user.setDate_verified("N/A");
                    realm.copyToRealmOrUpdate(user);
                    realm.commitTransaction();
                }
@@ -200,22 +200,28 @@ public class OneFragment extends Fragment{
         VerificationStatus vss = realm.where(VerificationStatus.class).findAll().first();
         SimpleDateFormat simpleDateFormat =
                 new SimpleDateFormat("dd/M/yyyy");
+        if(vss.getDate_to_expire().equalsIgnoreCase("N/A"))
+        {
+         level = 0f;
+        }
+        else
+        {
+            try {
+                Calendar calendar = Calendar.getInstance();
+                String strDate = "" + simpleDateFormat.format(calendar.getTime());
 
-        try {
-            Calendar calendar = Calendar.getInstance();
-            String strDate = "" + simpleDateFormat.format(calendar.getTime());
+                Date date1 = simpleDateFormat.parse(strDate);
+                Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
+                Long t =  printDifference(date1, date2)/7;
+                System.out.println("Difference "+strDate+" - "+vss.getDate_to_expire()+" = "+printDifference(date1, date2));
+                float tt = t/52f;
+                level =  tt*100;
+                System.out.println("Difference 1 "+level+" "+t+" "+tt);
 
-            Date date1 = simpleDateFormat.parse(strDate);
-            Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
-            Long t =  printDifference(date1, date2)/7;
-            System.out.println("Difference "+strDate+" - "+vss.getDate_to_expire()+" = "+printDifference(date1, date2));
-            float tt = t/52f;
-            level =  tt*100;
-            System.out.println("Difference 1 "+level+" "+t+" "+tt);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-            level = 50f;
+            } catch (ParseException e) {
+                e.printStackTrace();
+                level = 0f;
+            }
         }
 
 
