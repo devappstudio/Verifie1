@@ -12,9 +12,15 @@ public class VerificationStatus  extends RealmObject {
     @PrimaryKey
     private int id;
 
-    private String date_verified,date_to_expire,centre="";
+    private String date_verified,date_to_expire,centre="",date_recommended="Now";
 
+    public String getDate_recommended() {
+        return date_recommended;
+    }
 
+    public void setDate_recommended(String date_recommended) {
+        this.date_recommended = date_recommended;
+    }
 
     public VerificationStatus() {
     }

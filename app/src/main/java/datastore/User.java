@@ -13,7 +13,15 @@ public class User extends RealmObject{
     @PrimaryKey
     private int id;
 
-    private String fullname, telephone,server_id,longitude,latitude,file_name,last_verified;
+    public String getImage_verified() {
+        return image_verified;
+    }
+
+    public void setImage_verified(String image_verified) {
+        this.image_verified = image_verified;
+    }
+
+    private String fullname, telephone,server_id,longitude,latitude,file_name,last_verified,image_verified="0";
 
     public User(String fullname, String telephone, String server_id, String longitude, String latitude, String file_name) {
         this.fullname = fullname;

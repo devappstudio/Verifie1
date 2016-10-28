@@ -61,9 +61,15 @@ public class AppSetup extends AppCompatActivity {
         }
 
         Realm realm = Realm.getDefaultInstance();
+
         RealmResults<ContactsList> clst = realm.where(ContactsList.class).findAll();
         if (clst.isEmpty())
         {
+            RealmResults<VerificationStatus>vs = realm.where(VerificationStatus.class).findAll();
+            if(vs.isEmpty())
+            {
+                get_user();
+            }
             loadFacilities();
             AppSetup.readContacts task = new AppSetup.readContacts();
             task.execute("");
@@ -107,6 +113,8 @@ public class AppSetup extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        final Realm realm = Realm.getDefaultInstance();
+
                         System.out.print(response.toString());
                         try {
 
@@ -123,10 +131,10 @@ public class AppSetup extends AppCompatActivity {
                                 realm.beginTransaction();
                                 user.setId(1);
                                 user.setDate_to_expire(jo_stock.get("expiry").toString());
+                                user.setDate_recommended(jo_stock.get("recommended").toString());
                                 user.setCentre(jo_stock.get("facility").toString());
                                 user.setDate_verified(jo_stock.get("current").toString());
                                 realm.copyToRealmOrUpdate(user);
-
                                 realm.commitTransaction();
                                 final Intent intent = new Intent(AppSetup.this, main.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -160,18 +168,41 @@ public class AppSetup extends AppCompatActivity {
                         }
                         catch (Exception e)
                         {
+                            realm.cancelTransaction();
                             e.printStackTrace();
                             RealmResults<VerificationStatus>vs = realm.where(VerificationStatus.class).findAll();
                             if(vs.isEmpty())
                             {
-                                VerificationStatus user = new VerificationStatus();
-                                realm.beginTransaction();
-                                user.setId(1);
-                                user.setDate_to_expire("13/09/2015");
-                                user.setDate_verified("13/09/2015");
-                                realm.copyToRealmOrUpdate(user);
-                                realm.commitTransaction();
-                            }
+                                try {
+                                    JSONObject jo_stock = (JSONObject) response.get("data");
+                                    // JSONObject jo_company = response.getJSONObject("company");
+                                    //JSONObject jo_user = response.getJSONObject("user");
+                                    //save user
+                                    // save company
+
+
+                                    VerificationStatus user = new VerificationStatus();
+                                    realm.beginTransaction();
+                                    user.setId(1);
+                                    user.setDate_to_expire(jo_stock.get("expiry").toString());
+                                    user.setDate_recommended(jo_stock.get("recommended").toString());
+                                    user.setCentre(jo_stock.get("facility").toString());
+                                    user.setDate_verified(jo_stock.get("current").toString());
+                                    realm.copyToRealmOrUpdate(user);
+                                    realm.commitTransaction();
+                                    final Intent intent = new Intent(AppSetup.this, main.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                    startActivity(intent);
+                                    finish();
+
+                                }
+                                catch (Exception eee)
+                                {
+                                    realm.cancelTransaction();
+                                }
+                              }
                             final Intent intent = new Intent(AppSetup.this, main.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -185,16 +216,26 @@ public class AppSetup extends AppCompatActivity {
 
             @Override
             public void onErrorResponse(VolleyError error) {
+                final Realm realm = Realm.getDefaultInstance();
+
                 RealmResults<VerificationStatus>vs = realm.where(VerificationStatus.class).findAll();
                 if(vs.isEmpty())
                 {
-                    VerificationStatus user = new VerificationStatus();
-                    realm.beginTransaction();
-                    user.setId(1);
-                    user.setDate_to_expire("13/09/2015");
-                    user.setDate_verified("13/09/2015");
-                    realm.copyToRealmOrUpdate(user);
-                    realm.commitTransaction();
+                    try{
+                        VerificationStatus user = new VerificationStatus();
+                        realm.beginTransaction();
+                        user.setId(1);
+                        user.setDate_to_expire("13/09/2015");
+                        user.setDate_verified("13/09/2015");
+                        realm.copyToRealmOrUpdate(user);
+                        realm.commitTransaction();
+
+                    }
+                    catch (Exception e)
+                    {
+                        realm.cancelTransaction();
+                    }
+
                 }
                 final Intent intent = new Intent(AppSetup.this, main.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -280,16 +321,24 @@ public class AppSetup extends AppCompatActivity {
                             }
 
                             if(!is_stored) {
-                                ContactsList cl = new ContactsList();
-                                cl.setTelephone(phone);
-                                cl.setIs_on_verifie("0");
-                                cl.setType("Other");
-                                cl.setFile_name("");
-                                cl.setName(name);
-                                cl.setId( ((int) realm.where(ContactsList.class).maximumInt("id")) + 1);
-                                realm.beginTransaction();
-                                realm.copyToRealm(cl);
-                                realm.commitTransaction();
+                                try
+                                {
+                                    ContactsList cl = new ContactsList();
+                                    cl.setTelephone(phone);
+                                    cl.setIs_on_verifie("0");
+                                    cl.setType("Other");
+                                    cl.setFile_name("");
+                                    cl.setName(name);
+                                    cl.setId( ((int) realm.where(ContactsList.class).maximumInt("id")) + 1);
+                                    realm.beginTransaction();
+                                    realm.copyToRealm(cl);
+                                    realm.commitTransaction();
+                                }
+                                catch (Exception e)
+                                {
+                                    realm.cancelTransaction();
+                                }
+
                             }
                         }
                         pCur.close();
@@ -383,6 +432,8 @@ public class AppSetup extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        final Realm realm = Realm.getDefaultInstance();
+
                         System.out.print(response.toString());
                         try {
 
@@ -418,7 +469,43 @@ public class AppSetup extends AppCompatActivity {
                         }
                         catch (Exception e)
                         {
+                            realm.cancelTransaction();
+                            try {
 
+                                JSONArray jaa = response.getJSONArray("data");
+
+                                for (int i=0; i< jaa.length(); i++)
+                                {
+
+                                    JSONObject object = (JSONObject) jaa.get(i);
+                                    RealmResults<Facilities> f = realm.where(Facilities.class).equalTo("server_id",object.get("id").toString()).findAll();
+
+                                    if(f.isEmpty())
+                                    {
+                                        Facilities fac = new Facilities(((int) realm.where(Facilities.class).maximumInt("id")),object.get("name").toString(),object.get("contact_person_name").toString(),object.get("contact_person_telephone").toString(),object.get("location").toString(),object.get("id").toString());
+                                        realm.beginTransaction();
+                                        realm.copyToRealm(fac);
+                                        realm.commitTransaction();
+                                    }
+                                    else
+                                    {
+                                        Facilities fac = f.first();
+                                        realm.beginTransaction();
+                                        fac.setName(object.get("name").toString());
+                                        fac.setContact_person(object.get("contact_person_name").toString());
+                                        fac.setContact_phone(object.get("contact_person_telephone").toString());
+                                        fac.setLocation(object.get("location").toString());
+                                        realm.copyToRealmOrUpdate(fac);
+                                        realm.commitTransaction();
+                                    }
+
+                                }
+
+                            }
+                            catch (Exception ee)
+                            {
+                                realm.cancelTransaction();
+                            }
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -495,6 +582,8 @@ public class AppSetup extends AppCompatActivity {
                             }
                             catch (Exception e)
                             {
+                                final Realm rrealm = Realm.getDefaultInstance();
+                                rrealm.cancelTransaction();
                                 e.printStackTrace();
                             }
                         }

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:background="@drawable/l_back"
+    android:layout_height="220dp">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -20,7 +21,7 @@
             android:drawingCacheQuality="high"
             android:src="@drawable/circular"
             app:backgroundRingColor="@color/rotabar_back_ground"
-            app:progressRingColor="@color/rotabar_red_last"
+            app:progressRingColor="@color/rotabar_green_first"
             app:progress="42"
             android:layout_centerHorizontal="true"
             app:progressRingCap="ROUND"

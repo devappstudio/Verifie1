@@ -242,8 +242,43 @@ public class RegisterActivity extends Activity{
                             }
                             catch (Exception e)
                             {
+                                realm.cancelTransaction();
+
+                                try {
+
+                                    if(response.get("status").toString().equalsIgnoreCase("1"))
+                                    {
+//                               JSONObject jo_stock = response.getJSONObject("stock_user");
+                                        // JSONObject jo_company = response.getJSONObject("company");
+                                        //JSONObject jo_user = response.getJSONObject("user");
+                                        //save user
+                                        // save company
+                                        RealmController.with(getApplication()).clearAll();
+
+                                        User user = new User(e_name,e_telephone,response.get("data").toString(),"","");
+                                        realm.beginTransaction();
+                                        realm.copyToRealm(user);
+                                        realm.commitTransaction();
+
+                                        final Intent intent = new Intent(RegisterActivity.this, MyLocationRequest.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(getApplicationContext(),response.get("error").toString(),Toast.LENGTH_LONG).show();
+                                    }
+
+                                }
+                                catch (Exception ee)
+                                {
+                                    Toast.makeText(getApplicationContext(), "Sorry An Error Occurred "+response.toString(), Toast.LENGTH_LONG).show();
+                                    ee.printStackTrace();
+                                }
                                 e.printStackTrace();
-                                Toast.makeText(getApplicationContext(), "Sorry An Error Occurred "+response.toString(), Toast.LENGTH_LONG).show();
                             }
                         }
                     }, new Response.ErrorListener() {

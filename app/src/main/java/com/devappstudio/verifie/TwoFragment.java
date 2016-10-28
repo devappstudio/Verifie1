@@ -35,6 +35,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import com.kuassivi.view.ProgressProfileView;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -56,6 +58,7 @@ import datastore.ReceivedRequests;
 import datastore.SentRequests;
 import datastore.User;
 import datastore.Visibility;
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.realm.Realm;
 import io.realm.RealmResults;
 
@@ -335,6 +338,7 @@ public class TwoFragment extends Fragment{
                     public void onResponse(JSONObject response) {
                         System.out.print(response.toString());
                         dialog.hide();
+                        Realm realm = Realm.getDefaultInstance();
                         try {
 
                             if(response.get("status").toString().equalsIgnoreCase("1"))
@@ -368,10 +372,47 @@ public class TwoFragment extends Fragment{
                         catch (Exception e)
                         {
                             e.printStackTrace();
+                            try {
+                                realm.cancelTransaction();
 
+                                if(response.get("status").toString().equalsIgnoreCase("1"))
+                                {
+                                    RealmController.with(getActivity()).clearAllVisibility();
+                                    Visibility user = new Visibility(visibility.isChecked());
+                                    realm.beginTransaction();
+                                    realm.copyToRealm(user);
+                                    realm.commitTransaction();
+                                    if(visibility.isChecked())
+                                    {
+                                        Toast.makeText(getActivity(),"Your visibility is on",Toast.LENGTH_LONG).show();
+                                        near_by_users();
+                                    }
+                                    else
+                                    {
+                                        movieList.clear();
+                                        mAdapter.notifyDataSetChanged();
+                                        near_by_offline_users();
+                                        Toast.makeText(getActivity(),"Your visibility is off",Toast.LENGTH_LONG).show();
+
+                                    }
+
+                                }
+                                else
+                                {
+                                    near_by_offline_users();
+                                }
+
+                            }
+                            catch (Exception ee)
+                            {
+                                ee.printStackTrace();
+                                realm.cancelTransaction();
+
+                            }
 
 
                         }
+
                     }
                 }, new Response.ErrorListener() {
 
@@ -421,6 +462,7 @@ public class TwoFragment extends Fragment{
                     public void onResponse(JSONObject response) {
                         System.out.print(response.toString());
                         dialog.hide();
+                        Realm realm = Realm.getDefaultInstance();
                         try {
 
                             if(response.get("status").toString().equalsIgnoreCase("1"))
@@ -455,6 +497,7 @@ public class TwoFragment extends Fragment{
                         }
                         catch (Exception e)
                         {
+                            realm.cancelTransaction();
                             e.printStackTrace();
                             near_by_offline_users();
 
@@ -676,11 +719,12 @@ public class TwoFragment extends Fragment{
                         @Override
                         public void onResponse(JSONObject response) {
                             System.out.print(response.toString()+ " Telephone "+phon);
+                            final Realm rrealm = Realm.getDefaultInstance();
+
                             try {
 
                                 if(response.get("status").toString().equalsIgnoreCase("1"))
                                 {
-                                    final Realm rrealm = Realm.getDefaultInstance();
                                     ContactsList contactsList = rrealm.where(ContactsList.class).equalTo("id",finalI).findFirst();
                                     JSONObject jo_stock = (JSONObject) response.get("data");
                                     rrealm.beginTransaction();
@@ -696,6 +740,29 @@ public class TwoFragment extends Fragment{
                             catch (Exception e)
                             {
                                 e.printStackTrace();
+                                rrealm.cancelTransaction();
+
+                                try {
+
+                                    if(response.get("status").toString().equalsIgnoreCase("1"))
+                                    {
+                                        ContactsList contactsList = rrealm.where(ContactsList.class).equalTo("id",finalI).findFirst();
+                                        JSONObject jo_stock = (JSONObject) response.get("data");
+                                        rrealm.beginTransaction();
+                                        contactsList.setIs_on_verifie("1");
+                                        contactsList.setServer_id(jo_stock.get("id").toString());
+                                        contactsList.setFile_name(jo_stock.get("file_name").toString());
+                                        contactsList.setScreen_name(jo_stock.get("screen_name").toString());
+                                        rrealm.copyToRealmOrUpdate(contactsList);
+                                        rrealm.commitTransaction();
+                                        near_by_offline_users();
+                                    }
+                                }
+                                catch (Exception ee)
+                                {
+                                    ee.printStackTrace();
+                                }
+
                             }
                         }
                     }, new Response.ErrorListener() {
@@ -726,7 +793,6 @@ public class TwoFragment extends Fragment{
 
         final Dialog dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         Realm realm = Realm.getDefaultInstance();
 
         if(realm.where(ReceivedRequests.class).contains("id_send",server_id).findAll().isEmpty())
@@ -744,6 +810,7 @@ public class TwoFragment extends Fragment{
                     @Override
                     public void onClick(View view) {
                         dialog.dismiss();
+
                     }
                 });
                 allow.setOnClickListener(new View.OnClickListener() {
@@ -751,6 +818,7 @@ public class TwoFragment extends Fragment{
                     public void onClick(View view) {
                         dialog.dismiss();
                         requestRotabar(nearBy.getServer_id());
+
                     }
                 });
 
@@ -763,11 +831,14 @@ public class TwoFragment extends Fragment{
                     //accepted
                     text = "View RotaBar";
                    // dialog.setContentView(R.layout.view_rotabar);
+                    realm.beginTransaction();
+                    realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().removeFromRealm();
+                    realm.commitTransaction();
+
 
                     SimpleDateFormat simpleDateFormat =
                             new SimpleDateFormat("dd/M/yyyy");
                     Float level = 0f;
-
 
                     try {
                         Calendar calendar = Calendar.getInstance();
@@ -776,18 +847,10 @@ public class TwoFragment extends Fragment{
                         Date date1 = simpleDateFormat.parse(strDate);
                         Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
                         Long t =  printDifference(date1, date2)/7;
-                        System.out.println("Difference "+t);
-                        /*
-                        if(t > 52)
-                        {
-                            level =  (float)(t/52)*100;
-                        }
-                        else
-                        {
-                            level =  (float)(52/t)*100;
+                        //System.out.println("Difference "+t+ " "+vss.getDate_to_expire()+" "+date1.toString());
 
-                        }
-                        */
+                        float tt = t/52f;
+                        level =  tt*100;
 
                     } catch (ParseException e) {
                         e.printStackTrace();
@@ -808,26 +871,70 @@ public class TwoFragment extends Fragment{
                     {
                         dialog.setContentView(R.layout.pop3);
                     }
+                    ProgressProfileView profile = (ProgressProfileView) dialog.findViewById(R.id.profile);
+
+                    profile.setProgress(level);
+
+                    profile.startAnimation();
+
+                    TextView percentage = (TextView)dialog.findViewById(R.id.percent_view) ;
+                    percentage.setText(level.intValue()+"%");
 
 
-
-
+                    Realm Mrealm = Realm.getDefaultInstance();
+                    String url = Mrealm.where(User.class).findAll().first().getFile_name();
+                    server_id = Mrealm.where(User.class).findAll().first().getServer_id();
+                    try {
+                        Picasso.with(getActivity()).load(Api.getImage_end()+nearBy.getServer_id()).into(profile);
+                    }
+                    catch (Exception e)
+                    {
+                        System.out.println(url);
+                        e.printStackTrace();
+                    }
                 }
                 else
                 {
                     if (realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().getTime_replied().equalsIgnoreCase(""))
                     {
-                        //request denied
+                        //request Pending
                         text = "Request Denied";
                         //dialog.setContentView(R.layout.request_denied);
                         Toast.makeText(getContext(),"Request Still Pending Reply",Toast.LENGTH_LONG).show();
                     }
                     else
                     {
+                        //TODO DELETE
+
                         //request denied
                         text = "Request Denied";
-                        dialog.setContentView(R.layout.request_denied);
-                    }
+                        try
+                        {
+                            realm.beginTransaction();
+                            realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().removeFromRealm();
+                            realm.commitTransaction();
+                            dialog.setContentView(R.layout.request_denied);
+
+                        }
+                        catch (Exception e)
+                        {
+                            realm.cancelTransaction();
+                            try
+                            {
+                                realm.beginTransaction();
+                                realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().removeFromRealm();
+                                realm.commitTransaction();
+                                dialog.setContentView(R.layout.request_denied);
+
+                            }
+                            catch (Exception ee)
+                            {
+                                realm.cancelTransaction();
+                                ee.printStackTrace();
+                            }
+                            e.printStackTrace();
+                        }
+                     }
 
                 }
             }
@@ -889,8 +996,6 @@ public class TwoFragment extends Fragment{
         dialog.show();
     }
 
-
-
     void requestRotabar(final String server_id)
     {
 
@@ -919,16 +1024,35 @@ public class TwoFragment extends Fragment{
                                     String tsr = tsLong.toString();
 
                                     Realm io = Realm.getDefaultInstance();
+                                    SentRequests sr = new SentRequests((int)io.where(SentRequests.class).maximumInt("id")+1,server_id,tsr,"","0",0);
                                     // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
                                     io.beginTransaction();
-                                    SentRequests sr = new SentRequests((int)io.where(SentRequests.class).maximumInt("id")+1,server_id,tsr,"","0",0);
                                     io.copyToRealm(sr);
                                     io.commitTransaction();
 
                                 }
                                 catch (Exception e)
                                 {
-                                    e.printStackTrace();
+
+                                    Realm io = Realm.getDefaultInstance();
+                                    io.cancelTransaction();
+                                    try {
+
+                                        Long tsLong = System.currentTimeMillis()/1000;
+                                        String tsr = tsLong.toString();
+
+
+                                        SentRequests sr = new SentRequests((int)io.where(SentRequests.class).maximumInt("id")+1,server_id,tsr,"","0",0);
+                                        // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
+                                        io.beginTransaction();
+                                        io.copyToRealm(sr);
+                                        io.commitTransaction();
+
+                                    }
+                                    catch (Exception ee)
+                                    {
+                                        io.cancelTransaction();
+                                    }
                                    // Toast.makeText(getActivity(), "Sorry An Error Occurred Please Try Again Later", Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -984,21 +1108,34 @@ public class TwoFragment extends Fragment{
                         System.out.print(response.toString());
                         pd.hide();
                         try {
-
                             Long tsLong = System.currentTimeMillis()/1000;
                             String tsr = tsLong.toString();
 
                             Realm io = Realm.getDefaultInstance();
+                            ReceivedRequests rr = io.where(ReceivedRequests.class).equalTo("id_send",server_id).findAll().last();
                             // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
                             io.beginTransaction();
-                            ReceivedRequests rr = io.where(ReceivedRequests.class).equalTo("id_send",server_id).findAll().last();
                             rr.removeFromRealm();
                             io.commitTransaction();
 
                         }
                         catch (Exception e)
                         {
-                            e.printStackTrace();
+                            try
+                            {
+                                Realm io = Realm.getDefaultInstance();
+                                io.cancelTransaction();
+                                ReceivedRequests rr = io.where(ReceivedRequests.class).equalTo("id_send",server_id).findAll().last();
+                                io.beginTransaction();
+                                rr.removeFromRealm();
+                                io.commitTransaction();
+
+                            }
+                            catch (Exception ee)
+                            {
+                                ee.printStackTrace();
+                            }
+
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -1025,8 +1162,6 @@ public class TwoFragment extends Fragment{
 
 
     }
-
-
 
     public Long printDifference(Date startDate, Date endDate){
 
@@ -1057,7 +1192,6 @@ public class TwoFragment extends Fragment{
 
 
     }
-
 
 }
 

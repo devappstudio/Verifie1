@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -21,6 +22,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.github.ybq.android.spinkit.style.ChasingDots;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONObject;
 
@@ -28,14 +33,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 import datastore.Api;
+import datastore.ApprovedRequests;
+import datastore.ContactsList;
+import datastore.Facilities;
+import datastore.Location_Stats;
 import datastore.RealmController;
+import datastore.ReceivedRequests;
+import datastore.SentRequests;
 import datastore.User;
+import datastore.VerificationStatus;
+import datastore.Visibility;
 import io.realm.Realm;
 
 public class SplashActivity extends Activity {
     static String server_id;
     private Realm realm;
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +64,13 @@ public class SplashActivity extends Activity {
         //RealmController.with(getApplication()).clearContacts();
         this.realm = RealmController.with(this).getRealm();
 
-        ProgressBar progressBar = (ProgressBar)findViewById(R.id.spin_kit);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.spin_kit);
         ChasingDots doubleBounce = new ChasingDots();
         progressBar.setIndeterminateDrawable(doubleBounce);
-/*
+
 
         Realm rr = Realm.getDefaultInstance();
+        /*
         rr.beginTransaction();
         rr.clear(ContactsList.class);
         rr.clear(ApprovedRequests.class);
@@ -63,7 +82,7 @@ public class SplashActivity extends Activity {
         rr.clear(VerificationStatus.class);
         rr.clear(Visibility.class);
         rr.commitTransaction();
-*/
+        */
 
 
         Thread background = new Thread() {
@@ -73,13 +92,12 @@ public class SplashActivity extends Activity {
                 try {
 
 
-
                     // Thread will sleep for 5 seconds
-                    sleep(5*1000);
+                    sleep(5 * 1000);
 
                     // After 5 seconds redirect to another intent
 
-                    Intent intent=new Intent(SplashActivity.this,Login.class);
+                    Intent intent = new Intent(SplashActivity.this, Login.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -99,10 +117,10 @@ public class SplashActivity extends Activity {
 
                 try {
                     // Thread will sleep for 5 seconds
-                    sleep(2*1000);
+                    sleep(2 * 1000);
 
 
-                    Intent intent=new Intent(SplashActivity.this,MyLocationRequest.class);
+                    Intent intent = new Intent(SplashActivity.this, MyLocationRequest.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
@@ -114,19 +132,20 @@ public class SplashActivity extends Activity {
             }
         };
 
-            if(RealmController.with(getApplication()).hasUser())
-            {
-                background1.start();
-            }
-            else
-            {
-                background.start();
-            }
+        if (RealmController.with(getApplication()).hasUser()) {
+            background1.start();
+        } else {
+            get_user();
+            background.start();
 
-     }
+        }
 
-    void get_user()
-    {
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    void get_user() {
 
         //`users`(`id`, `fullname`, `login_type`, `security_code`, `extra_code`, `id_from_provider`, `telephone`, `file_blob`, `file_name`, `is_visible`, `visibility_code`, ``, ``, ``, ``, ``)
         final String tag = "new_user_logn";
@@ -135,27 +154,23 @@ public class SplashActivity extends Activity {
         params.put("id", server_id);
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
-                Api.getApi()+"user_details",new JSONObject(params),
+                Api.getApi() + "user_details", new JSONObject(params),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         System.out.print(response.toString());
                         try {
 
-                            if(response.get("status").toString().equalsIgnoreCase("1"))
-                            {
+                            if (response.get("status").toString().equalsIgnoreCase("1")) {
                                 JSONObject jo_stock = (JSONObject) response.get("data");
-                                // JSONObject jo_company = response.getJSONObject("company");
-                                //JSONObject jo_user = response.getJSONObject("user");
-                                //save user
-                                // save company
 
-
-                                User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","",jo_stock.get("file_name").toString());
+                                Realm ioRealm = Realm.getDefaultInstance();
+                                User user = new User(jo_stock.get("fullname").toString(), jo_stock.get("telephone").toString(), jo_stock.get("id").toString(), "", "", jo_stock.get("file_name").toString());
                                 RealmController.with(getApplication()).clearAll();
-                                realm.beginTransaction();
-                                realm.copyToRealm(user);
-                                realm.commitTransaction();
+                                ioRealm.beginTransaction();
+                                user.setImage_verified(jo_stock.get("image_verified").toString());
+                                ioRealm.copyToRealmOrUpdate(user);
+                                ioRealm.commitTransaction();
 
 
                                 final Intent intent = new Intent(SplashActivity.this, MyLocationService.class);
@@ -165,14 +180,12 @@ public class SplashActivity extends Activity {
                                 startActivity(intent);
                                 finish();
 
-                            }
-                            else
-                            {
+                            } else {
                                 final Dialog dialog1 = new Dialog(getApplicationContext());
                                 dialog1.setContentView(R.layout.dialog);
                                 dialog1.setTitle("Error Connecting ...");
                                 Button bb;
-                                bb = (Button)dialog1.findViewById(R.id.button2);
+                                bb = (Button) dialog1.findViewById(R.id.button2);
                                 bb.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -181,11 +194,12 @@ public class SplashActivity extends Activity {
                                 });
                             }
 
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             e.printStackTrace();
-                           open();
+
+                            Realm ioRealm = Realm.getDefaultInstance();
+                            ioRealm.cancelTransaction();
+                            open();
 
                         }
                     }
@@ -205,12 +219,12 @@ public class SplashActivity extends Activity {
             }
         };
 // Adding request to request queue
-        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        jsonObjReq.setRetryPolicy(new DefaultRetryPolicy(50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
 
     }
 
-    public void open(){
+    public void open() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("Sorry Couldn't Connect To Our Server. Do You Want To Retry ?");
 
@@ -221,7 +235,7 @@ public class SplashActivity extends Activity {
             }
         });
 
-        alertDialogBuilder.setNegativeButton("No",new DialogInterface.OnClickListener() {
+        alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 finish();
@@ -232,4 +246,39 @@ public class SplashActivity extends Activity {
         alertDialog.show();
     }
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Splash Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
+    }
 }

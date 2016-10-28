@@ -115,7 +115,7 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
         }
         else
         {
-            Picasso.with(context).load(Api.getImage_end()+nearBy.getImage_url()).into(holder.img);
+            Picasso.with(context).load(Api.getImage_end()+nearBy.getServer_id()).into(holder.img);
             holder.name.setText(nearBy.getName());
             holder.screen.setText(nearBy.getScreen_name());
             holder.imb.setText(get_button(nearBy.getServer_id()));

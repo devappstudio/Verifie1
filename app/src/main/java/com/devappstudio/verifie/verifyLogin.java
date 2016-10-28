@@ -120,6 +120,7 @@ public class verifyLogin extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         System.out.print(response.toString());
                         dialog.hide();
+                        Realm realm = Realm.getDefaultInstance();
                         try {
 
                             if(response.get("status").toString().equalsIgnoreCase("1"))

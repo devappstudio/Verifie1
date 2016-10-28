@@ -166,14 +166,36 @@ public class OneFragment extends Fragment{
         RealmResults<VerificationStatus> vs = realm.where(VerificationStatus.class).findAll();
         if(vs.isEmpty())
         {
-            VerificationStatus user = new VerificationStatus();
-            realm.beginTransaction();
-            user.setId(1);
-            user.setDate_to_expire("13/09/2015");
-            user.setDate_verified("13/09/2015");
-            realm.copyToRealmOrUpdate(user);
-            realm.commitTransaction();
-        }
+            try {
+                VerificationStatus user = new VerificationStatus();
+                realm.beginTransaction();
+                user.setId(1);
+                user.setDate_to_expire("13/09/2015");
+                user.setDate_verified("13/09/2015");
+                realm.copyToRealmOrUpdate(user);
+                realm.commitTransaction();
+
+            }
+            catch (Exception e)
+            {
+                realm.cancelTransaction();
+               try {
+                   VerificationStatus user = new VerificationStatus();
+                   realm.beginTransaction();
+                   user.setId(1);
+                   user.setDate_to_expire("13/09/2015");
+                   user.setDate_verified("13/09/2015");
+                   realm.copyToRealmOrUpdate(user);
+                   realm.commitTransaction();
+               }
+               catch (Exception ee)
+               {
+                   realm.cancelTransaction();
+                   ee.printStackTrace();
+               }
+
+            }
+         }
         //loadFacilities();
         VerificationStatus vss = realm.where(VerificationStatus.class).findAll().first();
         SimpleDateFormat simpleDateFormat =
@@ -186,15 +208,10 @@ public class OneFragment extends Fragment{
             Date date1 = simpleDateFormat.parse(strDate);
             Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
             Long t =  printDifference(date1, date2)/7;
-            if(t > 52)
-            {
-                level =  (float)(t/52)*100;
-            }
-            else
-            {
-                level =  (float)(52/t)*100;
-
-            }
+            System.out.println("Difference "+strDate+" - "+vss.getDate_to_expire()+" = "+printDifference(date1, date2));
+            float tt = t/52f;
+            level =  tt*100;
+            System.out.println("Difference 1 "+level+" "+t+" "+tt);
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -283,7 +300,9 @@ public class OneFragment extends Fragment{
 
         viewPager = (AutoScrollViewPager) myView.findViewById(R.id.view_pager);
         viewPager.setCycle(true);
+        viewPager.setInterval(5000);
         viewPager.setBorderAnimation(true);
+
         dotsLayout = (LinearLayout) myView.findViewById(R.id.layoutDots);
 
         layouts = new int[number_slides];
@@ -483,7 +502,7 @@ public class OneFragment extends Fragment{
                 String url = Mrealm.where(User.class).findAll().first().getFile_name();
                 server_id = Mrealm.where(User.class).findAll().first().getServer_id();
                 try {
-                    Picasso.with(getActivity()).load(url).into(profile);
+                    Picasso.with(getActivity()).load(Api.getImage_end()+server_id).into(profile);
                 }
                 catch (Exception e)
                 {
@@ -495,7 +514,18 @@ public class OneFragment extends Fragment{
                 profile.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        captureImage();
+
+                        Realm ii = Realm.getDefaultInstance();
+
+                        if(ii.where(User.class).findFirst().getImage_verified().equalsIgnoreCase("0"))
+                        {
+                            captureImage();
+                        }
+                        else
+                        {
+                            Toast.makeText(getActivity(),"Your Image Has Been Verified",Toast.LENGTH_LONG).show();
+                        }
+
                /* final Intent intent = new Intent(getActivity(), ImageEditor.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -597,7 +627,7 @@ public class OneFragment extends Fragment{
                 TextView centre_verified = (TextView) view.findViewById(R.id.centre);
 
                 last_verified.setText("Last Verified :"+verificationStatus.getDate_verified());
-                recommended_verification.setText("Recommended Verification Date :"+verificationStatus.getDate_to_expire());
+                recommended_verification.setText("Recommended Verification Date :"+verificationStatus.getDate_recommended());
                 centre_verified.setText("Center :"+verificationStatus.getCentre());
 
 
@@ -986,11 +1016,33 @@ public class OneFragment extends Fragment{
 //                                    new GetImages(location, profile, imagename).execute() ;
                                     Picasso.with(getActivity()).load(Api.getImage_end()+server_id).into(profile);
 
-                                    User us = realm.where(User.class).findFirst();
-                                    realm.beginTransaction();
-                                    us.setFile_name(location);
-                                    realm.copyToRealmOrUpdate(us);
-                                    realm.commitTransaction();
+                                    try{
+
+                                        User us = realm.where(User.class).findFirst();
+                                        realm.beginTransaction();
+                                        us.setFile_name(location);
+                                        realm.copyToRealmOrUpdate(us);
+                                        realm.commitTransaction();
+
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        realm.cancelTransaction();
+                                        try{
+
+                                            User us = realm.where(User.class).findFirst();
+                                            realm.beginTransaction();
+                                            us.setFile_name(location);
+                                            realm.copyToRealmOrUpdate(us);
+                                            realm.commitTransaction();
+
+                                        }
+                                        catch (Exception ee)
+                                        {
+                                            realm.cancelTransaction();
+                                        }
+                                    }
+
 //                                    if(pd != null)
 //                                    {
 //                                        pd.hide();

@@ -22,7 +22,7 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
-                android:textSize="22dp"
+                android:textSize="30sp"
                 
                 android:textStyle="bold"
                 tools2:ignore="MissingPrefix" />
@@ -43,7 +43,7 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 fontPath="fonts/nueva.ttf"
 
                 android:textStyle="normal"
@@ -51,7 +51,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:src="@drawable/about_one"
+                android:src="@drawable/about_five"
                 />
 
             <com.devappstudio.verifie.MyTextView
@@ -63,7 +63,7 @@
             Mind you, some infections, curable as they may be can still end up causing complications such as sterility in both males and females as well as cancers of the prostate, ovary and cervix."
                 android:textAlignment="center"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="normal"
                 fontPath="fonts/nueva.ttf"
 
@@ -94,7 +94,7 @@
                 android:textColor="#016C81"
                 fontPath="fonts/nueva.ttf"
 
-                android:textSize="20sp"
+                android:textSize="30sp"
                 android:textStyle="bold"
                 tools2:ignore="MissingPrefix" />
             <View
@@ -116,7 +116,7 @@
                 android:textColor="#6D6E70"
                 fontPath="fonts/nueva.ttf"
 
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="normal"
                 tools2:ignore="MissingPrefix" />
             <LinearLayout
@@ -154,7 +154,7 @@
                             android:text="Chlamydia"
                             android:layout_gravity="center"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="20sp"
                             android:textAlignment="center"
                             fontPath="fonts/nueva.ttf"
 
@@ -185,7 +185,7 @@
                             android:text="Gonorrhoea"
                             android:layout_gravity="center"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="20sp"
                             android:textAlignment="center"
                             fontPath="fonts/nueva.ttf"
 
@@ -216,7 +216,7 @@
                             android:text="Syphilis"
                             android:layout_gravity="center"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="20sp"
                             android:textAlignment="center"
                             fontPath="fonts/nueva.ttf"
 
@@ -258,7 +258,7 @@
 
                             android:layout_gravity="center"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="20sp"
                             android:textStyle="normal"
                             android:elevation="1dp"
                             tools2:ignore="MissingPrefix" />
@@ -289,7 +289,7 @@
                             fontPath="fonts/nueva.ttf"
 
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="20sp"
                             android:textStyle="normal"
                             android:elevation="1dp"
                             tools2:ignore="MissingPrefix" />
@@ -320,7 +320,7 @@
                             fontPath="fonts/nueva.ttf"
                             tools2:ignore="MissingPrefix"
                             android:layout_height="wrap_content"
-                            android:textSize="14sp"
+                            android:textSize="20sp"
                             android:textStyle="normal"
                             android:elevation="1dp"
                             />
@@ -331,7 +331,7 @@
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:src="@drawable/about_two"/>
+                android:src="@drawable/about_one"/>
 
             <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
@@ -341,7 +341,7 @@
                 android:text="Remember, it’s not only up to you. Get your partner and other people close to you to get tested."
                 android:textAlignment="center"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="normal"
                 fontPath="fonts/nueva.ttf"
                 tools2:ignore="MissingPrefix"
@@ -356,7 +356,7 @@
                 android:text=""
                 android:textAlignment="center"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 fontPath="fonts/nueva.ttf"
                 tools2:ignore="MissingPrefix"
 
@@ -386,7 +386,7 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
-                android:textSize="22sp"
+                android:textSize="30sp"
                 fontPath="fonts/nueva.ttf"
                 tools2:ignore="MissingPrefix"
 
@@ -408,7 +408,7 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 fontPath="fonts/nueva.ttf"
                 tools2:ignore="MissingPrefix"
 
@@ -417,7 +417,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:src="@drawable/about_three"/>
+                android:src="@drawable/about_eight"/>
 
             <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
@@ -428,7 +428,7 @@
                 android:text="We ensure confidentiality right from the beginning of the process. You can choose to provide an alias instead of your real name if you so wish when registering and also on the day of testing."
                 android:textAlignment="center"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 fontPath="fonts/nueva.ttf"
                 tools2:ignore="MissingPrefix"
 
@@ -461,7 +461,7 @@
                 fontPath="fonts/nueva.ttf"
                 tools2:ignore="MissingPrefix"
 
-                android:textSize="22sp"
+                android:textSize="30sp"
                 android:textStyle="bold"/>
             <View
                 android:layout_width="80dp"
@@ -482,7 +482,7 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 fontPath="fonts/nueva.ttf"
                 tools2:ignore="MissingPrefix"
 
@@ -520,7 +520,7 @@
                 fontPath="fonts/nueva.ttf"
                 tools2:ignore="MissingPrefix"
 
-                android:textSize="22sp"
+                android:textSize="30sp"
                 android:textStyle="bold"/>
             <View
                 android:layout_width="80dp"
@@ -542,13 +542,13 @@
                 fontPath="fonts/nueva.ttf"
                 tools2:ignore="MissingPrefix"
 
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="normal"/>
             <ImageView
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:src="@drawable/about_five"/>
+                android:src="@drawable/about_two"/>
 
         </LinearLayout>
         <View
@@ -577,7 +577,7 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
-                android:textSize="22sp"
+                android:textSize="30sp"
                 android:textStyle="bold"/>
             <View
                 android:layout_width="80dp"
@@ -599,7 +599,7 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="normal"/>
             <ImageView
                 android:layout_marginTop="10dp"
@@ -620,13 +620,13 @@
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="normal"/>
             <ImageView
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:src="@drawable/about_seven"/>
+                android:src="@drawable/app"/>
             <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -643,7 +643,7 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="normal"/>
 
         </LinearLayout>
@@ -673,7 +673,7 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
-                android:textSize="22sp"
+                android:textSize="30sp"
                 android:textStyle="bold"/>
             <View
                 android:layout_width="80dp"
@@ -685,7 +685,7 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:src="@drawable/rotabar"/>
+                android:src="@drawable/one"/>
             <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -700,14 +700,14 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="normal"/>
 
             <ImageView
                 android:layout_marginTop="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
-                android:src="@drawable/about_eight"/>
+                android:src="@drawable/about_seven"/>
             <com.devappstudio.verifie.MyTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -722,7 +722,7 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="normal"/>
 
 
@@ -753,7 +753,7 @@ It’s a simple way to connect people greatly minimising the risk of STI contrac
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#016C81"
-                android:textSize="22sp"
+                android:textSize="30sp"
                 android:textStyle="bold"/>
             <View
                 android:layout_width="80dp"
@@ -785,7 +785,7 @@ Remember your confidentiality is our topmost priority. "
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#6D6E70"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="normal"/>
 
             <com.devappstudio.verifie.MyTextView
@@ -802,7 +802,7 @@ Remember your confidentiality is our topmost priority. "
                 android:textAlignment="center"
                 android:layout_gravity="center_horizontal"
                 android:textColor="#F68B37"
-                android:textSize="14sp"
+                android:textSize="20sp"
                 android:textStyle="italic"/>
 
             <ImageView

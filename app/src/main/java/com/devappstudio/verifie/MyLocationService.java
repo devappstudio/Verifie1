@@ -208,6 +208,31 @@ public class MyLocationService extends Service implements LocationListener,
                         catch (Exception e)
                         {
                             e.printStackTrace();
+                            Realm rr = Realm.getDefaultInstance();
+                            rr.cancelTransaction();
+                            try {
+                                Realm rRealm = Realm.getDefaultInstance();
+
+
+                                if(response.get("status").toString().equalsIgnoreCase("1"))
+                                {
+                                    Location_Stats ls = new Location_Stats(myLocationVar.getLongitude(),myLocationVar.getLatitude());
+                                    rRealm.beginTransaction();
+                                    rRealm.clear(Location_Stats.class);
+                                    rRealm.copyToRealm(ls);
+                                    rRealm.commitTransaction();
+                                }
+                                else
+                                {
+
+                                }
+
+                            }
+                            catch (Exception ew)
+                            {
+                                ew.printStackTrace();
+                            }
+
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -302,6 +327,8 @@ public class MyLocationService extends Service implements LocationListener,
                             }
                             catch (Exception e)
                             {
+                                final Realm rrealm = Realm.getDefaultInstance();
+                                rrealm.cancelTransaction();
                                 e.printStackTrace();
                             }
                         }
@@ -342,6 +369,8 @@ public class MyLocationService extends Service implements LocationListener,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        final Realm realm = Realm.getDefaultInstance();
+
                         System.out.print(response.toString());
                         try {
 
@@ -377,8 +406,46 @@ public class MyLocationService extends Service implements LocationListener,
                         }
                         catch (Exception e)
                         {
+                            realm.cancelTransaction();
+                            try {
+
+                                JSONArray jaa = response.getJSONArray("data");
+
+                                for (int i=0; i< jaa.length(); i++)
+                                {
+
+                                    JSONObject object = (JSONObject) jaa.get(i);
+                                    RealmResults<Facilities> f = realm.where(Facilities.class).equalTo("server_id",object.get("id").toString()).findAll();
+
+                                    if(f.isEmpty())
+                                    {
+                                        Facilities fac = new Facilities(((int) realm.where(Facilities.class).maximumInt("id")),object.get("name").toString(),object.get("contact_person_name").toString(),object.get("contact_person_telephone").toString(),object.get("location").toString(),object.get("id").toString());
+                                        realm.beginTransaction();
+                                        realm.copyToRealm(fac);
+                                        realm.commitTransaction();
+                                    }
+                                    else
+                                    {
+                                        Facilities fac = f.first();
+                                        realm.beginTransaction();
+                                        fac.setName(object.get("name").toString());
+                                        fac.setContact_person(object.get("contact_person_name").toString());
+                                        fac.setContact_phone(object.get("contact_person_telephone").toString());
+                                        fac.setLocation(object.get("location").toString());
+                                        realm.copyToRealmOrUpdate(fac);
+                                        realm.commitTransaction();
+                                    }
+
+                                }
+
+                            }
+                            catch (Exception ee)
+                            {
+                                realm.cancelTransaction();
+                            }
 
                         }
+
                     }
                 }, new Response.ErrorListener() {
 
@@ -443,6 +510,7 @@ public class MyLocationService extends Service implements LocationListener,
                                 user.setId(1);
                                 user.setDate_to_expire(jo_stock.get("expiry").toString());
                                 user.setDate_verified(jo_stock.get("current").toString());
+                                user.setDate_recommended(jo_stock.get("recommended").toString());
                                 user.setCentre(jo_stock.get("facility").toString());
                                 realm1.copyToRealmOrUpdate(user);
                                 realm1.commitTransaction();
@@ -476,6 +544,7 @@ public class MyLocationService extends Service implements LocationListener,
                         }
                         catch (Exception e)
                         {
+                            realm1.cancelTransaction();
                             e.printStackTrace();
                             RealmResults<VerificationStatus>vs = realm1.where(VerificationStatus.class).findAll();
                             if(vs.isEmpty())
