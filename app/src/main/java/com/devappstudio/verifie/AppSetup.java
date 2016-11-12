@@ -59,7 +59,8 @@ public class AppSetup extends AppCompatActivity {
             startService(intent);
         }
         Realm realm = Realm.getDefaultInstance();
-
+        loadFacilities();
+        get_user();
         RealmResults<ContactsList> clst = realm.where(ContactsList.class).findAll();
         if (clst.isEmpty())
         {
