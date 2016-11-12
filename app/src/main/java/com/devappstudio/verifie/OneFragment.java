@@ -111,7 +111,7 @@ public class OneFragment extends Fragment{
 
 
     String url;
-    int number_slides = 3;
+    int number_slides = 4;
     private AutoScrollViewPager viewPager;
     private ViewPager viewPager1;
     private MyViewPagerAdapter myViewPagerAdapter;
@@ -178,8 +178,9 @@ public class OneFragment extends Fragment{
             }
             catch (Exception e)
             {
-                realm.cancelTransaction();
                try {
+                   realm.cancelTransaction();
+
                    VerificationStatus user = new VerificationStatus();
                    realm.beginTransaction();
                    user.setId(1);
@@ -190,8 +191,15 @@ public class OneFragment extends Fragment{
                }
                catch (Exception ee)
                {
-                   realm.cancelTransaction();
                    ee.printStackTrace();
+                   try {
+                       realm.cancelTransaction();
+
+                   }
+                   catch (Exception jkf)
+                   {
+
+                   }
                }
 
             }
@@ -443,7 +451,7 @@ public class OneFragment extends Fragment{
             if(position == 0)
             {
                 icon = BitmapFactory.decodeResource(getActivity().getResources(),
-                        R.drawable.bd1);
+                        R.drawable.bd0);
             }
            if(position == 1)
             {
@@ -457,6 +465,13 @@ public class OneFragment extends Fragment{
                         R.drawable.bd3);
 
             }
+            if(position == 3)
+            {
+                icon = BitmapFactory.decodeResource(getActivity().getResources(),
+                        R.drawable.bd4);
+
+            }
+
             iv.setImageBitmap((icon));
 
             container.addView(view);
@@ -949,12 +964,13 @@ public class OneFragment extends Fragment{
             CropImage.activity(selectedImageUri)
                     .start(getContext(), this);
            // TODO uploadMultipart(getContext(),path);
-            try {
+           /* try {
                 bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), ur);
                 profile.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            */
 //            uploadImage();
             //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
         }
@@ -969,12 +985,13 @@ public class OneFragment extends Fragment{
                 Exception error = result.getError();
             }
             uploadMultipart(getContext(),resultUri.getPath().toString());
-            try {
+            /*try {
                 bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), resultUri);
                 profile.setImageBitmap(bitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            */
         }
     }
 
@@ -1012,10 +1029,14 @@ public class OneFragment extends Fragment{
 
                                 @Override
                                 public void onCompleted(UploadInfo uploadInfo, ServerResponse serverResponse) {
+
+
+                                    //TODO TADAA
                                     // your code here
                                     // if you have mapped your server response to a POJO, you can easily get it:
                                     // YourClass obj = new Gson().fromJson(serverResponse.getBodyAsString(), YourClass.class);
                                     // JSONObject obj = serverResponse.getBodyAsString()
+                                    profile.setImageResource(R.drawable.circular);
                                     String location = serverResponse.getBodyAsString();
 
                                     Realm realm = Realm.getDefaultInstance();
@@ -1033,8 +1054,8 @@ public class OneFragment extends Fragment{
                                     }
                                     catch (Exception e)
                                     {
-                                        realm.cancelTransaction();
                                         try{
+                                            realm.cancelTransaction();
 
                                             User us = realm.where(User.class).findFirst();
                                             realm.beginTransaction();
@@ -1045,7 +1066,14 @@ public class OneFragment extends Fragment{
                                         }
                                         catch (Exception ee)
                                         {
-                                            realm.cancelTransaction();
+                                            try {
+                                                realm.cancelTransaction();
+
+                                            }
+                                            catch (Exception jh)
+                                            {
+
+                                            }
                                         }
                                     }
 

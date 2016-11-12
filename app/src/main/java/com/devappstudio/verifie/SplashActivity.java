@@ -198,7 +198,14 @@ public class SplashActivity extends Activity {
                             e.printStackTrace();
 
                             Realm ioRealm = Realm.getDefaultInstance();
-                            ioRealm.cancelTransaction();
+                            try {
+                                ioRealm.cancelTransaction();
+
+                            }
+                            catch (Exception gh)
+                            {
+
+                            }
                             open();
 
                         }

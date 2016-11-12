@@ -149,9 +149,10 @@ public class MyGcmListenerService  extends GcmListenerService  {
 
         } catch (JSONException e) {
             Realm io = Realm.getDefaultInstance();
-            io.cancelTransaction();
             e.printStackTrace();
             try {
+                io.cancelTransaction();
+
                 JSONObject jo_stock = new JSONObject(message);
                 if(jo_stock.get("type").toString().equalsIgnoreCase("request"))
                 {
@@ -224,8 +225,15 @@ public class MyGcmListenerService  extends GcmListenerService  {
 
 
             } catch (JSONException ee) {
-                io.cancelTransaction();
                 e.printStackTrace();
+                try {
+                    io.cancelTransaction();
+
+                }
+                catch (Exception uyt)
+                {
+
+                }
             }
 
         }

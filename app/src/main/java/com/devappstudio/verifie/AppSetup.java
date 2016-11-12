@@ -164,7 +164,7 @@ public class AppSetup extends AppCompatActivity {
                         }
                         catch (Exception e)
                         {
-                            realm.cancelTransaction();
+                            //realm.cancelTransaction();
                             e.printStackTrace();
                             RealmResults<VerificationStatus>vs = realm.where(VerificationStatus.class).findAll();
                             if(vs.isEmpty())
@@ -196,7 +196,15 @@ public class AppSetup extends AppCompatActivity {
                                 }
                                 catch (Exception eee)
                                 {
-                                    realm.cancelTransaction();
+                                    try
+                                    {
+                                        realm.cancelTransaction();
+
+                                    }
+                                    catch (Exception oy)
+                                    {
+
+                                    }
                                 }
                               }
                             final Intent intent = new Intent(AppSetup.this, main.class);
@@ -229,7 +237,16 @@ public class AppSetup extends AppCompatActivity {
                     }
                     catch (Exception e)
                     {
-                        realm.cancelTransaction();
+                        try
+                        {
+                            realm.cancelTransaction();
+
+                        }
+                        catch (Exception ty)
+                        {
+
+                        }
+
                     }
 
                 }
@@ -332,7 +349,14 @@ public class AppSetup extends AppCompatActivity {
                                 }
                                 catch (Exception e)
                                 {
-                                    realm.cancelTransaction();
+                                    try
+                                    {
+                                        realm.cancelTransaction();
+                                    }
+                                    catch (Exception yu)
+                                    {
+
+                                    }
                                 }
 
                             }
@@ -465,7 +489,7 @@ public class AppSetup extends AppCompatActivity {
                         }
                         catch (Exception e)
                         {
-                            realm.cancelTransaction();
+                           // realm.cancelTransaction();
                             try {
 
                                 JSONArray jaa = response.getJSONArray("data");
@@ -500,7 +524,14 @@ public class AppSetup extends AppCompatActivity {
                             }
                             catch (Exception ee)
                             {
-                                realm.cancelTransaction();
+                                try
+                                {
+                                    realm.cancelTransaction();
+                                }
+                                catch (Exception ty)
+                                {
+
+                                }
                             }
                         }
                     }
@@ -579,7 +610,13 @@ public class AppSetup extends AppCompatActivity {
                             catch (Exception e)
                             {
                                 final Realm rrealm = Realm.getDefaultInstance();
-                                rrealm.cancelTransaction();
+                                try{
+                                    rrealm.cancelTransaction();
+                                }
+                                catch(Exception e1l)
+                                {
+
+                                }
                                 e.printStackTrace();
                             }
                         }

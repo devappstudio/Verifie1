@@ -386,15 +386,14 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
             catch (Exception e)
             {
                 e.printStackTrace();
-                realm1.cancelTransaction();
                 try {
+                    realm1.cancelTransaction();
                     realm1.beginTransaction();
                     realm1.copyToRealmOrUpdate(ls);
                     realm1.commitTransaction();
                 }
                 catch (Exception ee)
                 {
-                    realm1.cancelTransaction();
                 }
             }
 
@@ -686,7 +685,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
                         }
                         catch (Exception e)
                         {
-                            realm.cancelTransaction();
+//                            realm.cancelTransaction();
                             e.printStackTrace();
                             RealmResults<VerificationStatus>vs = realm.where(VerificationStatus.class).findAll();
                             if(vs.isEmpty())
@@ -706,7 +705,15 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
                                 }
                                 catch (Exception eee)
                                 {
-                                    realm.cancelTransaction();
+                                    try
+                                    {
+                                        realm.cancelTransaction();
+
+                                    }
+                                    catch (Exception ty)
+                                    {
+
+                                    }
                                 }
                             }
 
@@ -734,7 +741,14 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
                     }
                     catch (Exception e)
                     {
-                        realm.cancelTransaction();
+                        try
+                        {
+                            realm.cancelTransaction();
+                        }
+                        catch (Exception eeh)
+                        {
+
+                        }
                     }
 
                 }

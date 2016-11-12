@@ -242,9 +242,9 @@ public class RegisterActivity extends Activity{
                             }
                             catch (Exception e)
                             {
-                                realm.cancelTransaction();
 
                                 try {
+                                    realm.cancelTransaction();
 
                                     if(response.get("status").toString().equalsIgnoreCase("1"))
                                     {

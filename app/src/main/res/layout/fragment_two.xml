@@ -54,11 +54,189 @@
            </SearchView>
        </RelativeLayout>
     </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical" />
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_height="0dp">
+
+            <com.devappstudio.verifie.MyTextView
+                android:layout_width="wrap_content"
+                android:textColor="@color/cardview_dark_background"
+                android:text="Nearby Users"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                fontPath="fonts/nueva.ttf"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="normal|italic"
+                android:elevation="1dp"
+                android:textAllCaps="true" />
+            <com.devappstudio.verifie.EmptyRecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical" />
+            <LinearLayout
+                android:id="@+id/near_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:textAlignment="center">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:clickable="true"
+                    >
+
+                    <!-- Thumbnail Image -->
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/thumbnail1"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/circular"
+                        app:civ_border_width="1dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
+                        app:civ_border_color="#FF000000"/>
+                    <!-- Rating -->
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        android:layout_toRightOf="@+id/thumbnail1"
+                        android:layout_toEndOf="@+id/thumbnail1"
+                        android:layout_height="match_parent">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_marginTop="1dip"
+                            android:orientation="vertical"
+                            android:layout_weight="4"
+                            android:layout_height="match_parent">
+                            <TextView
+                                android:id="@+id/name"
+                                android:layout_width="fill_parent"
+                                android:layout_height="0dp"
+                                android:text="Sorry No Users Nearby"
+                                android:layout_weight="2"
+                                android:textAlignment="textStart"
+                                android:layout_gravity="start"
+                                android:textStyle="normal|bold" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_weight="1.5"
+            android:orientation="vertical"
+
+            android:layout_height="0dp">
+
+            <com.devappstudio.verifie.MyTextView
+                android:layout_width="wrap_content"
+                android:textColor="@color/cardview_dark_background"
+                android:text="Contacts"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                fontPath="fonts/nueva.ttf"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="normal|italic"
+                android:elevation="1dp"
+                android:textAllCaps="true" />
+
+            <com.devappstudio.verifie.EmptyRecyclerView
+                android:id="@+id/recycler_view_contact"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical" />
+            <LinearLayout
+                android:id="@+id/contacts_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:textAlignment="center">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:clickable="true"
+                    >
+
+                    <!-- Thumbnail Image -->
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/thumbnail"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/circular"
+                        app:civ_border_width="1dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="10dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_gravity="center"
+                        app:civ_border_color="#FF000000"/>
+                    <!-- Rating -->
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_marginTop="10dp"
+                        android:orientation="horizontal"
+                        android:layout_toRightOf="@+id/thumbnail"
+                        android:layout_toEndOf="@+id/thumbnail"
+                        android:layout_height="match_parent">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_marginTop="1dip"
+                            android:orientation="vertical"
+                            android:layout_weight="4"
+                            android:layout_height="match_parent">
+                            <TextView
+                                android:id="@+id/name1"
+                                android:layout_width="fill_parent"
+                                android:layout_height="0dp"
+                                android:text="Sorry No Contacts Found"
+                                android:layout_weight="2"
+                                android:textAlignment="textStart"
+                                android:layout_gravity="start"
+                                android:textStyle="normal|bold" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </LinearLayout>
 
 
 </LinearLayout>

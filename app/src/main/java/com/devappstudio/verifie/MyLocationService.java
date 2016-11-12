@@ -209,8 +209,8 @@ public class MyLocationService extends Service implements LocationListener,
                         {
                             e.printStackTrace();
                             Realm rr = Realm.getDefaultInstance();
-                            rr.cancelTransaction();
                             try {
+                                rr.cancelTransaction();
                                 Realm rRealm = Realm.getDefaultInstance();
 
 
@@ -328,7 +328,14 @@ public class MyLocationService extends Service implements LocationListener,
                             catch (Exception e)
                             {
                                 final Realm rrealm = Realm.getDefaultInstance();
-                                rrealm.cancelTransaction();
+                                try {
+                                    rrealm.cancelTransaction();
+
+                                }
+                                catch (Exception jh)
+                                {
+
+                                }
                                 e.printStackTrace();
                             }
                         }
@@ -406,8 +413,8 @@ public class MyLocationService extends Service implements LocationListener,
                         }
                         catch (Exception e)
                         {
-                            realm.cancelTransaction();
                             try {
+                                realm.cancelTransaction();
 
                                 JSONArray jaa = response.getJSONArray("data");
 
@@ -441,7 +448,14 @@ public class MyLocationService extends Service implements LocationListener,
                             }
                             catch (Exception ee)
                             {
-                                realm.cancelTransaction();
+                                try {
+                                    realm.cancelTransaction();
+
+                                }
+                                catch (Exception mn)
+                                {
+
+                                }
                             }
 
                         }
@@ -544,7 +558,6 @@ public class MyLocationService extends Service implements LocationListener,
                         }
                         catch (Exception e)
                         {
-                            realm1.cancelTransaction();
                             e.printStackTrace();
                             RealmResults<VerificationStatus>vs = realm1.where(VerificationStatus.class).findAll();
                             if(vs.isEmpty())

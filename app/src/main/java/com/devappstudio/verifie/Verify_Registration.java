@@ -271,9 +271,10 @@ public class Verify_Registration extends AppCompatActivity {
                             }
                             catch (Exception e)
                             {
-                                realm.cancelTransaction();
                                 e.printStackTrace();
                                 try {
+                                    realm.cancelTransaction();
+
                                     if(response.get("status").toString().equalsIgnoreCase("1"))
                                     {
 //                               JSONObject jo_stock = response.getJSONObject("stock_user");

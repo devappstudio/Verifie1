@@ -66,14 +66,15 @@ import io.realm.RealmResults;
 
 public class TwoFragment extends Fragment{
     private List<NearBy> movieList = new ArrayList<>();
-    private RecyclerView recyclerView;
+    private List<NearBy> movieListContacts = new ArrayList<>();
+    private EmptyRecyclerView recyclerView,recyclerViewContacts;
     private NearByAdaptor mAdapter;
+    private NearByAdaptor mAdapterContacts;
+    View emptyNear,emptyContacts;
     Switch visibility;
     int visible;
     private Realm realm;
     Handler mHandler = new Handler();
-
-
 
     public TwoFragment() {
         // Required empty public constructor
@@ -89,8 +90,16 @@ public class TwoFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View myView = inflater.inflate(R.layout.fragment_two, container, false);
-        recyclerView = (RecyclerView) myView.findViewById(R.id.recycler_view);
+        recyclerView = (EmptyRecyclerView) myView.findViewById(R.id.recycler_view);
+        recyclerViewContacts = (EmptyRecyclerView) myView.findViewById(R.id.recycler_view_contact);
+         emptyNear = myView.findViewById(R.id.near_empty);
+        emptyContacts = myView.findViewById(R.id.contacts_empty);
+
+
+
+
         mAdapter = new NearByAdaptor(movieList,getContext());
+        mAdapterContacts = new NearByAdaptor(movieListContacts,getContext());
         this.realm = RealmController.with(this).getRealm();
         /**
          * TODO
@@ -140,6 +149,7 @@ public class TwoFragment extends Fragment{
             public boolean onQueryTextSubmit(String query) {
                 query = query.toLowerCase();
                 final List<NearBy> List = new ArrayList<>();
+                final List<NearBy> ListContacts = new ArrayList<>();
                 for (int i = 0; i< movieList.size(); i++) {
                     final NearBy text = movieList.get(i);
                     if (text.getTelephone_number().startsWith(query) || text.getTelephone_number().contains(query) || text.getTelephone_number().endsWith(query)) {
@@ -152,12 +162,39 @@ public class TwoFragment extends Fragment{
                         List.add(movieList.get(i));
                     }
                 }
+                for (int i = 0; i< movieListContacts.size(); i++) {
+                    final NearBy text = movieListContacts.get(i);
+                    if (text.getTelephone_number().startsWith(query) || text.getTelephone_number().contains(query) || text.getTelephone_number().endsWith(query)) {
+                        ListContacts.add(movieListContacts.get(i));
+                    }
+                    if (text.getName().toLowerCase().contains(query) || text.getName().toLowerCase().startsWith(query) || text.getName().toLowerCase().endsWith(query)) {
+                        ListContacts.add(movieListContacts.get(i));
+                    }
+                    if (text.getScreen_name().toLowerCase().contains(query) || text.getScreen_name().toLowerCase().startsWith(query) || text.getScreen_name().toLowerCase().endsWith(query)) {
+                        ListContacts.add(movieListContacts.get(i));
+                    }
+                }
+
                 mAdapter = new NearByAdaptor(List,getContext());
+                mAdapterContacts = new NearByAdaptor(ListContacts,getContext());
+
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+                RecyclerView.LayoutManager mLayoutManager1 = new LinearLayoutManager(getActivity());
+
                 recyclerView.setLayoutManager(mLayoutManager);
+                recyclerViewContacts.setLayoutManager(mLayoutManager1);
+                recyclerView.setEmptyView(emptyNear);
+                recyclerViewContacts.setEmptyView(emptyContacts);
+
                 recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+                recyclerViewContacts.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerViewContacts.setItemAnimator(new DefaultItemAnimator());
+
                 recyclerView.setAdapter(mAdapter);
+                recyclerViewContacts.setAdapter(mAdapterContacts);
+
                 return true;
             }
 
@@ -172,6 +209,7 @@ public class TwoFragment extends Fragment{
             public boolean onQueryTextChange(String query) {
                 query = query.toLowerCase();
                 final List<NearBy> List = new ArrayList<>();
+                final List<NearBy> ListContacts = new ArrayList<>();
                 for (int i = 0; i< movieList.size(); i++) {
                     final NearBy text = movieList.get(i);
                     if (text.getTelephone_number().startsWith(query) || text.getTelephone_number().contains(query) || text.getTelephone_number().endsWith(query)) {
@@ -184,12 +222,37 @@ public class TwoFragment extends Fragment{
                         List.add(movieList.get(i));
                     }
                 }
+                for (int i = 0; i< movieListContacts.size(); i++) {
+                    final NearBy text = movieListContacts.get(i);
+                    if (text.getTelephone_number().startsWith(query) || text.getTelephone_number().contains(query) || text.getTelephone_number().endsWith(query)) {
+                        ListContacts.add(movieListContacts.get(i));
+                    }
+                    if (text.getName().toLowerCase().contains(query) || text.getName().toLowerCase().startsWith(query) || text.getName().toLowerCase().endsWith(query)) {
+                        ListContacts.add(movieListContacts.get(i));
+                    }
+                    if (text.getScreen_name().toLowerCase().contains(query) || text.getScreen_name().toLowerCase().startsWith(query) || text.getScreen_name().toLowerCase().endsWith(query)) {
+                        ListContacts.add(movieListContacts.get(i));
+                    }
+                }
+
                 mAdapter = new NearByAdaptor(List,getContext());
+                mAdapterContacts = new NearByAdaptor(ListContacts,getContext());
+
                 RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+                RecyclerView.LayoutManager mLayoutManager1 = new LinearLayoutManager(getActivity());
+
                 recyclerView.setLayoutManager(mLayoutManager);
+                recyclerViewContacts.setLayoutManager(mLayoutManager1);
+
                 recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+                recyclerViewContacts.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
+                recyclerViewContacts.setItemAnimator(new DefaultItemAnimator());
+
                 recyclerView.setAdapter(mAdapter);
+                recyclerViewContacts.setAdapter(mAdapterContacts);
+
                 return true;
             }
         };
@@ -199,9 +262,7 @@ public class TwoFragment extends Fragment{
 
        // RealmController.with(getActivity()).clearContacts();
 
-
-
-
+        near_by_offline_users();
         mHandlerTask.run();
 
 
@@ -210,16 +271,65 @@ public class TwoFragment extends Fragment{
         task.execute("");
 */
         recyclerView.setHasFixedSize(true);
+        recyclerViewContacts.setHasFixedSize(true);
+
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        RecyclerView.LayoutManager mLayoutManager2 = new LinearLayoutManager(getActivity());
+
         recyclerView.setLayoutManager(mLayoutManager);
+        recyclerViewContacts.setLayoutManager(mLayoutManager2);
+
+        recyclerView.setEmptyView(emptyNear);
+        recyclerViewContacts.setEmptyView(emptyContacts);
+
+
+
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        recyclerViewContacts.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewContacts.setItemAnimator(new DefaultItemAnimator());
+
         recyclerView.setAdapter(mAdapter);
+        recyclerViewContacts.setAdapter(mAdapterContacts);
 
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
                 NearBy movie = movieList.get(position);
+                //Toast.makeText(getActivity(), movie.getServer_id() + " is selected!", Toast.LENGTH_SHORT).show();
+                if(movie.getOn_verifie().equalsIgnoreCase("0"))
+                {
+                    //Not On service so only invitation
+
+                    try {
+                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                        sendIntent.putExtra("sms_body", "Check out verifie on your smart phone download it at https://drive.google.com/open?id=0B_hBEdD_-DHUcVFjWnZTb01ZMEk");
+                        sendIntent.setType("vnd.android-dir/mms-sms");
+                        sendIntent.setData(Uri.parse("sms:"+movie.getTelephone_number()));
+                        getActivity().startActivity(sendIntent);
+                    }
+
+                    catch (Exception e) {
+                        Toast.makeText(getActivity(), "SMS failed, please try again.", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    call_method(movie.getServer_id(),movie);
+                }
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+        recyclerViewContacts.addOnItemTouchListener(new RecyclerTouchListener(getActivity(), recyclerViewContacts, new ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                NearBy movie = movieListContacts.get(position);
                 //Toast.makeText(getActivity(), movie.getServer_id() + " is selected!", Toast.LENGTH_SHORT).show();
                 if(movie.getOn_verifie().equalsIgnoreCase("0"))
                 {
@@ -360,7 +470,6 @@ public class TwoFragment extends Fragment{
                                     mAdapter.notifyDataSetChanged();
                                     near_by_offline_users();
                                     Toast.makeText(getActivity(),"Your visibility is off",Toast.LENGTH_LONG).show();
-
                                 }
 
                             }
@@ -407,7 +516,14 @@ public class TwoFragment extends Fragment{
                             catch (Exception ee)
                             {
                                 ee.printStackTrace();
-                                realm.cancelTransaction();
+                                try{
+                                    realm.cancelTransaction();
+
+                                }
+                                catch (Exception eee)
+                                {
+
+                                }
 
                             }
 
@@ -498,7 +614,14 @@ public class TwoFragment extends Fragment{
                         }
                         catch (Exception e)
                         {
-                            realm.cancelTransaction();
+                            try {
+                                realm.cancelTransaction();
+
+                            }
+                            catch (Exception eed)
+                            {
+
+                            }
                             e.printStackTrace();
                             near_by_offline_users();
 
@@ -548,8 +671,9 @@ public class TwoFragment extends Fragment{
 
                             if(response.get("status").toString().equalsIgnoreCase("1"))
                             {
+                                JSONArray jaa = response.getJSONArray("data");
                                 movieList.clear();
-
+/*
                                 RealmResults<ContactsList> RegisteredCls = RealmController.with(getActivity()).getAllRegisteredContacts();
                                 RealmResults<ContactsList> UnRegisteredCls = RealmController.with(getActivity()).getAllUnRegisteredContacts();
 
@@ -575,8 +699,7 @@ public class TwoFragment extends Fragment{
                                         movieList.add(dumb);
                                     }
                                 }
-
-                                JSONArray jaa = response.getJSONArray("data");
+*/
 
                                 for (int i=0; i< jaa.length(); i++)
                                 {
@@ -597,7 +720,7 @@ public class TwoFragment extends Fragment{
                             }
                             else
                             {
-                                near_by_offline_users();
+                                //near_by_offline_users();
 
                             }
 
@@ -605,7 +728,7 @@ public class TwoFragment extends Fragment{
                         catch (Exception e)
                         {
                             e.printStackTrace();
-                            near_by_offline_users();
+                            //near_by_offline_users();
 
                         }
                     }
@@ -614,7 +737,7 @@ public class TwoFragment extends Fragment{
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                near_by_offline_users();
+                //near_by_offline_users();
 
             }
         }) {
@@ -635,7 +758,7 @@ public class TwoFragment extends Fragment{
     void near_by_offline_users()
     {
         
-        movieList.clear();
+        movieListContacts.clear();
 
         RealmResults<ContactsList> RegisteredCls = RealmController.with(getActivity()).getAllRegisteredContacts();
         RealmResults<ContactsList> UnRegisteredCls = RealmController.with(getActivity()).getAllUnRegisteredContacts();
@@ -650,7 +773,7 @@ public class TwoFragment extends Fragment{
             NearBy dumb = new NearBy(cl.getName(),cl.getFile_name(),cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
             if(check_new(dumb))
             {
-                movieList.add(dumb);
+                movieListContacts.add(dumb);
             }
         }
 
@@ -660,11 +783,11 @@ public class TwoFragment extends Fragment{
             NearBy dumb = new NearBy(cl.getName(),"",cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
             if(check_new(dumb))
             {
-                movieList.add(dumb);
+                movieListContacts.add(dumb);
             }
         }
 
-        mAdapter.notifyDataSetChanged();
+        mAdapterContacts.notifyDataSetChanged();
     }
 
 
@@ -681,7 +804,7 @@ public class TwoFragment extends Fragment{
                 else
 
                 {
-                    near_by_offline_users();
+                   // near_by_offline_users();
 
                 }
             }
@@ -756,9 +879,9 @@ public class TwoFragment extends Fragment{
                             catch (Exception e)
                             {
                                 e.printStackTrace();
-                                rrealm.cancelTransaction();
 
                                 try {
+                                    rrealm.cancelTransaction();
 
                                     if(response.get("status").toString().equalsIgnoreCase("1"))
                                     {
@@ -856,19 +979,18 @@ public class TwoFragment extends Fragment{
                             new SimpleDateFormat("dd/M/yyyy");
 
                     Float level = 0f;
+                    ApprovedRequests vss = realm.where(ApprovedRequests.class).equalTo("server_id",server_id).findAll().last();
 
 
                     try {
                         Calendar calendar = Calendar.getInstance();
                         String strDate = "" + simpleDateFormat.format(calendar.getTime());
-                        ApprovedRequests vss = realm.where(ApprovedRequests.class).equalTo("server_id",server_id).findAll().last();
-                        if(vss.getDate_to_expire().equalsIgnoreCase("N/A"))
+                        if(!vss.getDate_to_expire().equalsIgnoreCase("N/A"))
                         {
                             Date date1 = simpleDateFormat.parse(strDate);
                             Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
                             Long t =  printDifference(date1, date2)/7;
                             //System.out.println("Difference "+t+ " "+vss.getDate_to_expire()+" "+date1.toString());
-
                             float tt = t/52f;
                             level =  tt*100;
 
@@ -889,11 +1011,11 @@ public class TwoFragment extends Fragment{
                     {
                         dialog.setContentView(R.layout.pop1);
                     }
-                    if(level > 25f && level <= 65)
+                    if(level > 25f && level <= 65f)
                     {
                         dialog.setContentView(R.layout.pop2);
                     }
-                    if(level > 65f && level <= 100)
+                    if(level > 65f && level <= 100f)
                     {
                         dialog.setContentView(R.layout.pop3);
                     }
@@ -904,7 +1026,7 @@ public class TwoFragment extends Fragment{
                     profile.startAnimation();
 
                     TextView percentage = (TextView)dialog.findViewById(R.id.percent_view) ;
-                    percentage.setText("8%");
+                    percentage.setText( level.intValue()+"%");
 
 
                     Realm Mrealm = Realm.getDefaultInstance();
@@ -944,9 +1066,10 @@ public class TwoFragment extends Fragment{
                         }
                         catch (Exception e)
                         {
-                            realm.cancelTransaction();
                             try
                             {
+                                realm.cancelTransaction();
+
                                 realm.beginTransaction();
                                 realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().removeFromRealm();
                                 realm.commitTransaction();
@@ -955,8 +1078,15 @@ public class TwoFragment extends Fragment{
                             }
                             catch (Exception ee)
                             {
-                                realm.cancelTransaction();
                                 ee.printStackTrace();
+                                try {
+                                    realm.cancelTransaction();
+
+                                }
+                                catch (Exception jhf)
+                                {
+
+                                }
                             }
                             e.printStackTrace();
                         }
@@ -1061,8 +1191,8 @@ public class TwoFragment extends Fragment{
                                 {
 
                                     Realm io = Realm.getDefaultInstance();
-                                    io.cancelTransaction();
                                     try {
+                                        io.cancelTransaction();
 
                                         Long tsLong = System.currentTimeMillis()/1000;
                                         String tsr = tsLong.toString();
@@ -1077,7 +1207,14 @@ public class TwoFragment extends Fragment{
                                     }
                                     catch (Exception ee)
                                     {
-                                        io.cancelTransaction();
+                                        try {
+                                            io.cancelTransaction();
+
+                                        }
+                                        catch (Exception lok)
+                                        {
+
+                                        }
                                     }
                                    // Toast.makeText(getActivity(), "Sorry An Error Occurred Please Try Again Later", Toast.LENGTH_LONG).show();
                                 }
