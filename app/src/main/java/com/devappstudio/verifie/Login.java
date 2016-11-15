@@ -36,7 +36,7 @@ public class Login extends Activity {
     String e_email,e_password,e_secrete,e_name,e_pic;
 
     ImageButton fb_login,gplus_login,login;
-    TextView not_registered;
+    TextView not_registered,forgot;
     EditText email,password;
     private Realm realm;
 
@@ -54,6 +54,8 @@ public class Login extends Activity {
         gplus_login = (ImageButton)findViewById(R.id.gplus_login_btn);
         login = (ImageButton)findViewById(R.id.login_btn);
         not_registered = (TextView)findViewById(R.id.dont_have_account);
+
+        forgot = (TextView)findViewById(R.id.forgot);
         email = (EditText)findViewById(R.id.login_email);
         password = (EditText)findViewById(R.id.login_password);
 
@@ -61,6 +63,13 @@ public class Login extends Activity {
             @Override
             public void onClick(View v) {
                 openMain();
+            }
+        });
+
+        forgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                forgot_pword();
             }
         });
 
@@ -529,6 +538,13 @@ public class Login extends Activity {
         }
 
 
+    }
+
+    void forgot_pword()
+    {
+        //show diwlog to enter emwil
+        //send request to server
+        //on succes redirect to pqge thqt will wqit for the pword
     }
 
 
