@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import datastore.Api;
 import datastore.RealmController;
@@ -546,6 +547,12 @@ public class Login extends Activity {
         //send request to server
         //on succes redirect to pqge thqt will wqit for the pword
     }
+    public int gen() {
+        Random r = new Random( System.currentTimeMillis() );
+        return 10000 + r.nextInt(20000);
+    }
+
+
 
 
 

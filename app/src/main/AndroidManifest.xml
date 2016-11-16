@@ -46,8 +46,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat"/>
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".Login"
             android:label="@string/title_activity_login"
@@ -70,48 +71,53 @@
         <activity android:name=".ImageEditor" />
         <activity android:name=".MyLocationRequest" />
         <activity android:name=".MainActivity" />
-        <activity android:name=".AppSetup"></activity>
-
-
+        <activity android:name=".AppSetup" />
 
         <!-- [START gcm_receiver] -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
                 <category android:name="gcm.play.android.samples.com.gcmquickstart" />
             </intent-filter>
         </receiver>
         <!-- [END gcm_receiver] -->
 
+        <receiver android:name=".SmsListener">
+            <intent-filter android:priority="1000">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
 
         <!-- [START gcm_listener] -->
         <service
             android:name=".MyGcmListenerService"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
         <!-- [END gcm_listener] -->
 
+
         <!-- [START instanceId_listener] -->
         <service
             android:name=".MyInstanceIDListenerService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
         <!-- [END instanceId_listener] -->
         <service
             android:name=".RegistrationIntentService"
-            android:exported="false">
-        </service>
+            android:exported="false"></service>
 
-
+        <activity android:name=".ForgotPwd"></activity>
     </application>
 
 </manifest>
