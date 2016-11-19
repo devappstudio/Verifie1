@@ -1,25 +1,22 @@
 package datastore;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.orm.SugarApp;
+import com.orm.SugarRecord;
 
 /**
  * Created by root on 9/16/16.
  */
 
-public class SentRequests extends RealmObject {
+public class SentRequests extends SugarRecord {
 
-    @PrimaryKey
-    private int id;
 
-    private String id_receipent,time_sent,time_replied,status;
-    private int reply;
+     String id_receipent,time_sent,time_replied,status;
+     int reply;
 
     public SentRequests() {
     }
 
-    public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply) {
-        this.id = id;
+    public SentRequests(String id_receipent, String time_sent, String time_replied, String status, int reply) {
         this.id_receipent = id_receipent;
         this.time_sent = time_sent;
         this.time_replied = time_replied;
@@ -28,13 +25,6 @@ public class SentRequests extends RealmObject {
     }
 
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getId_receipent() {
         return id_receipent;

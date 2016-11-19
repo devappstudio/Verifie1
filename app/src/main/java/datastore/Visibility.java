@@ -1,18 +1,16 @@
 package datastore;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.orm.SugarRecord;
+
 
 /**
  * Created by root on 8/8/16.
  */
 
-public class Visibility  extends RealmObject {
+public class Visibility  extends SugarRecord {
 
-    @PrimaryKey
-    private int id;
 
-    private boolean status;
+     boolean status;
 
     public Visibility(boolean status) {
         this.status = status;
@@ -30,11 +28,4 @@ public class Visibility  extends RealmObject {
     }
 
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 }

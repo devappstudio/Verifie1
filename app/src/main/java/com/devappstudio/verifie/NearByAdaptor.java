@@ -12,15 +12,18 @@ import com.android.volley.toolbox.ImageLoader;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import com.orm.query.Condition;
+import com.orm.query.Select;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
-
+import com.squareup.picasso.Downloader;
 import datastore.Api;
 import datastore.ReceivedRequests;
 import datastore.SentRequests;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.Realm;
 
 /**
  * Created by root on 8/1/16.
@@ -63,7 +66,7 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
     static String phone ;
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, final int position) {
+    public void onBindViewHolder(final MyViewHolder holder, final int position) {
         final NearBy nearBy = nearByList.get(position);
         if(is_local(nearBy.getLocal_id()))
         {
@@ -100,7 +103,25 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
             else
             {
                 if(!nearBy.getOn_verifie().equalsIgnoreCase("0") && !nearBy.getScreen_name().equalsIgnoreCase(""))
-                Picasso.with(context).load(Api.getImage_end()+nearBy.getServer_id()).into(holder.img);
+                    Picasso.with(context)
+                            .load(Api.getImage_end()+nearBy.getServer_id())
+                            .networkPolicy(NetworkPolicy.OFFLINE)
+                            .into(holder.img, new Callback() {
+                                @Override
+                                public void onSuccess() {
+
+                                }
+
+                                @Override
+                                public void onError() {
+                                    // Try again online if cache failed
+                                    Picasso.with(context)
+                                            .load(Api.getImage_end()+nearBy.getServer_id())
+                                            .placeholder(R.drawable.circular)
+                                            .error(R.drawable.circular)
+                                            .into(holder.img);
+                                }
+                            });
                 holder.name.setText(nearBy.getName());
                 holder.imb.setText(get_button(nearBy.getServer_id()));
                 holder.screen.setText(nearBy.getScreen_name()+" - "+phone);
@@ -115,7 +136,25 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
         }
         else
         {
-            Picasso.with(context).load(Api.getImage_end()+nearBy.getServer_id()).into(holder.img);
+            Picasso.with(context)
+                    .load(Api.getImage_end()+nearBy.getServer_id())
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .into(holder.img, new Callback() {
+                        @Override
+                        public void onSuccess() {
+
+                        }
+
+                        @Override
+                        public void onError() {
+                            // Try again online if cache failed
+                            Picasso.with(context)
+                                    .load(Api.getImage_end()+nearBy.getServer_id())
+                                    .placeholder(R.drawable.circular)
+                                    .error(R.drawable.circular)
+                                    .into(holder.img);
+                        }
+                    });
             holder.name.setText(nearBy.getName());
             holder.screen.setText(nearBy.getScreen_name());
             holder.imb.setText(get_button(nearBy.getServer_id()));
@@ -139,14 +178,13 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
     {
         String text="Request";
 
-
-        Realm realm = Realm.getDefaultInstance();
-
-        if(realm.where(ReceivedRequests.class).contains("id_send",server_id).findAll().isEmpty())
+        //realm.where(ReceivedRequests.class).contains("",server_id).findAll().isEmpty()
+        if(Select.from(ReceivedRequests.class).where(Condition.prop("idsend").eq(server_id)).list().isEmpty())
         {
             //we have not received request from this user
             //lets check if we have sent to user
-            if(realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().isEmpty())
+            //realm.where(SentRequests.class).contains("",server_id).findAll().isEmpty()
+            if(Select.from(SentRequests.class).where(Condition.prop("idreceipent").eq(server_id)).list().isEmpty())
             {
                 // we havent sent yet
                 text = "Request";
@@ -154,7 +192,8 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
             else
             {
                 //we have sent so lets check the result
-                if(realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().getReply() == 1)
+                //realm.where(SentRequests.class).contains("",server_id).findAll().first().getReply
+                if( Select.from(SentRequests.class).where(Condition.prop("idreceipent").eq(server_id)).first().getReply() == 1)
                 {
                     //accepted
                     text = "View RotaBar";
@@ -164,7 +203,7 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
                 {
                     //request denied
                     text = "Request Denied";
-                    if (realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().getTime_replied().equalsIgnoreCase(""))
+                    if (Select.from(SentRequests.class).where(Condition.prop("idreceipent").eq(server_id)).first().getTime_replied().equalsIgnoreCase(""))
                     {
                         //request denied
                         text = "Pending Reply";
@@ -184,7 +223,7 @@ public class NearByAdaptor extends RecyclerView.Adapter<NearByAdaptor.MyViewHold
         else
         {
             //we have received request from this user so lets see the result
-            if(realm.where(ReceivedRequests.class).contains("id_send",server_id).findAll().first().getStatus().equalsIgnoreCase("0"))
+            if(Select.from(ReceivedRequests.class).where(Condition.prop("idsend").eq(server_id)).first().getStatus().equalsIgnoreCase("0"))
             {
                 //Pending
                 text = "Pending Request";

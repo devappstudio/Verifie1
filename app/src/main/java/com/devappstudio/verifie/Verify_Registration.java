@@ -31,10 +31,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import datastore.Api;
-import datastore.RealmController;
 import datastore.User;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.Realm;
 
 public class Verify_Registration extends AppCompatActivity {
 
@@ -46,7 +44,6 @@ public class Verify_Registration extends AppCompatActivity {
     private DatePickerDialog fromDatePickerDialog;
     private SimpleDateFormat dateFormatter;
     AutoCompleteTextView gender;
-    private Realm realm;
     Button register;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +90,6 @@ public class Verify_Registration extends AppCompatActivity {
         date_of_birth = (EditText)findViewById(R.id.date_of_birth);
         date_of_birth.setText(e_date_of_birth);
         password = (EditText)findViewById(R.id.register_password);
-
-        this.realm = RealmController.with(this).getRealm();
-
         gender = (AutoCompleteTextView)
                 findViewById(R.id.gender);
         gender.setText(e_gender);
@@ -241,7 +235,6 @@ public class Verify_Registration extends AppCompatActivity {
                         public void onResponse(JSONObject response) {
                             System.out.print(response.toString());
                             dialog.hide();
-                            Realm realm = Realm.getDefaultInstance();
                             try {
                                 if(response.get("status").toString().equalsIgnoreCase("1"))
                                 {
@@ -250,12 +243,9 @@ public class Verify_Registration extends AppCompatActivity {
                                     //JSONObject jo_user = response.getJSONObject("user");
                                     //save user
                                     // save company
-                                    RealmController.with(getApplication()).clearAll();
-
+                                    User.deleteAll(User.class);
                                     User user = new User(e_name,e_telephone,response.get("data").toString(),"","");
-                                    realm.beginTransaction();
-                                    realm.copyToRealm(user);
-                                    realm.commitTransaction();
+                                    user.save();
                                     final Intent intent = new Intent(Verify_Registration.this, MyLocationRequest.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -272,41 +262,7 @@ public class Verify_Registration extends AppCompatActivity {
                             catch (Exception e)
                             {
                                 e.printStackTrace();
-                                try {
-                                    realm.cancelTransaction();
-
-                                    if(response.get("status").toString().equalsIgnoreCase("1"))
-                                    {
-//                               JSONObject jo_stock = response.getJSONObject("stock_user");
-                                        // JSONObject jo_company = response.getJSONObject("company");
-                                        //JSONObject jo_user = response.getJSONObject("user");
-                                        //save user
-                                        // save company
-                                        RealmController.with(getApplication()).clearAll();
-
-                                        User user = new User(e_name,e_telephone,response.get("data").toString(),"","");
-                                        realm.beginTransaction();
-                                        realm.copyToRealm(user);
-                                        realm.commitTransaction();
-                                        final Intent intent = new Intent(Verify_Registration.this, MyLocationRequest.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(getApplicationContext(),response.get("error").toString(),Toast.LENGTH_LONG).show();
-                                    }
-
-                                }
-                                catch (Exception ee)
-                                {
-                                    //realm.cancelTransaction();
-                                    ee.printStackTrace();
-                                    Toast.makeText(getApplicationContext(), "Sorry An Error Occurred "+response.toString(), Toast.LENGTH_LONG).show();
-                                }
+                                Toast.makeText(getApplicationContext(), "Sorry An Error Occurred "+response.toString(), Toast.LENGTH_LONG).show();
                             }
                         }
                     }, new Response.ErrorListener() {

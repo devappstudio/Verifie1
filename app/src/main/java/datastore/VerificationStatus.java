@@ -1,18 +1,15 @@
 package datastore;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.orm.SugarRecord;
+
 
 /**
  * Created by root on 9/14/16.
  */
 
-public class VerificationStatus  extends RealmObject {
+public class VerificationStatus  extends SugarRecord {
 
-    @PrimaryKey
-    private int id;
-
-    private String date_verified,date_to_expire,centre="",date_recommended="Now";
+     String date_verified,date_to_expire,centre="",date_recommended="Now";
 
     public String getDate_recommended() {
         return date_recommended;
@@ -26,20 +23,12 @@ public class VerificationStatus  extends RealmObject {
     }
 
 
-    public VerificationStatus(int id, String date_verified, String date_to_expire) {
-        this.id = id;
+    public VerificationStatus(String date_verified, String date_to_expire) {
         this.date_verified = date_verified;
         this.date_to_expire = date_to_expire;
     }
 
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getDate_verified() {
         return date_verified;
@@ -58,8 +47,7 @@ public class VerificationStatus  extends RealmObject {
     }
 
 
-    public VerificationStatus(int id, String date_verified, String date_to_expire, String centre) {
-        this.id = id;
+    public VerificationStatus(String date_verified, String date_to_expire, String centre) {
         this.date_verified = date_verified;
         this.date_to_expire = date_to_expire;
         this.centre = centre;

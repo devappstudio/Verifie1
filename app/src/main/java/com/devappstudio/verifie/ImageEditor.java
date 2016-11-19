@@ -36,10 +36,9 @@ import java.util.Date;
 import java.util.List;
 
 import datastore.Api;
-import datastore.RealmController;
 import datastore.User;
+import datastore.Visibility;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.Realm;
 
 public class ImageEditor extends AppCompatActivity {
     private static final int SELECT_PICTURE = 1;
@@ -65,10 +64,10 @@ public class ImageEditor extends AppCompatActivity {
 
             }
         } else {
-            new GetImages(RealmController.with(ImageEditor.this).getUser(1).getFile_name(), profile, imagename).execute() ;
+            new GetImages(User.first(User.class).getFile_name(), profile, imagename).execute() ;
         }
 
-        User user = RealmController.with(ImageEditor.this).getUser(1);
+        User user = User.first(User.class);
 
         nameTv = (TextView)findViewById(R.id.name);
         lastVerifiedTv = (TextView)findViewById(R.id.last_verified);
@@ -77,7 +76,7 @@ public class ImageEditor extends AppCompatActivity {
         nameTv.setText("Full Name : "+user.getFullname());
         imageStatusTv.setText("Image Status : Not Yet Confirmed");
 
-        if(RealmController.with(ImageEditor.this).hasVisible() && RealmController.with(ImageEditor.this).getVisibility(1).isStatus())
+        if(Visibility.first(Visibility.class).isStatus())
         {
             visibilityStatus.setText("Visibility Status : On");
         }
@@ -102,7 +101,7 @@ public class ImageEditor extends AppCompatActivity {
 
 
 
-        server_id = RealmController.with(ImageEditor.this).getUser(1).getServer_id();
+        server_id = user.getServer_id();
         profile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -229,13 +228,11 @@ public class ImageEditor extends AppCompatActivity {
                                     // JSONObject obj = serverResponse.getBodyAsString()
                                     String location = serverResponse.getBodyAsString();
 
-                                    Realm realm = Realm.getDefaultInstance();
+
                                     new GetImages(location, profile, imagename).execute() ;
-                                    User us = realm.where(User.class).findFirst();
-                                    realm.beginTransaction();
+                                    User us = User.first(User.class);
                                     us.setFile_name(location);
-                                    realm.copyToRealmOrUpdate(us);
-                                    realm.commitTransaction();
+                                    us.save();
                                     if(pd != null)
                                     {
                                         pd.hide();

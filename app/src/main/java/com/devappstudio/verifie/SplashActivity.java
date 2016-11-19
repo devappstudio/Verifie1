@@ -33,21 +33,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import datastore.Api;
-import datastore.ApprovedRequests;
-import datastore.ContactsList;
-import datastore.Facilities;
-import datastore.Location_Stats;
-import datastore.RealmController;
-import datastore.ReceivedRequests;
-import datastore.SentRequests;
 import datastore.User;
-import datastore.VerificationStatus;
-import datastore.Visibility;
-import io.realm.Realm;
 
 public class SplashActivity extends Activity {
     static String server_id;
-    private Realm realm;
     final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -62,14 +51,12 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.activity_splash);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         //RealmController.with(getApplication()).clearContacts();
-        this.realm = RealmController.with(this).getRealm();
 
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.spin_kit);
         ChasingDots doubleBounce = new ChasingDots();
         progressBar.setIndeterminateDrawable(doubleBounce);
 
 
-        Realm rr = Realm.getDefaultInstance();
 /*
         rr.beginTransaction();
         rr.clear(ContactsList.class);
@@ -132,7 +119,7 @@ public class SplashActivity extends Activity {
             }
         };
 
-        if (RealmController.with(getApplication()).hasUser()) {
+        if (!User.listAll(User.class).isEmpty()) {
             background1.start();
         } else {
             get_user();
@@ -163,14 +150,11 @@ public class SplashActivity extends Activity {
 
                             if (response.get("status").toString().equalsIgnoreCase("1")) {
                                 JSONObject jo_stock = (JSONObject) response.get("data");
-
-                                Realm ioRealm = Realm.getDefaultInstance();
+                                User.deleteAll(User.class);
                                 User user = new User(jo_stock.get("fullname").toString(), jo_stock.get("telephone").toString(), jo_stock.get("id").toString(), "", "", jo_stock.get("file_name").toString());
-                                RealmController.with(getApplication()).clearAll();
-                                ioRealm.beginTransaction();
                                 user.setImage_verified(jo_stock.get("image_verified").toString());
-                                ioRealm.copyToRealmOrUpdate(user);
-                                ioRealm.commitTransaction();
+                                user.setId((long)1);
+                                user.save();
 
 
                                 final Intent intent = new Intent(SplashActivity.this, MyLocationService.class);
@@ -195,17 +179,7 @@ public class SplashActivity extends Activity {
                             }
 
                         } catch (Exception e) {
-                            e.printStackTrace();
-
-                            Realm ioRealm = Realm.getDefaultInstance();
-                            try {
-                                ioRealm.cancelTransaction();
-
-                            }
-                            catch (Exception gh)
-                            {
-
-                            }
+                           e.printStackTrace();
                             open();
 
                         }

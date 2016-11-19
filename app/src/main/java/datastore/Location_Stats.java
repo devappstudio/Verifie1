@@ -1,18 +1,15 @@
 package datastore;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.orm.SugarRecord;
 
 /**
  * Created by root on 8/8/16.
  */
 
-public class Location_Stats  extends RealmObject {
+public class Location_Stats  extends SugarRecord {
 
-    @PrimaryKey
-    private int id;
 
-    private double longitude,latitude;
+     double longitude,latitude;
 
     public Location_Stats(double longitude, double latitude) {
         this.longitude = longitude;
@@ -22,13 +19,6 @@ public class Location_Stats  extends RealmObject {
     public Location_Stats() {
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public double getLongitude() {
         return longitude;

@@ -23,14 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import datastore.Api;
-import datastore.RealmController;
 import datastore.User;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.Realm;
 
 
 public class verifyLogin extends AppCompatActivity {
-    private Realm realm;
 
     TextView username;
     String e_secrete,e_link,e_name,e_pic,e_email;
@@ -58,8 +55,6 @@ public class verifyLogin extends AppCompatActivity {
         back = (Button) findViewById(R.id.deny_button);
         login = (Button) findViewById(R.id.confirm_button);
         circleImageView = (CircleImageView)findViewById(R.id.profile_image);
-
-        this.realm = RealmController.with(this).getRealm();
 
         Picasso.with(getApplicationContext()).load(e_pic).into(circleImageView);
         username.setText("Welcome "+e_name);
@@ -120,7 +115,6 @@ public class verifyLogin extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         System.out.print(response.toString());
                         dialog.hide();
-                        Realm realm = Realm.getDefaultInstance();
                         try {
 
                             if(response.get("status").toString().equalsIgnoreCase("1"))
@@ -131,12 +125,10 @@ public class verifyLogin extends AppCompatActivity {
                                 //save user
                                 // save company
 
+                                User.deleteAll(User.class);
 
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
-                                    RealmController.with(getApplication()).clearAll();
-                                    realm.beginTransaction();
-                                    realm.copyToRealm(user);
-                                    realm.commitTransaction();
+                                    user.save();
 
 
                                 final Intent intent = new Intent(verifyLogin.this, MyLocationRequest.class);
@@ -217,13 +209,9 @@ public class verifyLogin extends AppCompatActivity {
                                 //JSONObject jo_user = response.getJSONObject("user");
                                 //save user
                                 // save company
-
+                                User.deleteAll(User.class);
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
-                                RealmController.with(getApplication()).clearAll();
-                                realm.beginTransaction();
-                                    realm.copyToRealm(user);
-                                    realm.commitTransaction();
-
+                          user.save();
 
                                 final Intent intent = new Intent(verifyLogin.this, MyLocationRequest.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

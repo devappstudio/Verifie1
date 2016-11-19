@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
 
+import datastore.PwordCode;
+
 /**
  * Created by root on 11/16/16.
  */
@@ -26,12 +28,21 @@ public class SmsListener extends BroadcastReceiver {
             if (bundle != null){
                 //---retrieve the SMS message received---
                 try{
+                    System.out.println("New Text Detected");
                     Object[] pdus = (Object[]) bundle.get("pdus");
                     msgs = new SmsMessage[pdus.length];
                     for(int i=0; i<msgs.length; i++){
                         msgs[i] = SmsMessage.createFromPdu((byte[])pdus[i]);
                         msg_from = msgs[i].getOriginatingAddress();
-                        String msgBody = msgs[i].getMessageBody();
+                        if(msg_from.equalsIgnoreCase("verifie"))
+                        {
+                            String msgBody = msgs[i].getMessageBody();
+
+                            if(msgBody.equalsIgnoreCase(PwordCode.first(PwordCode.class).getCode()))
+                            {
+                                ForgotPwd.set_vals(msgBody);
+                            }
+                        }
                     }
                 }catch(Exception e){
 //                            Log.d("Exception caught",e.getMessage());

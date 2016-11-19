@@ -31,7 +31,6 @@ import java.util.Map;
 
 import datastore.Api;
 import datastore.User;
-import io.realm.Realm;
 
 
 @TargetApi(Build.VERSION_CODES.CUPCAKE)
@@ -95,13 +94,11 @@ public class RegistrationIntentService extends IntentService{
 
         //
 
-        Realm realm = Realm.getInstance(RegistrationIntentService.this);
-
 
         final String tag = "new_user_logn";
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("server_id", realm.where(User.class).findAll().first().getServer_id() );
+        params.put("server_id", User.first(User.class).getServer_id() );
         params.put("token", token);
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,

@@ -48,9 +48,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.pusher.client.Pusher;
-import com.pusher.client.channel.Channel;
-import com.pusher.client.channel.SubscriptionEventListener;
 
 import org.json.JSONObject;
 
@@ -61,11 +58,9 @@ import java.util.Map;
 
 import datastore.Api;
 import datastore.Location_Stats;
-import datastore.RealmController;
 import datastore.User;
 import datastore.VerificationStatus;
-import io.realm.Realm;
-import io.realm.RealmResults;
+
 
 
 public class main extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
@@ -93,7 +88,6 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,24 +98,6 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         toolbar.setLogo(R.drawable.slider_logo);
-/*
-        Pusher pusher = new Pusher("b92833487bc47f83ac76");
-        //  pusher.setCluster("eu");
-
-        Channel channel = pusher.subscribe("test_channel");
-
-        channel.bind("my_event", new SubscriptionEventListener() {
-            @Override
-            public void onEvent(String channelName, String eventName, final String data) {
-                Toast.makeText(main.this,data,Toast.LENGTH_LONG).show();
-                System.out.println(data);
-            }
-        });
-
-        pusher.connect();
-*/
-
-        // prepareMovieData();
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
@@ -129,10 +105,8 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-//        setupTabIcons();
 
 
-        this.realm = RealmController.with(getApplication()).getRealm();
         if (mGoogleApiClient == null) {
             // ATTENTION: This "addApi(AppIndex.API)"was auto-generated to implement the App Indexing API.
             // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -370,33 +344,12 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         }
         mLastLocation = LocationServices.FusedLocationApi
                 .getLastLocation(mGoogleApiClient);
-        final Realm realm1 = Realm.getDefaultInstance();
 
         if (mLastLocation != null) {
             double latitude = mLastLocation.getLatitude();
             double longitude = mLastLocation.getLongitude();
             final Location_Stats ls = new Location_Stats(longitude, latitude);
-
-            try{
-
-                realm1.beginTransaction();
-                realm1.copyToRealmOrUpdate(ls);
-                realm1.commitTransaction();
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-                try {
-                    realm1.cancelTransaction();
-                    realm1.beginTransaction();
-                    realm1.copyToRealmOrUpdate(ls);
-                    realm1.commitTransaction();
-                }
-                catch (Exception ee)
-                {
-                }
-            }
-
+            ls.save();
 
 
         } else {
@@ -609,12 +562,13 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
             switch (resultCode) {
                 case Activity.RESULT_OK:
                     Log.i(TAG, "User agreed to make required location settings changes.");
-                    final Intent intent = new Intent(main.this, AppSetup.class);
+                    /*final Intent intent = new Intent(main.this, AppSetup.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                     startActivity(intent);
                     finish();
+                    */
                     break;
                 case Activity.RESULT_CANCELED:
                     Log.i(TAG, "User chose not to make required location settings changes.");
@@ -630,8 +584,7 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
         //`users`(`id`, `fullname`, `login_type`, `security_code`, `extra_code`, `id_from_provider`, `telephone`, `file_blob`, `file_name`, `is_visible`, `visibility_code`, ``, ``, ``, ``, ``)
         final String tag = "new_user_logn";
 
-        final Realm realm = Realm.getDefaultInstance();
-        User clst = realm.where(User.class).findAll().first();
+        User clst = User.first(User.class);
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("id_user", clst.getServer_id());
@@ -641,7 +594,6 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        final Realm realm = Realm.getDefaultInstance();
 
                         System.out.print(response.toString());
                         try {
@@ -656,30 +608,26 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
 
                                 VerificationStatus user = new VerificationStatus();
-                                realm.beginTransaction();
-                                user.setId(1);
+                                user.setId((long)1);
                                 user.setDate_to_expire(jo_stock.get("expiry").toString());
                                 user.setDate_recommended(jo_stock.get("recommended").toString());
                                 user.setCentre(jo_stock.get("facility").toString());
                                 user.setDate_verified(jo_stock.get("current").toString());
-                                realm.copyToRealmOrUpdate(user);
-                                realm.commitTransaction();
+                                user.save();
 
 
                             }
                             else
                             {
-                                RealmResults<VerificationStatus>vs = realm.where(VerificationStatus.class).findAll();
+                                List<VerificationStatus>vs = VerificationStatus.listAll(VerificationStatus.class);
                                 if(vs.isEmpty())
                                 {
                                     VerificationStatus user = new VerificationStatus();
-                                    realm.beginTransaction();
-                                    user.setId(1);
+                                    user.setId((long)1);
                                     user.setDate_to_expire("N/A");
                                     user.setDate_verified("N/A");
-                                    realm.copyToRealmOrUpdate(user);
-                                    realm.commitTransaction();
-                                }
+                                    user.save();
+                                 }
 
                             }
                         }
@@ -687,36 +635,6 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
                         {
 //                            realm.cancelTransaction();
                             e.printStackTrace();
-                            RealmResults<VerificationStatus>vs = realm.where(VerificationStatus.class).findAll();
-                            if(vs.isEmpty())
-                            {
-                                try {
-                                    JSONObject jo_stock = (JSONObject) response.get("data");
-                                    VerificationStatus user = new VerificationStatus();
-                                    realm.beginTransaction();
-                                    user.setId(1);
-                                    user.setDate_to_expire(jo_stock.get("expiry").toString());
-                                    user.setDate_recommended(jo_stock.get("recommended").toString());
-                                    user.setCentre(jo_stock.get("facility").toString());
-                                    user.setDate_verified(jo_stock.get("current").toString());
-                                    realm.copyToRealmOrUpdate(user);
-                                    realm.commitTransaction();
-
-                                }
-                                catch (Exception eee)
-                                {
-                                    try
-                                    {
-                                        realm.cancelTransaction();
-
-                                    }
-                                    catch (Exception ty)
-                                    {
-
-                                    }
-                                }
-                            }
-
 
                         }
                     }
@@ -724,33 +642,14 @@ public class main extends AppCompatActivity implements GoogleApiClient.Connectio
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                final Realm realm = Realm.getDefaultInstance();
-
-                RealmResults<VerificationStatus>vs = realm.where(VerificationStatus.class).findAll();
+                List<VerificationStatus>vs = VerificationStatus.listAll(VerificationStatus.class);
                 if(vs.isEmpty())
                 {
-                    try{
-                        VerificationStatus user = new VerificationStatus();
-                        realm.beginTransaction();
-                        user.setId(1);
-                        user.setDate_to_expire("N/A");
-                        user.setDate_verified("N/A");
-                        realm.copyToRealmOrUpdate(user);
-                        realm.commitTransaction();
-
-                    }
-                    catch (Exception e)
-                    {
-                        try
-                        {
-                            realm.cancelTransaction();
-                        }
-                        catch (Exception eeh)
-                        {
-
-                        }
-                    }
-
+                    VerificationStatus user = new VerificationStatus();
+                    user.setId((long)1);
+                    user.setDate_to_expire("N/A");
+                    user.setDate_verified("N/A");
+                    user.save();
                 }
                 error.printStackTrace();
             }

@@ -8,6 +8,213 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/background1"
+
     tools:context="com.devappstudio.verifie.ForgotPwd">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/logo"
+        >
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_weight="0.9"
+                android:layout_height="0dp">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_weight="2.1"
+                android:layout_height="0dp">
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="fill_parent"
+                    android:layout_weight="1.8"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:text="Enter Your Reset Code"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textAlignment="center" />
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/white"
+                            android:inputType="number"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white"
+                            android:ems="10"
+                            android:id="@+id/key_1"
+                            android:hint="0"
+                            android:textAlignment="center" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+
+                            android:text=" - "
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textAlignment="center" />
+
+                        <EditText
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/white"
+                            android:inputType="number"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white"
+                            android:ems="10"
+                            android:id="@+id/key_2"
+                            android:hint="0"
+                            android:textAlignment="center" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+
+                            android:text=" - "
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textAlignment="center" />
+
+                        <EditText
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/white"
+                            android:inputType="number"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white"
+                            android:ems="10"
+                            android:id="@+id/key_3"
+                            android:hint="0"
+                            android:textAlignment="center" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+
+                            android:text=" - "
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textAlignment="center" />
+
+                        <EditText
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/white"
+                            android:inputType="number"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white"
+                            android:ems="10"
+                            android:id="@+id/key_4"
+                            android:hint="0"
+                            android:textAlignment="center" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+
+                            android:text=" - "
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:textAlignment="center" />
+
+                        <EditText
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="@color/white"
+                            android:inputType="number"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white"
+                            android:ems="10"
+                            android:id="@+id/key_5"
+                            android:hint="0"
+                            android:textAlignment="center" />
+
+                    </LinearLayout>
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/white"
+                        android:inputType="textPassword"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:ems="10"
+                        android:drawableLeft="@drawable/vector_smart_object"
+                        android:drawableStart="@drawable/vector_smart_object"
+                        android:drawablePadding="14dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:id="@+id/new_pword"
+                        android:hint="New Password" />
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/white"
+                        android:inputType="textPassword"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:ems="10"
+                        android:drawableLeft="@drawable/vector_smart_object"
+                        android:drawableStart="@drawable/vector_smart_object"
+                        android:drawablePadding="14dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp"
+                        android:id="@+id/confirm_pword"
+                        android:hint="Confirm Password" />
+                    <Button
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/register_button"
+                        android:layout_gravity="center_horizontal"
+                        android:text="Change Password"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginRight="20dp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:text="Go Back To Login"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:id="@+id/to_login"
+                        android:textAlignment="center"
+                        android:textStyle="normal|bold|italic"
+                        android:textSize="14sp"
+                        android:layout_marginTop="10dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

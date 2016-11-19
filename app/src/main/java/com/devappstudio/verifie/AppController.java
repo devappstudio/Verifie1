@@ -12,16 +12,21 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.orm.SugarContext;
+import com.squareup.picasso.OkHttpDownloader;
+import com.squareup.picasso.Picasso;
 
 import net.gotev.uploadservice.UploadService;
-
+/*
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-
+*/
 //import android.support.multidex.MultiDex;
 
 
-public class AppController extends android.support.multidex.MultiDexApplication {
+public class AppController extends com.orm.SugarApp {
+
+    private android.support.multidex.MultiDexApplication multi;
     public static final String TAG = AppController.class
             .getSimpleName();
 
@@ -33,13 +38,24 @@ public class AppController extends android.support.multidex.MultiDexApplication 
     @Override
     public void onCreate() {
         super.onCreate();
-
+        SugarContext.init(getApplicationContext());
+        multi = new android.support.multidex.MultiDexApplication();
+        /*
         RealmConfiguration realmConfiguration = new RealmConfiguration.Builder(this)
                 .name(Realm.DEFAULT_REALM_NAME)
                 .schemaVersion(0)
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm.setDefaultConfiguration(realmConfiguration);
+        */
+
+        Picasso.Builder builder = new Picasso.Builder(this);
+        builder.downloader(new OkHttpDownloader(this,Integer.MAX_VALUE));
+        Picasso built = builder.build();
+        built.setIndicatorsEnabled(true);
+        built.setLoggingEnabled(true);
+        Picasso.setSingletonInstance(built);
+
 
         UploadService.NAMESPACE = BuildConfig.APPLICATION_ID;
    //     LeakCanary.install(this);

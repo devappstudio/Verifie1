@@ -2,10 +2,12 @@ package com.devappstudio.verifie;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -19,6 +21,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.cloudrail.si.services.Facebook;
 import com.cloudrail.si.services.GooglePlus;
+import com.orm.SugarApp;
 
 import org.json.JSONObject;
 
@@ -27,9 +30,15 @@ import java.util.Map;
 import java.util.Random;
 
 import datastore.Api;
-import datastore.RealmController;
+import datastore.ApprovedRequests;
+import datastore.ContactsList;
+import datastore.Location_Stats;
+import datastore.PwordCode;
+import datastore.ReceivedRequests;
+import datastore.SentRequests;
 import datastore.User;
-import io.realm.Realm;
+import datastore.VerificationStatus;
+import datastore.Visibility;
 
 public class Login extends Activity {
    static GooglePlus googleplus;
@@ -39,7 +48,6 @@ public class Login extends Activity {
     ImageButton fb_login,gplus_login,login;
     TextView not_registered,forgot;
     EditText email,password;
-    private Realm realm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +57,6 @@ public class Login extends Activity {
 //         facebook = new Facebook(getApplication(), "1016646581724640", "c88fa83f9fc4ffd2a5c708ae8ccc6675");
 
         //dont_have_account
-        this.realm = RealmController.with(this).getRealm();
 
         fb_login = (ImageButton)findViewById(R.id.fb_login_btn);
         gplus_login = (ImageButton)findViewById(R.id.gplus_login_btn);
@@ -134,13 +141,18 @@ public class Login extends Activity {
                                 //JSONObject jo_user = response.getJSONObject("user");
                                 //save user
                                 // save company
+                                ApprovedRequests.deleteAll(ApprovedRequests.class);
+                                ContactsList.deleteAll(ContactsList.class);
+                                Location_Stats.deleteAll(Location_Stats.class);
+                                PwordCode.deleteAll(PwordCode.class);
+                                ReceivedRequests.deleteAll(ReceivedRequests.class);
+                                SentRequests.deleteAll(SentRequests.class);
+                                User.deleteAll(User.class);
+                                VerificationStatus.deleteAll(VerificationStatus.class);
+                                Visibility.deleteAll(Visibility.class);
 
-                                RealmController.with(getApplication()).clearAll();
-
-                                    User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
-                                    realm.beginTransaction();
-                                    realm.copyToRealm(user);
-                                    realm.commitTransaction();
+                                User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
+                                    user.save();
 
 
                                 final Intent intent = new Intent(Login.this, MyLocationRequest.class);
@@ -208,13 +220,19 @@ public class Login extends Activity {
                                 //JSONObject jo_user = response.getJSONObject("user");
                                 //save user
                                 // save company
+                                ApprovedRequests.deleteAll(ApprovedRequests.class);
+                                ContactsList.deleteAll(ContactsList.class);
+                                Location_Stats.deleteAll(Location_Stats.class);
+                                PwordCode.deleteAll(PwordCode.class);
+                                ReceivedRequests.deleteAll(ReceivedRequests.class);
+                                SentRequests.deleteAll(SentRequests.class);
+                                User.deleteAll(User.class);
+                                VerificationStatus.deleteAll(VerificationStatus.class);
+                                Visibility.deleteAll(Visibility.class);
 
-                                RealmController.with(getApplication()).clearAll();
 
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
-                                    realm.beginTransaction();
-                                    realm.copyToRealm(user);
-                                    realm.commitTransaction();
+                                   user.save();
 
 
                                 final Intent intent = new Intent(Login.this, MyLocationRequest.class);
@@ -331,14 +349,20 @@ public class Login extends Activity {
                                     //save user
                                     // save company
 
-                                    RealmController.with(getApplication()).clearAll();
+                                    ApprovedRequests.deleteAll(ApprovedRequests.class);
+                                    ContactsList.deleteAll(ContactsList.class);
+                                    Location_Stats.deleteAll(Location_Stats.class);
+                                    PwordCode.deleteAll(PwordCode.class);
+                                    ReceivedRequests.deleteAll(ReceivedRequests.class);
+                                    SentRequests.deleteAll(SentRequests.class);
+                                    User.deleteAll(User.class);
+                                    VerificationStatus.deleteAll(VerificationStatus.class);
+                                    Visibility.deleteAll(Visibility.class);
 
                                     User user = new User(jo_stock.get("fullname").toString(),jo_stock.get("telephone").toString(),jo_stock.get("id").toString(),"","");
                                     user.setFile_name(jo_stock.get("file_name").toString());
                                     user.setImage_verified(jo_stock.get("image_verified").toString());
-                                    realm.beginTransaction();
-                                    realm.copyToRealm(user);
-                                    realm.commitTransaction();
+                                    user.save();
 
 
                                     final Intent intent = new Intent(Login.this, MyLocationRequest.class);
@@ -544,12 +568,108 @@ public class Login extends Activity {
     void forgot_pword()
     {
         //show diwlog to enter emwil
+        final Dialog dialog = new Dialog(Login.this);
+        dialog.setContentView(R.layout.enter_phone);
+        dialog.setTitle("Please Enter Your Phone Number");
+        final EditText text = (EditText) dialog.findViewById(R.id.editTextPhone);
+        Button btn = (Button)dialog.findViewById(R.id.send_sms);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String em = text.getText().toString();
+                if(em.equalsIgnoreCase("") || em.equalsIgnoreCase(null))
+                {
+                    Toast.makeText(getApplicationContext(),"Please Enter A Phone Number",Toast.LENGTH_LONG).show();
+                }
+                else
+                {
+                    final String code= gen()+"";
+                    final String tag = "new_user_login";
+                    final ProgressDialog pd = ProgressDialog.show(Login.this,"Contacting Server ..."," Please Wait Sending Your Code  ...", true);
+
+                    Map<String, String> params = new HashMap<String, String>();
+                    params.put("phone", em);
+                    params.put("code", code);
+                    pd.show();
+
+                    JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                            Api.getApi()+"send_sms",new JSONObject(params),
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    System.out.print(response.toString());
+                                    pd.hide();
+                                    try {
+
+                                        if(response.get("status").toString().equalsIgnoreCase("1"))
+                                        {
+                                            PwordCode.deleteAll(PwordCode.class);
+                                            PwordCode pwordCode = new PwordCode(code,0);
+                                            pwordCode.save();
+
+                                            final Intent intent = new Intent(Login.this, ForgotPwd.class);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                            startActivity(intent);
+                                            finish();
+                                        }
+                                        else
+                                        {
+                                            Toast.makeText(getApplicationContext(),response.get("error").toString(),Toast.LENGTH_LONG).show();
+                                        }
+
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        e.printStackTrace();
+                                        Toast.makeText(getApplicationContext(), "Sorry An Error Occurred "+response.toString(), Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            }, new Response.ErrorListener() {
+
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(getApplicationContext(),"Sorry A Network Error Occurred Please Try Again Later",Toast.LENGTH_LONG).show();
+                            error.printStackTrace();
+                            pd.hide();
+                        }
+                    }) {
+                        @Override
+                        public Map<String, String> getHeaders() throws AuthFailureError {
+                            HashMap<String, String> headers = new HashMap<String, String>();
+                            headers.put("Content-Type", "application/json; charset=utf-8");
+                            return headers;
+                        }
+                    };
+// Adding request to request queue
+                    jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                    AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
+
+                    //send request to server
+
+                }
+
+            }
+        });
+        dialog.show();
+
         //send request to server
         //on succes redirect to pqge thqt will wqit for the pword
     }
     public int gen() {
         Random r = new Random( System.currentTimeMillis() );
         return 10000 + r.nextInt(20000);
+    }
+    void replyRequest(final String server_id, final String reply)
+    {
+
+        // Tag used to cancel the request
+
+        //`users`(`id`, `fullname`, `login_type`, `security_code`, `extra_code`, `id_from_provider`, `telephone`, `file_blob`, `file_name`, `is_visible`, `visibility_code`, ``, ``, ``, ``, ``)
+
+
     }
 
 

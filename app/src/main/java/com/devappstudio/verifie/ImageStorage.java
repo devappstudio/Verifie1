@@ -47,7 +47,6 @@ public class ImageStorage {
 
             mediaImage = new File(myDir.getPath() + "/.verifie/profile//"+imagename);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return mediaImage;

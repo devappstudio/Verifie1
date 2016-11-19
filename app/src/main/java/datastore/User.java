@@ -1,17 +1,14 @@
 package datastore;
 
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.orm.SugarRecord;
+
 
 /**
  * Created by root on 8/2/16.
  */
 
-public class User extends RealmObject{
-
-    @PrimaryKey
-    private int id;
+public class User extends SugarRecord{
 
     public String getImage_verified() {
         return image_verified;
@@ -21,7 +18,7 @@ public class User extends RealmObject{
         this.image_verified = image_verified;
     }
 
-    private String fullname, telephone,server_id,longitude,latitude,file_name,last_verified,image_verified="0";
+     String fullname, telephone,server_id,longitude,latitude,file_name,last_verified,image_verified="0";
 
     public User(String fullname, String telephone, String server_id, String longitude, String latitude, String file_name) {
         this.fullname = fullname;
@@ -57,14 +54,6 @@ public class User extends RealmObject{
         this.server_id = server_id;
         this.longitude = longitude;
         this.latitude = latitude;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getFullname() {

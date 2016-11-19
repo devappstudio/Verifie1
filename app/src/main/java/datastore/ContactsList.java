@@ -1,18 +1,16 @@
 package datastore;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.orm.SugarRecord;
+
 
 /**
  * Created by root on 9/7/16.
  */
 
-public class ContactsList   extends RealmObject {
-    @PrimaryKey
-    private int id;
+public class ContactsList   extends SugarRecord {
 
 
-    private   String name,telephone,is_on_verifie,type,file_name,server_id,screen_name;
+    String name,telephone,is_on_verifie,type,file_name,server_id,screen_name;
 
     public String getServer_id() {
         return server_id;
@@ -30,8 +28,7 @@ public class ContactsList   extends RealmObject {
         this.server_id = server_id;
     }
 
-    public ContactsList(int id, String name, String telephone, String is_on_verifie) {
-        this.id = id;
+    public ContactsList( String name, String telephone, String is_on_verifie) {
         this.name = name;
         this.telephone = telephone;
         this.is_on_verifie = is_on_verifie;
@@ -56,13 +53,6 @@ public class ContactsList   extends RealmObject {
     }
 
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;

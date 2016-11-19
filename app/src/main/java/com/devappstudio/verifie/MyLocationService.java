@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
-import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -24,23 +23,23 @@ import com.google.android.gms.location.LocationServices;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import com.orm.query.Condition;
+import com.orm.query.Select;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import datastore.Api;
 import datastore.ContactsList;
 import datastore.Facilities;
 import datastore.Location_Stats;
-import datastore.RealmController;
 import datastore.User;
 import datastore.VerificationStatus;
 import datastore.Visibility;
-import io.realm.Realm;
-import io.realm.RealmResults;
 
 /**
  * Created by root on 8/8/16.
@@ -52,7 +51,6 @@ public class MyLocationService extends Service implements LocationListener,
 
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
-    private Realm realm;
     private static Location myLocationVar;
 
     public MyLocationService() {
@@ -68,8 +66,6 @@ public class MyLocationService extends Service implements LocationListener,
                         addConnectionCallbacks(this).
                         addOnConnectionFailedListener(this)
                 .build();
-        this.realm = RealmController.with(getApplication()).getRealm();
-
 
     }
 
@@ -91,9 +87,8 @@ public class MyLocationService extends Service implements LocationListener,
         myLocationVar = location;
         // do your work here with location
         //TODO This is where location is updated
-        Realm rRealm = Realm.getDefaultInstance();
-        if (!rRealm.where(Visibility.class).findAll().isEmpty() && !rRealm.where(Location_Stats.class).findAll().isEmpty()) {
-            if (rRealm.where(Visibility.class).findFirst().isStatus()) {
+        if (!Visibility.listAll(Visibility.class).isEmpty() && !Location_Stats.listAll(Location_Stats.class).isEmpty()) {
+            if (Visibility.first(Visibility.class).isStatus()) {
                 new_location();
             }
         }
@@ -120,10 +115,9 @@ public class MyLocationService extends Service implements LocationListener,
         }
         Location loc = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         myLocationVar = loc;
-        Realm rRealm = Realm.getDefaultInstance();
         //TODO This where the location is first requested
-        if (!rRealm.where(Visibility.class).findAll().isEmpty() && !rRealm.where(Location_Stats.class).findAll().isEmpty()) {
-            if (rRealm.where(Visibility.class).findFirst().isStatus()) {
+        if (!Visibility.listAll(Visibility.class).isEmpty() && !Location_Stats.listAll(Location_Stats.class).isEmpty()) {
+            if (Visibility.first(Visibility.class).isStatus()) {
                 if (myLocationVar != null)
                 {
                     MyLocationService.readContacts task = new MyLocationService.readContacts();
@@ -132,6 +126,7 @@ public class MyLocationService extends Service implements LocationListener,
                 }
              }
         }
+
 
     }
 
@@ -175,10 +170,9 @@ public class MyLocationService extends Service implements LocationListener,
 
         //`users`(`id`, `fullname`, `login_type`, `security_code`, `extra_code`, `id_from_provider`, `telephone`, `file_blob`, `file_name`, `is_visible`, `visibility_code`, ``, ``, ``, ``, ``)
         final String tag = "new_user_logn";
-        Realm mRealm = Realm.getDefaultInstance();
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("server_id", mRealm.where(User.class).findFirst().getServer_id());
+        params.put("server_id", User.first(User.class).getServer_id());
         params.put("longitude",myLocationVar.getLongitude()+"");
         params.put("latitude",myLocationVar.getLatitude()+"");
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
@@ -188,16 +182,11 @@ public class MyLocationService extends Service implements LocationListener,
                     public void onResponse(JSONObject response) {
                         System.out.print(response.toString());
                         try {
-                            Realm rRealm = Realm.getDefaultInstance();
-
 
                             if(response.get("status").toString().equalsIgnoreCase("1"))
                             {
                                 Location_Stats ls = new Location_Stats(myLocationVar.getLongitude(),myLocationVar.getLatitude());
-                                rRealm.beginTransaction();
-                                rRealm.clear(Location_Stats.class);
-                                rRealm.copyToRealm(ls);
-                                rRealm.commitTransaction();
+                                ls.save();
                             }
                             else
                             {
@@ -208,30 +197,6 @@ public class MyLocationService extends Service implements LocationListener,
                         catch (Exception e)
                         {
                             e.printStackTrace();
-                            Realm rr = Realm.getDefaultInstance();
-                            try {
-                                rr.cancelTransaction();
-                                Realm rRealm = Realm.getDefaultInstance();
-
-
-                                if(response.get("status").toString().equalsIgnoreCase("1"))
-                                {
-                                    Location_Stats ls = new Location_Stats(myLocationVar.getLongitude(),myLocationVar.getLatitude());
-                                    rRealm.beginTransaction();
-                                    rRealm.clear(Location_Stats.class);
-                                    rRealm.copyToRealm(ls);
-                                    rRealm.commitTransaction();
-                                }
-                                else
-                                {
-
-                                }
-
-                            }
-                            catch (Exception ew)
-                            {
-                                ew.printStackTrace();
-                            }
 
                         }
                     }
@@ -277,9 +242,7 @@ public class MyLocationService extends Service implements LocationListener,
 
     void  check_on_verifie()
     {
-        final Realm trealm = Realm.getDefaultInstance();
-        final RealmResults<ContactsList> cl = trealm.where(ContactsList.class).equalTo("is_on_verifie","0").findAll();
-
+        final List<ContactsList> cl = Select.from(ContactsList.class).where(Condition.prop("isonverifie").eq("0")).list();
         for (int i=0; i<cl.size();i++)
         {
 
@@ -302,7 +265,7 @@ public class MyLocationService extends Service implements LocationListener,
 
             Map<String, String> params = new HashMap<String, String>();
             params.put("telephone", phone);
-            final int finalI = cl.get(i).getId();
+            final int finalI = cl.get(i).getId().intValue();
             JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                     Api.getApi()+"check_is_on_verifie",new JSONObject(params),
                     new Response.Listener<JSONObject>() {
@@ -313,29 +276,18 @@ public class MyLocationService extends Service implements LocationListener,
 
                                 if(response.get("status").toString().equalsIgnoreCase("1"))
                                 {
-                                    final Realm rrealm = Realm.getDefaultInstance();
-                                    ContactsList contactsList = rrealm.where(ContactsList.class).equalTo("id",finalI).findFirst();
+                                    ContactsList contactsList = ContactsList.findById(ContactsList.class,(long) finalI);
                                     JSONObject jo_stock = (JSONObject) response.get("data");
-                                    rrealm.beginTransaction();
                                     contactsList.setIs_on_verifie("1");
                                     contactsList.setServer_id(jo_stock.get("id").toString());
                                     contactsList.setFile_name(jo_stock.get("file_name").toString());
                                     contactsList.setScreen_name(jo_stock.get("screen_name").toString());
-                                    rrealm.copyToRealmOrUpdate(contactsList);
-                                    rrealm.commitTransaction();
+                                    contactsList.save();
                                 }
                             }
                             catch (Exception e)
                             {
-                                final Realm rrealm = Realm.getDefaultInstance();
-                                try {
-                                    rrealm.cancelTransaction();
 
-                                }
-                                catch (Exception jh)
-                                {
-
-                                }
                                 e.printStackTrace();
                             }
                         }
@@ -365,8 +317,7 @@ public class MyLocationService extends Service implements LocationListener,
     {
         final String tag = "new_user_logn";
 
-        final Realm realm = Realm.getDefaultInstance();
-        User clst = realm.where(User.class).findAll().first();
+        User clst = User.first(User.class);
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("id_user", clst.getServer_id());
@@ -376,8 +327,6 @@ public class MyLocationService extends Service implements LocationListener,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        final Realm realm = Realm.getDefaultInstance();
-
                         System.out.print(response.toString());
                         try {
 
@@ -387,25 +336,20 @@ public class MyLocationService extends Service implements LocationListener,
                             {
 
                                 JSONObject object = (JSONObject) jaa.get(i);
-                                RealmResults<Facilities> f = realm.where(Facilities.class).equalTo("server_id",object.get("id").toString()).findAll();
-
+                                List<Facilities> f = Select.from(Facilities.class).where(Condition.prop("serverid").eq(object.get("id").toString())).list();
                                 if(f.isEmpty())
                                 {
-                                    Facilities fac = new Facilities(((int) realm.where(Facilities.class).maximumInt("id")),object.get("name").toString(),object.get("contact_person_name").toString(),object.get("contact_person_telephone").toString(),object.get("location").toString(),object.get("id").toString());
-                                    realm.beginTransaction();
-                                    realm.copyToRealm(fac);
-                                    realm.commitTransaction();
+                                    Facilities fac = new Facilities(object.get("name").toString(),object.get("contact_person_name").toString(),object.get("contact_person_telephone").toString(),object.get("location").toString(),object.get("id").toString());
+                                    fac.save();
                                 }
                                 else
                                 {
-                                    Facilities fac = f.first();
-                                    realm.beginTransaction();
+                                    Facilities fac = f.get(1);
                                     fac.setName(object.get("name").toString());
                                     fac.setContact_person(object.get("contact_person_name").toString());
                                     fac.setContact_phone(object.get("contact_person_telephone").toString());
                                     fac.setLocation(object.get("location").toString());
-                                    realm.copyToRealmOrUpdate(fac);
-                                    realm.commitTransaction();
+                                    fac.save();
                                 }
 
                             }
@@ -413,51 +357,7 @@ public class MyLocationService extends Service implements LocationListener,
                         }
                         catch (Exception e)
                         {
-                            try {
-                                realm.cancelTransaction();
-
-                                JSONArray jaa = response.getJSONArray("data");
-
-                                for (int i=0; i< jaa.length(); i++)
-                                {
-
-                                    JSONObject object = (JSONObject) jaa.get(i);
-                                    RealmResults<Facilities> f = realm.where(Facilities.class).equalTo("server_id",object.get("id").toString()).findAll();
-
-                                    if(f.isEmpty())
-                                    {
-                                        Facilities fac = new Facilities(((int) realm.where(Facilities.class).maximumInt("id")),object.get("name").toString(),object.get("contact_person_name").toString(),object.get("contact_person_telephone").toString(),object.get("location").toString(),object.get("id").toString());
-                                        realm.beginTransaction();
-                                        realm.copyToRealm(fac);
-                                        realm.commitTransaction();
-                                    }
-                                    else
-                                    {
-                                        Facilities fac = f.first();
-                                        realm.beginTransaction();
-                                        fac.setName(object.get("name").toString());
-                                        fac.setContact_person(object.get("contact_person_name").toString());
-                                        fac.setContact_phone(object.get("contact_person_telephone").toString());
-                                        fac.setLocation(object.get("location").toString());
-                                        realm.copyToRealmOrUpdate(fac);
-                                        realm.commitTransaction();
-                                    }
-
-                                }
-
-                            }
-                            catch (Exception ee)
-                            {
-                                try {
-                                    realm.cancelTransaction();
-
-                                }
-                                catch (Exception mn)
-                                {
-
-                                }
-                            }
-
+                           e.printStackTrace();
                         }
 
                     }
@@ -492,8 +392,7 @@ public class MyLocationService extends Service implements LocationListener,
         final String tag = "new_user_logn";
         System.out.println("Started");
 
-        final Realm realm = Realm.getDefaultInstance();
-        User clst = realm.where(User.class).findAll().first();
+        User clst = User.first(User.class);
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("id_user", clst.getServer_id());
@@ -503,7 +402,6 @@ public class MyLocationService extends Service implements LocationListener,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        final Realm realm1 = Realm.getDefaultInstance();
                         System.out.print("result "+response.toString());
                         try {
 
@@ -519,28 +417,23 @@ public class MyLocationService extends Service implements LocationListener,
 
                                 VerificationStatus user = new VerificationStatus();
                                 //realm1.clear(VerificationStatus.class);
-
-                                realm1.beginTransaction();
-                                user.setId(1);
+                                user.setId((long)1);
                                 user.setDate_to_expire(jo_stock.get("expiry").toString());
                                 user.setDate_verified(jo_stock.get("current").toString());
                                 user.setDate_recommended(jo_stock.get("recommended").toString());
                                 user.setCentre(jo_stock.get("facility").toString());
-                                realm1.copyToRealmOrUpdate(user);
-                                realm1.commitTransaction();
+                                user.save();
                             }
                             else
                             {
-                                RealmResults<VerificationStatus> vs = realm1.where(VerificationStatus.class).findAll();
+                                List<VerificationStatus> vs = VerificationStatus.listAll(VerificationStatus.class);
                                 if(vs.isEmpty())
                                 {
                                     VerificationStatus user = new VerificationStatus();
-                                    realm1.beginTransaction();
-                                    user.setId(1);
+                                    user.setId((long)1);
                                     user.setDate_to_expire("N/A");
                                     user.setDate_verified("N/A");
-                                    realm1.copyToRealmOrUpdate(user);
-                                    realm1.commitTransaction();
+                                    user.save();
                                 }
                                 else
                                 {
@@ -559,16 +452,14 @@ public class MyLocationService extends Service implements LocationListener,
                         catch (Exception e)
                         {
                             e.printStackTrace();
-                            RealmResults<VerificationStatus>vs = realm1.where(VerificationStatus.class).findAll();
+                            List<VerificationStatus>vs = VerificationStatus.listAll(VerificationStatus.class);
                             if(vs.isEmpty())
                             {
                                 VerificationStatus user = new VerificationStatus();
-                                realm1.beginTransaction();
-                                user.setId(1);
+                                user.setId((long)1);
                                 user.setDate_to_expire("N/A");
                                 user.setDate_verified("N/A");
-                                realm1.copyToRealmOrUpdate(user);
-                                realm1.commitTransaction();
+                                user.save();
                             }
                             else
                             {
@@ -588,17 +479,14 @@ public class MyLocationService extends Service implements LocationListener,
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                final Realm realm1 = Realm.getDefaultInstance();
-                RealmResults<VerificationStatus>vs = realm1.where(VerificationStatus.class).findAll();
+                List<VerificationStatus>vs = VerificationStatus.listAll(VerificationStatus.class);
                 if(vs.isEmpty())
                 {
                     VerificationStatus user = new VerificationStatus();
-                    realm1.beginTransaction();
-                    user.setId(1);
+                    user.setId((long)1);
                     user.setDate_to_expire("N/A");
                     user.setDate_verified("N/A");
-                    realm1.copyToRealmOrUpdate(user);
-                    realm1.commitTransaction();
+                    user.save();
                 }
                 else
                 {

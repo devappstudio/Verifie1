@@ -21,7 +21,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -40,12 +39,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.kuassivi.view.ProgressProfileView;
@@ -58,27 +55,14 @@ import net.gotev.uploadservice.UploadInfo;
 import net.gotev.uploadservice.UploadNotificationConfig;
 import net.gotev.uploadservice.UploadStatusDelegate;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
@@ -87,12 +71,9 @@ import java.util.Map;
 import cn.trinea.android.view.autoscrollviewpager.AutoScrollViewPager;
 import datastore.Api;
 import datastore.Facilities;
-import datastore.RealmController;
 import datastore.User;
 import datastore.VerificationStatus;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.Realm;
-import io.realm.RealmResults;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -161,51 +142,18 @@ public class OneFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final Realm realm = Realm.getDefaultInstance();
 
-        RealmResults<VerificationStatus> vs = realm.where(VerificationStatus.class).findAll();
+        List<VerificationStatus> vs = VerificationStatus.listAll(VerificationStatus.class);
         if(vs.isEmpty())
         {
-            try {
-                VerificationStatus user = new VerificationStatus();
-                realm.beginTransaction();
-                user.setId(1);
-                user.setDate_to_expire("N/A");
-                user.setDate_verified("N/A");
-                realm.copyToRealmOrUpdate(user);
-                realm.commitTransaction();
-
-            }
-            catch (Exception e)
-            {
-               try {
-                   realm.cancelTransaction();
-
-                   VerificationStatus user = new VerificationStatus();
-                   realm.beginTransaction();
-                   user.setId(1);
-                   user.setDate_to_expire("N/A");
-                   user.setDate_verified("N/A");
-                   realm.copyToRealmOrUpdate(user);
-                   realm.commitTransaction();
-               }
-               catch (Exception ee)
-               {
-                   ee.printStackTrace();
-                   try {
-                       realm.cancelTransaction();
-
-                   }
-                   catch (Exception jkf)
-                   {
-
-                   }
-               }
-
-            }
+            VerificationStatus user = new VerificationStatus();
+            user.setId((long)1);
+            user.setDate_to_expire("N/A");
+            user.setDate_verified("N/A");
+            user.save();
          }
         //loadFacilities();
-        VerificationStatus vss = realm.where(VerificationStatus.class).findAll().first();
+        VerificationStatus vss = VerificationStatus.first(VerificationStatus.class);
         SimpleDateFormat simpleDateFormat =
                 new SimpleDateFormat("dd/M/yyyy");
         if(vss.getDate_to_expire().equalsIgnoreCase("N/A"))
@@ -280,9 +228,7 @@ public class OneFragment extends Fragment{
         mData.add(cl);
         mViews.add(null);
 
-        final Realm realm1 = Realm.getDefaultInstance();
-
-        RealmResults<Facilities> facilities = realm1.where(Facilities.class).findAll();
+        List<Facilities> facilities = Facilities.listAll(Facilities.class);
         for (int i = 0; i < facilities.size(); i++) {
             cl  = new ContactLocations();
             Facilities facility = facilities.get(i);
@@ -519,9 +465,8 @@ public class OneFragment extends Fragment{
 
                 percentage = (TextView)view.findViewById(R.id.percent_view) ;
 
-                Realm Mrealm = Realm.getDefaultInstance();
-                String url = Mrealm.where(User.class).findAll().first().getFile_name();
-                server_id = Mrealm.where(User.class).findAll().first().getServer_id();
+                String url = User.first(User.class).getFile_name();
+                server_id = User.first(User.class).getServer_id();
                 try {
                     Picasso.with(getActivity()).load(Api.getImage_end()+server_id).into(profile);
                 }
@@ -536,9 +481,8 @@ public class OneFragment extends Fragment{
                     @Override
                     public void onClick(View v) {
 
-                        Realm ii = Realm.getDefaultInstance();
 
-                        if(ii.where(User.class).findFirst().getImage_verified().equalsIgnoreCase("0"))
+                        if(User.first(User.class).getImage_verified().equalsIgnoreCase("0"))
                         {
                             captureImage();
                         }
@@ -641,8 +585,7 @@ public class OneFragment extends Fragment{
                 percentage.setText(level.intValue()+"%");
 
                 //TextView last_verified,recommended_verification,centre_verified;
-                Realm rr = Realm.getDefaultInstance();
-                VerificationStatus verificationStatus = rr.where(VerificationStatus.class).findFirst();
+                VerificationStatus verificationStatus = VerificationStatus.first(VerificationStatus.class);
                 TextView last_verified = (TextView) view.findViewById(R.id.last_verified);
                 TextView recommended_verification = (TextView) view.findViewById(R.id.next);
                 TextView centre_verified = (TextView) view.findViewById(R.id.centre);
@@ -759,111 +702,6 @@ public class OneFragment extends Fragment{
     /**
      * Receiving activity result method will be called after closing the camera
      * */
-
-    private void launchUploadActivity(boolean isImage){
-        new UploadFileToServer().execute();
-    }
-
-    /**
-     * Uploading the file to server
-     * */
-    private class UploadFileToServer extends AsyncTask<Void, Integer, String> {
-        ProgressDialog pd;
-
-         @Override
-        protected void onPreExecute() {
-            // setting progress bar to zero
-
-             pd = ProgressDialog.show(getActivity(),"Contacting Server ..."," Please wait uploading ... 0% done", true);
-
-             super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... progress) {
-            // Making progress bar visible
-
-            // updating progress bar value
-
-            // updating percentage value
-            pd.setMessage("Please wait uploading ... "+String.valueOf(progress[0])+"% done");
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            return uploadFile();
-        }
-
-        @SuppressWarnings("deprecation")
-        private String uploadFile() {
-            String responseString = null;
-
-            HttpClient httpclient = new DefaultHttpClient();
-
-            HttpPost httppost = new HttpPost(Api.FILE_UPLOAD_URL);
-  /*
-*/
-            try {
-
-                String boundary = "-------------" + System.currentTimeMillis();
-
-                httppost.setHeader("Content-type", "multipart/form-data; boundary="+boundary);
-
-                AndroidMultiPartEntity entity = new AndroidMultiPartEntity(
-                        new AndroidMultiPartEntity.ProgressListener() {
-
-                            @Override
-                            public void transferred(long num) {
-                                publishProgress((int) ((num / (float) totalSize) * 100));
-                            }
-                        });
-
-                File sourceFile = new File(filePath);
-
-                // Adding file data to http body
-                entity.addPart("image", new FileBody(sourceFile));
-
-                // Extra parameters if you want to pass to server
-                entity.addPart("id", new StringBody(RealmController.with(getActivity()).getUser(1).getServer_id()));
-
-                totalSize = entity.getContentLength();
-                httppost.setEntity((entity));
-
-                // Making server call
-                HttpResponse response = httpclient.execute(httppost);
-                HttpEntity r_entity = response.getEntity();
-
-                int statusCode = response.getStatusLine().getStatusCode();
-                if (statusCode == 200) {
-                    // Server response
-                    responseString = EntityUtils.toString(r_entity);
-                } else {
-                    responseString = "Error occurred! Http Status Code: "
-                            + statusCode;
-                }
-
-            } catch (ClientProtocolException e) {
-                responseString = e.toString();
-            } catch (IOException e) {
-                responseString = e.toString();
-            }
-
-            return responseString;
-
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.e(TAG, "Response from server: " + result);
-            pd.hide();
-            // showing the server response in an alert dialog
-          //  showAlert(result);
-            Toast.makeText(getActivity(),result,Toast.LENGTH_LONG).show();
-
-            super.onPostExecute(result);
-        }
-
-    }
 
     /**
      * Creating file uri to store image/video
@@ -1039,58 +877,17 @@ public class OneFragment extends Fragment{
                                     profile.setImageResource(R.drawable.circular);
                                     String location = serverResponse.getBodyAsString();
 
-                                    Realm realm = Realm.getDefaultInstance();
-//                                    new GetImages(location, profile, imagename).execute() ;
-                                    Picasso.with(getActivity()).load(Api.getImage_end()+server_id).into(profile);
-
-                                    try{
-
-                                        User us = realm.where(User.class).findFirst();
-                                        realm.beginTransaction();
-                                        us.setFile_name(location);
-                                        realm.copyToRealmOrUpdate(us);
-                                        realm.commitTransaction();
-
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        try{
-                                            realm.cancelTransaction();
-
-                                            User us = realm.where(User.class).findFirst();
-                                            realm.beginTransaction();
-                                            us.setFile_name(location);
-                                            realm.copyToRealmOrUpdate(us);
-                                            realm.commitTransaction();
-
-                                        }
-                                        catch (Exception ee)
-                                        {
-                                            try {
-                                                realm.cancelTransaction();
-
-                                            }
-                                            catch (Exception jh)
-                                            {
-
-                                            }
-                                        }
-                                    }
-
-//                                    if(pd != null)
-//                                    {
-//                                        pd.hide();
-//                                    }
+                                    User us = User.first(User.class);
+                                    us.setFile_name(location);
+                                    us.save();
+                                    Picasso.with(getActivity()).invalidate(Api.getImage_end()+us.getServer_id());
+                                    Picasso.with(getActivity()).load("http://admin.verifieworld.com/assets/images/placeholder.png").into(profile);
+                                    Picasso.with(getActivity()).load(Api.getImage_end()+us.getServer_id()).into(profile);
 
                                 }
 
                                 @Override
                                 public void onCancelled(UploadInfo uploadInfo) {
-                                    // your code here
-//                                    if(pd != null)
-//                                    {
-//                                        pd.hide();
-//                                    }
 
                                 }
                             })

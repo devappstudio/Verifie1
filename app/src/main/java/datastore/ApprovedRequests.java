@@ -1,24 +1,20 @@
 package datastore;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.orm.SugarRecord;
 
 /**
  * Created by root on 9/23/16.
  */
 
-public class ApprovedRequests  extends RealmObject {
+public class ApprovedRequests  extends SugarRecord {
 
-    @PrimaryKey
-    private int id;
 
-    private String date_verified,date_to_expire,file_name,server_id;
+     String date_verified,date_to_expire,file_name,server_id;
 
     public ApprovedRequests() {
     }
 
-    public ApprovedRequests(int id, String date_verified, String date_to_expire, String file_name, String server_id) {
-        this.id = id;
+    public ApprovedRequests( String date_verified, String date_to_expire, String file_name, String server_id) {
         this.date_verified = date_verified;
         this.date_to_expire = date_to_expire;
         this.file_name = file_name;
@@ -26,13 +22,6 @@ public class ApprovedRequests  extends RealmObject {
     }
 
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getDate_verified() {
         return date_verified;

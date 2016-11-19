@@ -32,11 +32,12 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.android.gms.nearby.Nearby;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.kuassivi.view.ProgressProfileView;
+import com.orm.query.Condition;
+import com.orm.query.Select;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -54,14 +55,11 @@ import java.util.Map;
 import datastore.Api;
 import datastore.ApprovedRequests;
 import datastore.ContactsList;
-import datastore.RealmController;
+import datastore.Location_Stats;
 import datastore.ReceivedRequests;
 import datastore.SentRequests;
 import datastore.User;
 import datastore.Visibility;
-import de.hdodenhof.circleimageview.CircleImageView;
-import io.realm.Realm;
-import io.realm.RealmResults;
 
 
 public class TwoFragment extends Fragment{
@@ -72,8 +70,8 @@ public class TwoFragment extends Fragment{
     private NearByAdaptor mAdapterContacts;
     View emptyNear,emptyContacts;
     Switch visibility;
+    private Request.Priority priority = Request.Priority.HIGH;
     int visible;
-    private Realm realm;
     Handler mHandler = new Handler();
 
     public TwoFragment() {
@@ -100,22 +98,13 @@ public class TwoFragment extends Fragment{
 
         mAdapter = new NearByAdaptor(movieList,getContext());
         mAdapterContacts = new NearByAdaptor(movieListContacts,getContext());
-        this.realm = RealmController.with(this).getRealm();
-        /**
-         * TODO
-         *
-        Realm rro = Realm.getDefaultInstance();
-        rro.beginTransaction();
-        rro.clear(SentRequests.class);
-        rro.clear(ReceivedRequests.class);
-        rro.commitTransaction();
-*/
+
         visibility = (Switch)myView.findViewById(R.id.visibility);
         //Just got here check if visibility has been set already
-        if(RealmController.with(getActivity()).hasVisible())
+        if(!Visibility.listAll(Visibility.class).isEmpty())
         {
 
-            visibility.setChecked(RealmController.with(getActivity()).getVisibility(1).isStatus());
+            visibility.setChecked(Visibility.first(Visibility.class).isStatus());
         }
         else
         {
@@ -175,6 +164,7 @@ public class TwoFragment extends Fragment{
                     }
                 }
 
+
                 mAdapter = new NearByAdaptor(List,getContext());
                 mAdapterContacts = new NearByAdaptor(ListContacts,getContext());
 
@@ -218,10 +208,18 @@ public class TwoFragment extends Fragment{
                     if (text.getName().toLowerCase().contains(query) || text.getName().toLowerCase().startsWith(query) || text.getName().toLowerCase().endsWith(query)) {
                         List.add(movieList.get(i));
                     }
-                    if (text.getScreen_name().toLowerCase().contains(query) || text.getScreen_name().toLowerCase().startsWith(query) || text.getScreen_name().toLowerCase().endsWith(query)) {
-                        List.add(movieList.get(i));
+                    try {
+
+                        if (text.getScreen_name().toLowerCase().contains(query) || text.getScreen_name().toLowerCase().startsWith(query) || text.getScreen_name().toLowerCase().endsWith(query)) {
+                            List.add(movieList.get(i));
+                        }
+
                     }
-                }
+                    catch (Exception e)
+                    {
+
+                    }
+                  }
                 for (int i = 0; i< movieListContacts.size(); i++) {
                     final NearBy text = movieListContacts.get(i);
                     if (text.getTelephone_number().startsWith(query) || text.getTelephone_number().contains(query) || text.getTelephone_number().endsWith(query)) {
@@ -230,10 +228,17 @@ public class TwoFragment extends Fragment{
                     if (text.getName().toLowerCase().contains(query) || text.getName().toLowerCase().startsWith(query) || text.getName().toLowerCase().endsWith(query)) {
                         ListContacts.add(movieListContacts.get(i));
                     }
-                    if (text.getScreen_name().toLowerCase().contains(query) || text.getScreen_name().toLowerCase().startsWith(query) || text.getScreen_name().toLowerCase().endsWith(query)) {
-                        ListContacts.add(movieListContacts.get(i));
+                    try{
+                        if (text.getScreen_name().toLowerCase().contains(query) || text.getScreen_name().toLowerCase().startsWith(query) || text.getScreen_name().toLowerCase().endsWith(query)) {
+                            ListContacts.add(movieListContacts.get(i));
+                        }
+
                     }
-                }
+                    catch (Exception e)
+                    {
+
+                    }
+                  }
 
                 mAdapter = new NearByAdaptor(List,getContext());
                 mAdapterContacts = new NearByAdaptor(ListContacts,getContext());
@@ -360,14 +365,12 @@ public class TwoFragment extends Fragment{
             }
         }));
 
-        near_by_offline_users();
 
         return myView;
     }
 
     public interface ClickListener {
         void onClick(View view, int position);
-
         void onLongClick(View view, int position);
     }
 
@@ -430,7 +433,7 @@ public class TwoFragment extends Fragment{
         dialog.show();
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("server_id", RealmController.with(getActivity()).getUser(1).getServer_id());
+        params.put("server_id", User.first(User.class).getServer_id());
 
         if(visibility.isChecked())
         {
@@ -449,16 +452,13 @@ public class TwoFragment extends Fragment{
                     public void onResponse(JSONObject response) {
                         System.out.print(response.toString());
                         dialog.hide();
-                        Realm realm = Realm.getDefaultInstance();
                         try {
 
                             if(response.get("status").toString().equalsIgnoreCase("1"))
                             {
-                               RealmController.with(getActivity()).clearAllVisibility();
+                               Visibility.deleteAll(Visibility.class);
                                 Visibility user = new Visibility(visibility.isChecked());
-                                realm.beginTransaction();
-                                realm.copyToRealm(user);
-                                realm.commitTransaction();
+                               user.save();
                                 if(visibility.isChecked())
                                 {
                                     Toast.makeText(getActivity(),"Your visibility is on",Toast.LENGTH_LONG).show();
@@ -468,65 +468,16 @@ public class TwoFragment extends Fragment{
                                 {
                                     movieList.clear();
                                     mAdapter.notifyDataSetChanged();
-                                    near_by_offline_users();
                                     Toast.makeText(getActivity(),"Your visibility is off",Toast.LENGTH_LONG).show();
                                 }
 
                             }
-                            else
-                            {
-                                near_by_offline_users();
-                            }
+
 
                         }
                         catch (Exception e)
                         {
                             e.printStackTrace();
-                            try {
-                                realm.cancelTransaction();
-
-                                if(response.get("status").toString().equalsIgnoreCase("1"))
-                                {
-                                    RealmController.with(getActivity()).clearAllVisibility();
-                                    Visibility user = new Visibility(visibility.isChecked());
-                                    realm.beginTransaction();
-                                    realm.copyToRealm(user);
-                                    realm.commitTransaction();
-                                    if(visibility.isChecked())
-                                    {
-                                        Toast.makeText(getActivity(),"Your visibility is on",Toast.LENGTH_LONG).show();
-                                        near_by_users();
-                                    }
-                                    else
-                                    {
-                                        movieList.clear();
-                                        mAdapter.notifyDataSetChanged();
-                                        near_by_offline_users();
-                                        Toast.makeText(getActivity(),"Your visibility is off",Toast.LENGTH_LONG).show();
-
-                                    }
-
-                                }
-                                else
-                                {
-                                    near_by_offline_users();
-                                }
-
-                            }
-                            catch (Exception ee)
-                            {
-                                ee.printStackTrace();
-                                try{
-                                    realm.cancelTransaction();
-
-                                }
-                                catch (Exception eee)
-                                {
-
-                                }
-
-                            }
-
 
                         }
 
@@ -537,7 +488,6 @@ public class TwoFragment extends Fragment{
             public void onErrorResponse(VolleyError error) {
                 dialog.hide();
                 Toast.makeText(getActivity(),"Sorry A Network Error Occurred",Toast.LENGTH_LONG).show();
-                near_by_offline_users();
 
                 error.printStackTrace();
             }
@@ -548,6 +498,7 @@ public class TwoFragment extends Fragment{
                 headers.put("Content-Type", "application/json; charset=utf-8");
                 return headers;
             }
+
         };
 // Adding request to request queue
         jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -571,7 +522,7 @@ public class TwoFragment extends Fragment{
         dialog.show();
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("server_id", RealmController.with(getActivity()).getUser(1).getServer_id());
+        params.put("server_id", User.first(User.class).getServer_id());
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 Api.getApi()+"check_user_visibility",new JSONObject(params),
                 new Response.Listener<JSONObject>() {
@@ -579,52 +530,32 @@ public class TwoFragment extends Fragment{
                     public void onResponse(JSONObject response) {
                         System.out.print(response.toString());
                         dialog.hide();
-                        Realm realm = Realm.getDefaultInstance();
                         try {
 
                             if(response.get("status").toString().equalsIgnoreCase("1"))
                             {
-                               RealmController.with(getActivity()).clearAllVisibility();
+                              Visibility.deleteAll(Visibility.class);
                                 Visibility user = new Visibility();
                                 if(response.get("data").toString().equalsIgnoreCase("0"))
                                 {
                                      user = new Visibility(false);
                                     visibility.setChecked(false);
-                                    near_by_offline_users();
-
                                 }
                                 if(response.get("data").toString().equalsIgnoreCase("1"))
                                 {
                                      user = new Visibility(true);
                                     visibility.setChecked(true);
-                                    near_by_offline_users();
-
                                 }
 
-                                realm.beginTransaction();
-                                realm.copyToRealm(user);
-                                realm.commitTransaction();
+                               user.save();
                             }
-                            else
-                            {
-                                near_by_offline_users();
 
-                            }
 
                         }
                         catch (Exception e)
                         {
-                            try {
-                                realm.cancelTransaction();
 
-                            }
-                            catch (Exception eed)
-                            {
-
-                            }
                             e.printStackTrace();
-                            near_by_offline_users();
-
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -634,8 +565,6 @@ public class TwoFragment extends Fragment{
                 dialog.hide();
                 Toast.makeText(getActivity(),"Sorry A Network Error Occurred Visibility",Toast.LENGTH_LONG).show();
                 error.printStackTrace();
-                near_by_offline_users();
-
             }
         }) {
             @Override
@@ -658,9 +587,9 @@ public class TwoFragment extends Fragment{
 
 
         Map<String, String> params = new HashMap<String, String>();
-        params.put("server_id", RealmController.with(getActivity()).getUser(1).getServer_id());
-        params.put("longitude",RealmController.with(getActivity()).getLocation(1).getLongitude()+"");
-        params.put("latitude",RealmController.with(getActivity()).getLocation(1).getLatitude()+"");
+        params.put("server_id", User.first(User.class).getServer_id());
+        params.put("longitude", Location_Stats.first(Location_Stats.class).getLongitude()+"");
+        params.put("latitude",Location_Stats.first(Location_Stats.class).getLatitude()+"");
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                 Api.getApi()+"near_users",new JSONObject(params),
                 new Response.Listener<JSONObject>() {
@@ -673,39 +602,13 @@ public class TwoFragment extends Fragment{
                             {
                                 JSONArray jaa = response.getJSONArray("data");
                                 movieList.clear();
-/*
-                                RealmResults<ContactsList> RegisteredCls = RealmController.with(getActivity()).getAllRegisteredContacts();
-                                RealmResults<ContactsList> UnRegisteredCls = RealmController.with(getActivity()).getAllUnRegisteredContacts();
 
-                                RegisteredCls.sort("name",true);
-                                UnRegisteredCls.sort("name",true);
-
-                                for (int ii = 0; ii < RegisteredCls.size(); ii++)
-                                {
-                                    ContactsList cl = RegisteredCls.get(ii);
-                                    NearBy dumb = new NearBy(cl.getName(),cl.getFile_name(),cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
-                                    if(check_new(dumb))
-                                    {
-                                        movieList.add(dumb);
-                                    }
-                                }
-
-                                for (int ii = 0; ii < UnRegisteredCls.size(); ii++)
-                                {
-                                    ContactsList cl = UnRegisteredCls.get(ii);
-                                    NearBy dumb = new NearBy(cl.getName(),cl.getFile_name(),cl.getTelephone(),cl.getServer_id()+"","",cl.getIs_on_verifie(),cl.getId()+"",cl.getScreen_name());
-                                    if(check_new(dumb))
-                                    {
-                                        movieList.add(dumb);
-                                    }
-                                }
-*/
 
                                 for (int i=0; i< jaa.length(); i++)
                                 {
 
                                     JSONObject object = (JSONObject) jaa.get(i);
-                                    User us = RealmController.with(getActivity()).getUser(1);
+                                    User us = User.first(User.class);
                                     if(!us.getServer_id().equalsIgnoreCase(object.get("id").toString()))
                                     {
                                         NearBy dumb = new NearBy(object.get("fullname").toString(),object.get("file_name").toString(),object.get("telephone").toString(),object.get("id").toString(),object.get("screen_name").toString());
@@ -720,7 +623,6 @@ public class TwoFragment extends Fragment{
                             }
                             else
                             {
-                                //near_by_offline_users();
 
                             }
 
@@ -728,7 +630,6 @@ public class TwoFragment extends Fragment{
                         catch (Exception e)
                         {
                             e.printStackTrace();
-                            //near_by_offline_users();
 
                         }
                     }
@@ -737,7 +638,6 @@ public class TwoFragment extends Fragment{
             @Override
             public void onErrorResponse(VolleyError error) {
                 error.printStackTrace();
-                //near_by_offline_users();
 
             }
         }) {
@@ -760,13 +660,9 @@ public class TwoFragment extends Fragment{
         
         movieListContacts.clear();
 
-        RealmResults<ContactsList> RegisteredCls = RealmController.with(getActivity()).getAllRegisteredContacts();
-        RealmResults<ContactsList> UnRegisteredCls = RealmController.with(getActivity()).getAllUnRegisteredContacts();
-
-
-        RegisteredCls.sort("name",true);
-        UnRegisteredCls.sort("name",true);
-
+        List<ContactsList> RegisteredCls = Select.from(ContactsList.class).where(Condition.prop("isonverifie").eq("1")).orderBy("name").list();
+        List<ContactsList> UnRegisteredCls = Select.from(ContactsList.class).where(Condition.prop("isonverifie").eq("0")).orderBy("name").list();
+        //TODO sort
         for (int ii = 0; ii < RegisteredCls.size(); ii++)
         {
             ContactsList cl = RegisteredCls.get(ii);
@@ -776,7 +672,6 @@ public class TwoFragment extends Fragment{
                 movieListContacts.add(dumb);
             }
         }
-
         for (int ii = 0; ii < UnRegisteredCls.size(); ii++)
         {
             ContactsList cl = UnRegisteredCls.get(ii);
@@ -795,16 +690,15 @@ public class TwoFragment extends Fragment{
     {
         @Override
         public void run() {
-            if(RealmController.with(getActivity()).hasVisible() && RealmController.with(getActivity()).hasLocation())
+            if(!Visibility.listAll(Visibility.class).isEmpty() && !Location_Stats.listAll(Location_Stats.class).isEmpty())
             {
-                if(RealmController.with(getActivity()).getVisibility(1).isStatus())
+                if(Visibility.first(Visibility.class).isStatus())
                 {
                     near_by_users();
                 }
                 else
 
                 {
-                   // near_by_offline_users();
 
                 }
             }
@@ -826,8 +720,7 @@ public class TwoFragment extends Fragment{
 
     void  check_on_verifie()
     {
-        final Realm trealm = Realm.getDefaultInstance();
-        final RealmResults<ContactsList> cl = trealm.where(ContactsList.class).equalTo("is_on_verifie","0").findAll();
+        final List<ContactsList> cl = Select.from(ContactsList.class).where(Condition.prop("isonverifie").eq("0")).list();
 
         for (int i=0; i<cl.size();i++)
         {
@@ -851,57 +744,29 @@ public class TwoFragment extends Fragment{
 
             Map<String, String> params = new HashMap<String, String>();
             params.put("telephone", phone);
-            final int finalI = cl.get(i).getId();
+            final int finalI = cl.get(i).getId().intValue();
             JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
                     Api.getApi()+"check_is_on_verifie",new JSONObject(params),
                     new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
                             System.out.print(response.toString()+ " Telephone "+phon);
-                            final Realm rrealm = Realm.getDefaultInstance();
-
                             try {
 
                                 if(response.get("status").toString().equalsIgnoreCase("1"))
                                 {
-                                    ContactsList contactsList = rrealm.where(ContactsList.class).equalTo("id",finalI).findFirst();
+                                    ContactsList contactsList = ContactsList.findById(ContactsList.class,(long)finalI);
                                     JSONObject jo_stock = (JSONObject) response.get("data");
-                                    rrealm.beginTransaction();
                                     contactsList.setIs_on_verifie("1");
                                     contactsList.setServer_id(jo_stock.get("id").toString());
                                     contactsList.setFile_name(jo_stock.get("file_name").toString());
                                     contactsList.setScreen_name(jo_stock.get("screen_name").toString());
-                                    rrealm.copyToRealmOrUpdate(contactsList);
-                                    rrealm.commitTransaction();
-                                    near_by_offline_users();
+                                    contactsList.save();
                                 }
                             }
                             catch (Exception e)
                             {
                                 e.printStackTrace();
-
-                                try {
-                                    rrealm.cancelTransaction();
-
-                                    if(response.get("status").toString().equalsIgnoreCase("1"))
-                                    {
-                                        ContactsList contactsList = rrealm.where(ContactsList.class).equalTo("id",finalI).findFirst();
-                                        JSONObject jo_stock = (JSONObject) response.get("data");
-                                        rrealm.beginTransaction();
-                                        contactsList.setIs_on_verifie("1");
-                                        contactsList.setServer_id(jo_stock.get("id").toString());
-                                        contactsList.setFile_name(jo_stock.get("file_name").toString());
-                                        contactsList.setScreen_name(jo_stock.get("screen_name").toString());
-                                        rrealm.copyToRealmOrUpdate(contactsList);
-                                        rrealm.commitTransaction();
-                                        near_by_offline_users();
-                                    }
-                                }
-                                catch (Exception ee)
-                                {
-                                    ee.printStackTrace();
-                                }
-
                             }
                         }
                     }, new Response.ErrorListener() {
@@ -923,6 +788,7 @@ public class TwoFragment extends Fragment{
             jsonObjReq.setRetryPolicy(new DefaultRetryPolicy( 50000, 5, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             AppController.getInstance().addToRequestQueue(jsonObjReq, tag);
         }
+        near_by_offline_users();
     }
 
     void call_method(String server_id, final NearBy nearBy)
@@ -932,13 +798,12 @@ public class TwoFragment extends Fragment{
 
         final Dialog dialog = new Dialog(getContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        Realm realm = Realm.getDefaultInstance();
-
-        if(realm.where(ReceivedRequests.class).contains("id_send",server_id).findAll().isEmpty())
+//realm.where(ReceivedRequests.class).contains("",server_id).findAll().isEmpty()
+        if(Select.from(ReceivedRequests.class).where(Condition.prop("idsend").eq(server_id)).list().isEmpty())
         {
             //we have not received request from this user
             //lets check if we have sent to user
-            if(realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().isEmpty())
+            if(Select.from(SentRequests.class).where(Condition.prop("idreceipent").eq(server_id)).list().isEmpty())
             {
                 // we havent sent yet
                 text = "Request";
@@ -965,22 +830,22 @@ public class TwoFragment extends Fragment{
             else
             {
                 //we have sent so lets check the result
-                if(realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().getReply() == 1)
+                if(Select.from(SentRequests.class).where(Condition.prop("idreceipent").eq(server_id)).first().getReply() == 1)
                 {
                     //accepted
                     text = "View RotaBar";
                    // dialog.setContentView(R.layout.view_rotabar);
-                    realm.beginTransaction();
-                    realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().removeFromRealm();
-                    realm.commitTransaction();
+
+                    SentRequests rr = Select.from(SentRequests.class).where(Condition.prop("idreceipent").eq(server_id)).first();
+
+                    SentRequests.delete(rr);
 
 
                     SimpleDateFormat simpleDateFormat =
                             new SimpleDateFormat("dd/M/yyyy");
 
                     Float level = 0f;
-                    ApprovedRequests vss = realm.where(ApprovedRequests.class).equalTo("server_id",server_id).findAll().last();
-
+                    ApprovedRequests vss = Select.from(ApprovedRequests.class).where(Condition.prop("serverid").eq(server_id)).first();
 
                     try {
                         Calendar calendar = Calendar.getInstance();
@@ -1029,9 +894,8 @@ public class TwoFragment extends Fragment{
                     percentage.setText( level.intValue()+"%");
 
 
-                    Realm Mrealm = Realm.getDefaultInstance();
-                    String url = Mrealm.where(User.class).findAll().first().getFile_name();
-                    server_id = Mrealm.where(User.class).findAll().first().getServer_id();
+                    String url = User.first(User.class).getFile_name();
+                    server_id = User.first(User.class).getServer_id();
                     try {
                         Picasso.with(getActivity()).load(Api.getImage_end()+nearBy.getServer_id()).into(profile);
                     }
@@ -1043,7 +907,8 @@ public class TwoFragment extends Fragment{
                 }
                 else
                 {
-                    if (realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().getTime_replied().equalsIgnoreCase(""))
+                    //realm.where(SentRequests.class).contains("",server_id).findAll().first()
+                    if (Select.from(SentRequests.class).where(Condition.prop("idreceipent").eq(server_id)).first().getTime_replied().equalsIgnoreCase(""))
                     {
                         //request Pending
                         text = "Request Denied";
@@ -1058,36 +923,14 @@ public class TwoFragment extends Fragment{
                         text = "Request Denied";
                         try
                         {
-                            realm.beginTransaction();
-                            realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().removeFromRealm();
-                            realm.commitTransaction();
+                            SentRequests rr = Select.from(SentRequests.class).where(Condition.prop("idreceipent").eq(server_id)).first();
+                            SentRequests.delete(rr);
                             dialog.setContentView(R.layout.request_denied);
 
                         }
                         catch (Exception e)
                         {
-                            try
-                            {
-                                realm.cancelTransaction();
 
-                                realm.beginTransaction();
-                                realm.where(SentRequests.class).contains("id_receipent",server_id).findAll().first().removeFromRealm();
-                                realm.commitTransaction();
-                                dialog.setContentView(R.layout.request_denied);
-
-                            }
-                            catch (Exception ee)
-                            {
-                                ee.printStackTrace();
-                                try {
-                                    realm.cancelTransaction();
-
-                                }
-                                catch (Exception jhf)
-                                {
-
-                                }
-                            }
                             e.printStackTrace();
                         }
                      }
@@ -1101,7 +944,7 @@ public class TwoFragment extends Fragment{
         else
         {
             //we have received request from this user so lets see the result
-            if(realm.where(ReceivedRequests.class).contains("id_send",server_id).findAll().first().getStatus().equalsIgnoreCase("0"))
+            if(Select.from(ReceivedRequests.class).where(Condition.prop("idsend").eq(server_id)).first().getStatus().equalsIgnoreCase("0"))
             {
                 //Pending
                 text = "Pending Request";
@@ -1161,11 +1004,9 @@ public class TwoFragment extends Fragment{
                 //`users`(`id`, `fullname`, `login_type`, `security_code`, `extra_code`, `id_from_provider`, `telephone`, `file_blob`, `file_name`, `is_visible`, `visibility_code`, ``, ``, ``, ``, ``)
                 final String tag = "new_user_login";
                 final ProgressDialog pd = ProgressDialog.show(getActivity(),"Contacting Server ..."," Please Wait Submitting Your Request ...", true);
-
-                Realm rea = Realm.getDefaultInstance();
-                Map<String, String> params = new HashMap<String, String>();
+         Map<String, String> params = new HashMap<String, String>();
                 params.put("to_user", server_id);
-                params.put("server_id", rea.where(User.class).findAll().first().getServer_id());
+                params.put("server_id", User.first(User.class).getServer_id());
                 pd.show();
 
                 JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
@@ -1179,43 +1020,14 @@ public class TwoFragment extends Fragment{
                                     Long tsLong = System.currentTimeMillis()/1000;
                                     String tsr = tsLong.toString();
 
-                                    Realm io = Realm.getDefaultInstance();
-                                    SentRequests sr = new SentRequests((int)io.where(SentRequests.class).maximumInt("id")+1,server_id,tsr,"","0",0);
+                                    SentRequests sr = new SentRequests(server_id,tsr,"","0",0);
                                     // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
-                                    io.beginTransaction();
-                                    io.copyToRealm(sr);
-                                    io.commitTransaction();
+                                    sr.save();
 
                                 }
                                 catch (Exception e)
                                 {
-
-                                    Realm io = Realm.getDefaultInstance();
-                                    try {
-                                        io.cancelTransaction();
-
-                                        Long tsLong = System.currentTimeMillis()/1000;
-                                        String tsr = tsLong.toString();
-
-
-                                        SentRequests sr = new SentRequests((int)io.where(SentRequests.class).maximumInt("id")+1,server_id,tsr,"","0",0);
-                                        // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
-                                        io.beginTransaction();
-                                        io.copyToRealm(sr);
-                                        io.commitTransaction();
-
-                                    }
-                                    catch (Exception ee)
-                                    {
-                                        try {
-                                            io.cancelTransaction();
-
-                                        }
-                                        catch (Exception lok)
-                                        {
-
-                                        }
-                                    }
+                                    e.printStackTrace();
                                    // Toast.makeText(getActivity(), "Sorry An Error Occurred Please Try Again Later", Toast.LENGTH_LONG).show();
                                 }
                             }
@@ -1233,6 +1045,10 @@ public class TwoFragment extends Fragment{
                         HashMap<String, String> headers = new HashMap<String, String>();
                         headers.put("Content-Type", "application/json; charset=utf-8");
                         return headers;
+                    }
+                    @Override
+                    public Priority getPriority() {
+                        return priority;
                     }
                 };
 // Adding request to request queue
@@ -1256,11 +1072,10 @@ public class TwoFragment extends Fragment{
         final String tag = "new_user_login";
         final ProgressDialog pd = ProgressDialog.show(getActivity(),"Contacting Server ..."," Please Wait Submitting Your Reply ...", true);
 
-        Realm rea = Realm.getDefaultInstance();
         Map<String, String> params = new HashMap<String, String>();
         params.put("to_user", server_id);
         params.put("reply", reply);
-        params.put("server_id", rea.where(User.class).findAll().first().getServer_id());
+        params.put("server_id", User.first((User.class)).getServer_id());
         pd.show();
 
         JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
@@ -1274,30 +1089,14 @@ public class TwoFragment extends Fragment{
                             Long tsLong = System.currentTimeMillis()/1000;
                             String tsr = tsLong.toString();
 
-                            Realm io = Realm.getDefaultInstance();
-                            ReceivedRequests rr = io.where(ReceivedRequests.class).equalTo("id_send",server_id).findAll().last();
+                            ReceivedRequests rr = Select.from(ReceivedRequests.class).where(Condition.prop("idsend").eq(server_id)).first();
                             // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
-                            io.beginTransaction();
-                            rr.removeFromRealm();
-                            io.commitTransaction();
+                            ReceivedRequests.delete(rr);
 
                         }
                         catch (Exception e)
                         {
-                            try
-                            {
-                                Realm io = Realm.getDefaultInstance();
-                                io.cancelTransaction();
-                                ReceivedRequests rr = io.where(ReceivedRequests.class).equalTo("id_send",server_id).findAll().last();
-                                io.beginTransaction();
-                                rr.removeFromRealm();
-                                io.commitTransaction();
-
-                            }
-                            catch (Exception ee)
-                            {
-                                ee.printStackTrace();
-                            }
+                           e.printStackTrace();
 
                         }
                     }
@@ -1315,6 +1114,10 @@ public class TwoFragment extends Fragment{
                 HashMap<String, String> headers = new HashMap<String, String>();
                 headers.put("Content-Type", "application/json; charset=utf-8");
                 return headers;
+            }
+            @Override
+            public Priority getPriority() {
+                return priority;
             }
         };
 // Adding request to request queue

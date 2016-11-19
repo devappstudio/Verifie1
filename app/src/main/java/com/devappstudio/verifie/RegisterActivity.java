@@ -33,9 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import datastore.Api;
-import datastore.RealmController;
 import datastore.User;
-import io.realm.Realm;
 
 
 public class RegisterActivity extends Activity{
@@ -50,8 +48,6 @@ public class RegisterActivity extends Activity{
     String[] arr = { "Male", "Female"};
     private DatePickerDialog fromDatePickerDialog;
     private SimpleDateFormat dateFormatter;
-    private Realm realm;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +66,6 @@ public class RegisterActivity extends Activity{
         screen_name = (EditText)findViewById(R.id.screen_name);
         date_of_birth = (EditText)findViewById(R.id.date_of_birth);
         password = (EditText)findViewById(R.id.register_password);
-
-        this.realm = RealmController.with(this).getRealm();
 
         gender = (AutoCompleteTextView)
                 findViewById(R.id.gender);
@@ -220,12 +214,9 @@ public class RegisterActivity extends Activity{
                                     //JSONObject jo_user = response.getJSONObject("user");
                                     //save user
                                     // save company
-                                    RealmController.with(getApplication()).clearAll();
 
                                     User user = new User(e_name,e_telephone,response.get("data").toString(),"","");
-                                    realm.beginTransaction();
-                                    realm.copyToRealm(user);
-                                    realm.commitTransaction();
+                                   user.save();
 
                                     final Intent intent = new Intent(RegisterActivity.this, MyLocationRequest.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -242,42 +233,6 @@ public class RegisterActivity extends Activity{
                             }
                             catch (Exception e)
                             {
-
-                                try {
-                                    realm.cancelTransaction();
-
-                                    if(response.get("status").toString().equalsIgnoreCase("1"))
-                                    {
-//                               JSONObject jo_stock = response.getJSONObject("stock_user");
-                                        // JSONObject jo_company = response.getJSONObject("company");
-                                        //JSONObject jo_user = response.getJSONObject("user");
-                                        //save user
-                                        // save company
-                                        RealmController.with(getApplication()).clearAll();
-
-                                        User user = new User(e_name,e_telephone,response.get("data").toString(),"","");
-                                        realm.beginTransaction();
-                                        realm.copyToRealm(user);
-                                        realm.commitTransaction();
-
-                                        final Intent intent = new Intent(RegisterActivity.this, MyLocationRequest.class);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                    else
-                                    {
-                                        Toast.makeText(getApplicationContext(),response.get("error").toString(),Toast.LENGTH_LONG).show();
-                                    }
-
-                                }
-                                catch (Exception ee)
-                                {
-                                    Toast.makeText(getApplicationContext(), "Sorry An Error Occurred "+response.toString(), Toast.LENGTH_LONG).show();
-                                    ee.printStackTrace();
-                                }
                                 e.printStackTrace();
                             }
                         }

@@ -144,7 +144,7 @@
                                                 android:layout_width="wrap_content"
                                                 android:layout_height="wrap_content"
 
-                                                android:text="Forgot Your PASSWORD? RECOVER HERE"
+                                                android:text="FORGOT YOUR PASSWORD? RECOVER HERE"
                                                 android:id="@+id/forgot"
                                                 android:textColor="@color/white"
                                                 android:paddingTop="5dp"

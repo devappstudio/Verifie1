@@ -14,6 +14,8 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
+import com.orm.query.Condition;
+import com.orm.query.Select;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +23,6 @@ import org.json.JSONObject;
 import datastore.ApprovedRequests;
 import datastore.ReceivedRequests;
 import datastore.SentRequests;
-import io.realm.Realm;
 
 
 public class MyGcmListenerService  extends GcmListenerService  {
@@ -84,12 +85,9 @@ public class MyGcmListenerService  extends GcmListenerService  {
                 //   public ReceivedRequests(int id, String id_send, String time_sent, String time_replied, String status, int reply)
                 Long tsLong = System.currentTimeMillis()/1000;
                 String tsr = tsLong.toString();
-                Realm io = Realm.getDefaultInstance();
 
-                ReceivedRequests rr = new ReceivedRequests((int)io.where(ReceivedRequests.class).maximumInt("id")+1,user_details.get("id").toString(),tsr,"","0",0);
-                io.beginTransaction();
-                io.copyToRealm(rr);
-                io.commitTransaction();
+                ReceivedRequests rr = new ReceivedRequests(user_details.get("id").toString(),tsr,"","0",0);
+                rr.save();
             }
 
            if(jo_stock.get("type").toString().equalsIgnoreCase("reply"))
@@ -106,22 +104,18 @@ public class MyGcmListenerService  extends GcmListenerService  {
                     String server_id = user_details.get("id").toString();
 
 
-                    Realm io = Realm.getDefaultInstance();
                     // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
                     //    public ApprovedRequests(int id, String date_verified, String date_to_expire, String file_name, String server_id) {
                     JSONObject data = jo_stock.getJSONObject("verification");
 
 
-                    ApprovedRequests ar = new ApprovedRequests((int)io.where(ApprovedRequests.class).maximumInt("id")+1,data.get("current").toString(),data.get("expiry").toString(),user_details.get("file_name").toString(),user_details.get("id").toString());
+                    ApprovedRequests ar = new ApprovedRequests(data.get("current").toString(),data.get("expiry").toString(),user_details.get("file_name").toString(),user_details.get("id").toString());
 
-                    io.beginTransaction();
-                    SentRequests sr = io.where(SentRequests.class).equalTo("id_receipent",server_id).findAll().first();
+                    SentRequests sr = Select.from(SentRequests.class).where(Condition.prop("idreceipent").eq(server_id)).first();
                     sr.setReply(1);
                     sr.setStatus("1");
                     sr.setTime_replied(tsr);
-                    io.copyToRealmOrUpdate(sr);
-                    io.copyToRealmOrUpdate(ar);
-                    io.commitTransaction();
+                    sr.save();
                     message = user_details.get("fullname").toString()+" Accepted Your Request";
 
                 }
@@ -132,15 +126,12 @@ public class MyGcmListenerService  extends GcmListenerService  {
                     JSONObject user_details = jo_stock.getJSONObject("details");
                     String server_id = user_details.get("id").toString();
 
-                    Realm io = Realm.getDefaultInstance();
                     // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
-                    io.beginTransaction();
-                    SentRequests sr = io.where(SentRequests.class).equalTo("id_receipent",server_id).findAll().first();
+                    SentRequests sr = Select.from(SentRequests.class).where(Condition.prop("idreceipent").eq(server_id)).first();
                     sr.setReply(0);
                     sr.setStatus("1");
                     sr.setTime_replied(tsr);
-                    io.copyToRealmOrUpdate(sr);
-                    io.commitTransaction();
+                    sr.save();
                     message = user_details.get("fullname").toString()+" Denied Your Request";
                 }
 
@@ -148,93 +139,7 @@ public class MyGcmListenerService  extends GcmListenerService  {
 
 
         } catch (JSONException e) {
-            Realm io = Realm.getDefaultInstance();
             e.printStackTrace();
-            try {
-                io.cancelTransaction();
-
-                JSONObject jo_stock = new JSONObject(message);
-                if(jo_stock.get("type").toString().equalsIgnoreCase("request"))
-                {
-                    JSONObject user_details = jo_stock.getJSONObject("from_user");
-
-                    message = jo_stock.get("message").toString()+" from "+user_details.get("fullname").toString() ;
-                    //request here
-                    //        $res = $this->gcm->send(json_encode(array('type'=>'request','from_user'=>$this->db->get_where('users',array('id'=>$this->post('server_id')))->row(),'message'=>'Request To View Your Rotabar')),"",$tokens);
-                    //   public ReceivedRequests(int id, String id_send, String time_sent, String time_replied, String status, int reply)
-                    Long tsLong = System.currentTimeMillis()/1000;
-                    String tsr = tsLong.toString();
-
-                    ReceivedRequests rr = new ReceivedRequests((int)io.where(ReceivedRequests.class).maximumInt("id")+1,user_details.get("id").toString(),tsr,"","0",0);
-                    io.beginTransaction();
-                    io.copyToRealm(rr);
-                    io.commitTransaction();
-                }
-
-                if(jo_stock.get("type").toString().equalsIgnoreCase("reply"))
-                {
-                    //reply here
-
-                    if(jo_stock.get("reply").toString().equalsIgnoreCase("1"))
-                    {
-                        //Yes
-                        //            $this->response(array('status'=>1,"data"=>$this->gcm->send(json_encode(array('type'=>'reply','reply'=>'1','details'=>$this->db->get_where('users',array('id'=>$this->post('server_id')))->row(),'verification'=>$user,'message'=>'Request To View Your RotaBar Bar')),"",$tokens)),200);
-                        Long tsLong = System.currentTimeMillis()/1000;
-                        String tsr = tsLong.toString();
-                        JSONObject user_details = jo_stock.getJSONObject("details");
-                        String server_id = user_details.get("id").toString();
-
-
-                        // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
-                        //    public ApprovedRequests(int id, String date_verified, String date_to_expire, String file_name, String server_id) {
-                        JSONObject data = jo_stock.getJSONObject("verification");
-
-
-                        ApprovedRequests ar = new ApprovedRequests((int)io.where(ApprovedRequests.class).maximumInt("id")+1,data.get("current").toString(),data.get("expiry").toString(),user_details.get("file_name").toString(),user_details.get("id").toString());
-
-                        io.beginTransaction();
-                        SentRequests sr = io.where(SentRequests.class).equalTo("id_receipent",server_id).findAll().first();
-                        sr.setReply(1);
-                        sr.setStatus("1");
-                        sr.setTime_replied(tsr);
-                        io.copyToRealmOrUpdate(sr);
-                        io.copyToRealmOrUpdate(ar);
-                        io.commitTransaction();
-                        message = user_details.get("fullname").toString()+" Accepted Your Request";
-
-                    }
-                    else
-                    {
-                        Long tsLong = System.currentTimeMillis()/1000;
-                        String tsr = tsLong.toString();
-                        JSONObject user_details = jo_stock.getJSONObject("details");
-                        String server_id = user_details.get("id").toString();
-
-                        // public SentRequests(int id, String id_receipent, String time_sent, String time_replied, String status, int reply)
-                        io.beginTransaction();
-                        SentRequests sr = io.where(SentRequests.class).equalTo("id_receipent",server_id).findAll().first();
-                        sr.setReply(0);
-                        sr.setStatus("1");
-                        sr.setTime_replied(tsr);
-                        io.copyToRealmOrUpdate(sr);
-                        io.commitTransaction();
-                        message = user_details.get("fullname").toString()+" Denied Your Request";
-                    }
-
-                }
-
-
-            } catch (JSONException ee) {
-                e.printStackTrace();
-                try {
-                    io.cancelTransaction();
-
-                }
-                catch (Exception uyt)
-                {
-
-                }
-            }
 
         }
 

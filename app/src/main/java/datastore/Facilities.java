@@ -1,20 +1,17 @@
 package datastore;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
+import com.orm.SugarRecord;
+
 
 /**
  * Created by root on 9/16/16.
  */
 
-public class Facilities extends RealmObject {
-    @PrimaryKey
-    private int id;
+public class Facilities extends SugarRecord {
 
-    private String name,contact_person,contact_phone,location,server_id;
+     String name,contact_person,contact_phone,location,server_id;
 
-    public Facilities(int id, String name, String contact_person, String contact_phone, String location, String server_id) {
-        this.id = id;
+    public Facilities(String name, String contact_person, String contact_phone, String location, String server_id) {
         this.name = name;
         this.contact_person = contact_person;
         this.contact_phone = contact_phone;
@@ -34,14 +31,6 @@ public class Facilities extends RealmObject {
     }
 
 
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
