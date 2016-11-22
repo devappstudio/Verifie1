@@ -102,10 +102,6 @@ public class MyLocationRequest extends Activity  implements GoogleApiClient.Conn
         startActivity(intent);
         finish();
 
-
-
-
-
     }
 
 

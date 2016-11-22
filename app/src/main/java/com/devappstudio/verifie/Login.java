@@ -63,7 +63,7 @@ public class Login extends Activity {
         login = (ImageButton)findViewById(R.id.login_btn);
         not_registered = (TextView)findViewById(R.id.dont_have_account);
 
-        forgot = (TextView)findViewById(R.id.forgot);
+        //forgot = (TextView)findViewById(R.id.forgot);
         email = (EditText)findViewById(R.id.login_email);
         password = (EditText)findViewById(R.id.login_password);
 
@@ -73,7 +73,7 @@ public class Login extends Activity {
                 openMain();
             }
         });
-
+/*
         forgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +81,7 @@ public class Login extends Activity {
             }
         });
 
-
+*/
         not_registered.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

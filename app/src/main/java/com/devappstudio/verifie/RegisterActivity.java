@@ -474,9 +474,9 @@ public class RegisterActivity extends Activity{
         date_of_birth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*if(!fromDatePickerDialog.isShowing())
-                    fromDatePickerDialog.show();
-                */
+                if(!fromDatePickerDialog.isShowing())
+                   fromDatePickerDialog.show();
+
             }
         });
 
@@ -485,9 +485,9 @@ public class RegisterActivity extends Activity{
             public void onFocusChange(View v, boolean hasFocus) {
                 if(date_of_birth.isFocused())
                 {
-                    /*if(!fromDatePickerDialog.isShowing())
+                    if(!fromDatePickerDialog.isShowing())
                         fromDatePickerDialog.show();
-                    */
+
                 }
             }
         });

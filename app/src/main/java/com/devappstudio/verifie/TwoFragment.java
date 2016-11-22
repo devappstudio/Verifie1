@@ -856,7 +856,7 @@ public class TwoFragment extends Fragment{
                             Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
                             Long t =  printDifference(date1, date2)/7;
                             //System.out.println("Difference "+t+ " "+vss.getDate_to_expire()+" "+date1.toString());
-                            float tt = t/52f;
+                            float tt = t/60f;
                             level =  tt*100;
 
                         }

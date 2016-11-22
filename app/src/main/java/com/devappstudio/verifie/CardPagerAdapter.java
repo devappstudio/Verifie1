@@ -1,6 +1,10 @@
 package com.devappstudio.verifie;
 
 import android.app.Dialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
@@ -18,7 +22,7 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
     private List<ContactLocations> mData;
     private float mBaseElevation;
 
-    public CardPagerAdapter(List<CardView> mViews,List<ContactLocations> mData) {
+    public CardPagerAdapter(List<CardView> mViews, List<ContactLocations> mData) {
 
         this.mData = mData;
         this.mViews = mViews;
@@ -64,12 +68,12 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView title,location,name,telephone;
+                TextView title, location, name, telephone;
 
-                title = (TextView)dialog.findViewById(R.id.centerName);
-                location = (TextView)dialog.findViewById(R.id.location);
-                name = (TextView)dialog.findViewById(R.id.nameContactPerson);
-                telephone = (TextView)dialog.findViewById(R.id.telephoneContactPerson);
+                title = (TextView) dialog.findViewById(R.id.centerName);
+                location = (TextView) dialog.findViewById(R.id.location);
+                name = (TextView) dialog.findViewById(R.id.nameContactPerson);
+                telephone = (TextView) dialog.findViewById(R.id.telephoneContactPerson);
                 title.setText(mData.get(position).getName());
                 location.setText(mData.get(position).getLocation());
                 name.setText(mData.get(position).getPerson());
@@ -80,8 +84,22 @@ public class CardPagerAdapter extends PagerAdapter implements CardAdapter {
                     @Override
                     public void onClick(View v) {
                         dialog.dismiss();
+
                     }
                 });
+
+                Button dialogButton1 = (Button) dialog.findViewById(R.id.button4);
+                dialogButton1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                        callIntent.setData(Uri.parse("tel:"+mData.get(position).getTelephone()));
+                        container.getContext().startActivity(callIntent);
+                    }
+                });
+
+
                 dialog.show();
             }
         });

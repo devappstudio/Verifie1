@@ -170,7 +170,7 @@ public class OneFragment extends Fragment{
                 Date date2 = simpleDateFormat.parse(vss.getDate_to_expire());
                 Long t =  printDifference(date1, date2)/7;
                 System.out.println("Difference "+strDate+" - "+vss.getDate_to_expire()+" = "+printDifference(date1, date2));
-                float tt = t/52f;
+                float tt = t/60f;
                 level =  tt*100;
                 System.out.println("Difference 1 "+level+" "+t+" "+tt);
 
@@ -221,11 +221,14 @@ public class OneFragment extends Fragment{
         mData = new ArrayList<>();
         mViews = new ArrayList<>();
         ContactLocations cl  = new ContactLocations();
+
+        /*
         cl.setLocation("Test : Location");
         cl.setName("Test Facility");
         cl.setPerson("Alexander ");
         cl.setTelephone("+233244419419");
         mData.add(cl);
+        */
         mViews.add(null);
 
         List<Facilities> facilities = Facilities.listAll(Facilities.class);
@@ -882,7 +885,7 @@ public class OneFragment extends Fragment{
                                     us.save();
                                     Picasso.with(getActivity()).invalidate(Api.getImage_end()+us.getServer_id());
                                     Picasso.with(getActivity()).load("http://admin.verifieworld.com/assets/images/placeholder.png").into(profile);
-                                    Picasso.with(getActivity()).load(Api.getImage_end()+us.getServer_id()).into(profile);
+                                    Picasso.with(getActivity()).load(location).into(profile);
 
                                 }
 

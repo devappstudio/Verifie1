@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import datastore.ApprovedRequests;
 import datastore.ReceivedRequests;
 import datastore.SentRequests;
+import datastore.VerificationStatus;
 
 
 public class MyGcmListenerService  extends GcmListenerService  {
@@ -89,6 +90,24 @@ public class MyGcmListenerService  extends GcmListenerService  {
                 ReceivedRequests rr = new ReceivedRequests(user_details.get("id").toString(),tsr,"","0",0);
                 rr.save();
             }
+            if(jo_stock.get("type").toString().equalsIgnoreCase("verification"))
+            {
+                JSONObject user_details = jo_stock.getJSONObject("status");
+
+                message = "Your Verification Status Has Been Updated" ;
+                //request here
+                //        $res = $this->gcm->send(json_encode(array('type'=>'request','from_user'=>$this->db->get_where('users',array('id'=>$this->post('server_id')))->row(),'message'=>'Request To View Your Rotabar')),"",$tokens);
+                //   public ReceivedRequests(int id, String id_send, String time_sent, String time_replied, String status, int reply)
+
+                VerificationStatus vs = new VerificationStatus();
+                vs.setId((long)1);
+                vs.setDate_to_expire(user_details.get("expiry").toString());
+                vs.setDate_recommended(user_details.get("recommended").toString());
+                vs.setCentre(user_details.get("facility").toString());
+                vs.setDate_verified(user_details.get("current").toString());
+                vs.save();
+            }
+
 
            if(jo_stock.get("type").toString().equalsIgnoreCase("reply"))
             {

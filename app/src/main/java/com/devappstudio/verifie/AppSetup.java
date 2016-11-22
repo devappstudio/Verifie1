@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import datastore.Api;
+import datastore.ContactsChecked;
 import datastore.ContactsList;
 import datastore.Facilities;
 import datastore.User;
@@ -41,6 +42,7 @@ import datastore.VerificationStatus;
 public class AppSetup extends AppCompatActivity {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
+    private Request.Priority priority = Request.Priority.HIGH;
 
     private ProgressBar mRegistrationProgressBar;
 
@@ -62,17 +64,19 @@ public class AppSetup extends AppCompatActivity {
         loadFacilities();
         get_user();
         loadFacilities();
-
-
-
         List<ContactsList> clst = ContactsList.listAll(ContactsList.class);
-        if (clst.isEmpty())
+
+        if(!ContactsChecked.first(ContactsChecked.class).getChecked() && !clst.isEmpty())
         {
-            List<VerificationStatus>vs = VerificationStatus.listAll(VerificationStatus.class);
-            if(vs.isEmpty())
-            {
-                get_user();
-            }
+            check_on_verifie();
+
+        }
+
+
+
+        if (!ContactsChecked.first(ContactsChecked.class).getChecked())
+        {
+            get_user();
             loadFacilities();
             AppSetup.readContacts task = new AppSetup.readContacts();
             task.execute("");
@@ -133,12 +137,14 @@ public class AppSetup extends AppCompatActivity {
                                 user.setCentre(jo_stock.get("facility").toString());
                                 user.setDate_verified(jo_stock.get("current").toString());
                                 user.save();
+/*
                                 final Intent intent = new Intent(AppSetup.this, main.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                 startActivity(intent);
                                 finish();
+                                */
 
                             }
                             else
@@ -152,12 +158,14 @@ public class AppSetup extends AppCompatActivity {
                                     user.setDate_verified("N/A");
                                     user.save();
                                 }
+                                /*
                                 final Intent intent = new Intent(AppSetup.this, main.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                 startActivity(intent);
                                 finish();
+                                */
                             }
 
                         }
@@ -178,12 +186,14 @@ public class AppSetup extends AppCompatActivity {
                                     user.setCentre(jo_stock.get("facility").toString());
                                     user.setDate_verified(jo_stock.get("current").toString());
                                     user.save();
+                                    /*
                                     final Intent intent = new Intent(AppSetup.this, main.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                                     startActivity(intent);
                                     finish();
+                                    */
 
                                 }
                                 catch (Exception eee)
@@ -191,12 +201,14 @@ public class AppSetup extends AppCompatActivity {
 
                                 }
                               }
+                            /*
                             final Intent intent = new Intent(AppSetup.this, main.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                             startActivity(intent);
                             finish();
+                            */
 
                         }
                     }
@@ -221,11 +233,13 @@ public class AppSetup extends AppCompatActivity {
                     }
 
                 }
+                /*
                 final Intent intent = new Intent(AppSetup.this, main.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivity(intent);
+                */
                 error.printStackTrace();
             }
         }) {
@@ -235,6 +249,11 @@ public class AppSetup extends AppCompatActivity {
                 headers.put("Content-Type", "application/json; charset=utf-8");
                 return headers;
             }
+            @Override
+            public Priority getPriority() {
+                return priority;
+            }
+
         };
 // Adding request to request queue
 
@@ -324,6 +343,7 @@ public class AppSetup extends AppCompatActivity {
                         pCur.close();
                     }
                 }
+
             }
             check_on_verifie();
             return null;
@@ -344,16 +364,15 @@ public class AppSetup extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            final Intent intent = new Intent(AppSetup.this, main.class);
+            /*final Intent intent = new Intent(AppSetup.this, main.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
             finish();
+            */
         }
     }
-
-
     /**
      * Check the device to make sure it has the Google Play Services APK. If
      * it doesn't, display a dialog that allows users to download the APK from
@@ -379,6 +398,7 @@ public class AppSetup extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         registerReceiver();
+
     }
 
     @Override
@@ -468,13 +488,13 @@ public class AppSetup extends AppCompatActivity {
 
     }
 
-
     void  check_on_verifie()
     {
-        List<ContactsList> cl = Select.from(ContactsList.class).where(Condition.prop("isonverifie").eq("0")).list();
+        final List<ContactsList> cl = Select.from(ContactsList.class).where(Condition.prop("isonverifie").eq("0")).list();
 
         for (int i=0; i<cl.size();i++)
         {
+            final int j=i;
 
             String phone = cl.get(i).getTelephone();
             try {
@@ -519,6 +539,20 @@ public class AppSetup extends AppCompatActivity {
                             {
 
                             }
+
+
+                            if(j== cl.size())
+                            {
+                                ContactsChecked cc = new ContactsChecked(true);
+                                cc.setId((long)1);
+                                cc.save();
+                                final Intent intent = new Intent(AppSetup.this, main.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                startActivity(intent);
+                                finish();
+                            }
                         }
                     }, new Response.ErrorListener() {
 
@@ -533,6 +567,11 @@ public class AppSetup extends AppCompatActivity {
                     HashMap<String, String> headers = new HashMap<String, String>();
                     headers.put("Content-Type", "application/json; charset=utf-8");
                     return headers;
+                }
+
+                @Override
+                public Priority getPriority() {
+                    return priority;
                 }
             };
 // Adding request to request queue
