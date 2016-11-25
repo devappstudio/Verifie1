@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "959643729618",
+    "firebase_url": "https://verifie-1383.firebaseio.com",
+    "project_id": "verifie-1383",
+    "storage_bucket": "verifie-1383.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:959643729618:android:0cffc8755478b7c9",
+        "android_client_info": {
+          "package_name": "com.devappstudio.verifie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "959643729618-qj3qmemg67be3laghdbnvasrp87pq09t.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "959643729618-34qni9duh3f9bg1bp7of6ua7467p95up.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA6p_AscDdubKiFZcQEy5e3qgF48avQP1s"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
